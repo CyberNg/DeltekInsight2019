@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition">
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="PageBreakSubReport">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>1.275in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox1</rd:DefaultName>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="PageBreakSubReport_Group1">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!Field1.Value</GroupExpression>
+                    </GroupExpressions>
+                    <PageBreak>
+                      <BreakLocation>End</BreakLocation>
+                    </PageBreak>
+                  </Group>
+                  <TablixMembers>
+                    <TablixMember>
+                      <KeepWithGroup>After</KeepWithGroup>
+                      <KeepTogether>true</KeepTogether>
+                    </TablixMember>
+                  </TablixMembers>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>PageBreakDataset</DataSetName>
+            <Height>0.16in</Height>
+            <Width>1.275in</Width>
+            <Style>
+              <FontSize>9pt</FontSize>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>0.16in</Height>
+        <Style />
+      </Body>
+      <Width>1.275in</Width>
+      <Page>
+        <LeftMargin>1in</LeftMargin>
+        <RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin>
+        <BottomMargin>1in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <DataSources>
+    <DataSource Name="VisionQA51MCMC__alisond_">
+      <DataSourceReference>DefaultDataSource</DataSourceReference>
+      <rd:DataSourceID>fdc62d2f-d38a-4285-ac4a-3e011f99d64d</rd:DataSourceID>
+      <rd:SecurityType>None</rd:SecurityType>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="PageBreakDataset">
+      <Fields>
+        <Field Name="Field1">
+          <DataField>Field1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <Query>
+        <DataSourceName>VisionQA51MCMC__alisond_</DataSourceName>
+        <CommandText>Select 'x' As Field1 From FW_CFGSystem Where @parmWBS &gt; ' '</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@parmWBS">
+            <Value>=Parameters!parmWBS.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+    </DataSet>
+  </DataSets>
+  <ReportParameters>
+    <ReportParameter Name="parmWBS">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+  </ReportParameters>
+  <CustomProperties>
+    <CustomProperty>
+      <Name>ReportType</Name>
+      <Value>SubReport</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ResourceFileName</Name>
+      <Value>InvoiceTaxes</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ReportVersion</Name>
+      <Value>2.0.5.5170</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>LookupType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>GroupingType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AutoGroupQuery</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>OptionForm</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>HelpFile</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>UseColumnSelection</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowUserDefinedFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowCalcFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>Modules</Name>
+      <Value />
+    </CustomProperty>
+  </CustomProperties>
+  <Language>=User.Language</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportID>f40b5e89-9ca0-4aa9-a1d5-3d1c188652b0</rd:ReportID>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+</Report>

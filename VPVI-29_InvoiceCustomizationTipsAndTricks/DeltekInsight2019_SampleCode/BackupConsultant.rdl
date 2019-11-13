@@ -1,0 +1,1409 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="VisionDemo50__CAMDB7_">
+      <DataSourceReference>DefaultDataSource</DataSourceReference>
+      <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>fdc62d2f-d38a-4285-ac4a-3e011f99d64d</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="ConsultantDataset">
+      <Query>
+        <DataSourceName>VisionDemo50__CAMDB7_</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@parmInvoice">
+            <Value>=Parameters!parmInvoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@BillingCurrencyCode">
+            <Value>=Parameters!BillingCurrencyCode.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@PreInvoice">
+            <Value>=Parameters!PreInvoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmMainWBS1">
+            <Value>=Parameters!parmMainWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@showBillingBackup">
+            <Value>=Parameters!showBillingBackup.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS1">
+            <Value>=Parameters!parmWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS2">
+            <Value>=Parameters!parmWBS2.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS3">
+            <Value>=Parameters!parmWBS3.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@BGConsolidatePrint">
+            <Value>=Parameters!BGConsolidatePrint.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>
+          SELECT sortKey,
+          CASE WHEN method = 3 AND transType = /*N*/'EX' THEN description1 ELSE sortLabel END AS sortLabel,
+          transDate,
+          description1,
+          description2,
+          invoiceNumber,
+          invoiceDate,
+          transType,
+          Case When Exists(select FileID from LedgerDocuments where LedgerDocuments.Period = billConDetail.OriginalPeriod
+          and LedgerDocuments.PostSeq = billConDetail.OriginalPostSeq and LedgerDocuments.PKey = billConDetail.OriginalPKey
+          and LedgerDocuments.TableName = billConDetail.OriginalTable and PrintWithInvoice='Y') and ((transType='AP' and SupportDocumentsAP='Y') or (transType='EX' and SupportDocumentsEX='Y')) and SupportDocumentsBkupRpt='Y' then 'Y' else '' end as Documents ,
+          billConDetail.OriginalPeriod, billConDetail.OriginalPostSeq, billConDetail.OriginalPKey,
+
+          refno,
+          amount,
+          multiplier,
+          showMult,
+          expenseDetail,
+          diffMult,
+          SortKey2,
+          CASE WHEN method = 3 AND transType = /*N*/'EX' THEN description1 ELSE sortLabel2 END AS sortLabel2,
+          IsNull(summary2.subAmount, 0) As SubSectionTotal,
+          IsNull(summary.finalAmount, 0) + IsNull(summaryNonBill.finalAmount, 0) As SectionTotal,
+          CASE WHEN IsNull(ek1billGroup.Reason, ek1.Reason) Is Null Then IsNull(ek2billGroup.Reason, ek2.Reason) Else IsNull(ek1billGroup.Reason, ek1.Reason) END As Reason,
+          CASE WHEN IsNull(ek1billGroup.Miles, ek1.Miles) Is Null Then IsNull(ek2billGroup.Miles, IsNull(ek2.Miles, 0)) Else IsNull(ek1billGroup.Miles, IsNull(ek1.Miles, 0)) END As Miles,
+          CASE WHEN IsNull(ek1billGroup.AmountPerMile, ek1.AmountPerMile) Is Null Then IsNull(ek2billGroup.AmountPerMile, IsNull(ek2.AmountPerMile, 0)) Else IsNull(ek1billGroup.AmountPerMile, IsNull(ek1.AmountPerMile, 0)) END As AmountPerMile,
+          CASE WHEN
+          (CASE WHEN IsNull(EKCategorybillGroup.DistanceType, EKCategory.DistanceType) Is Null Then IsNull(EKCategory2billGroup.DistanceType, EKCategory2.DistanceType) Else IsNull(EKCategorybillGroup.DistanceType, EKCategory.DistanceType) END)
+          IS Null Then
+          (CASE WHEN
+          (CASE WHEN IsNull(ek1billGroup.DistanceType, ek1.DistanceType) Is Null Then IsNull(ek2billGroup.DistanceType, ek2.DistanceType) Else IsNull(ek1billGroup.DistanceType, ek1.DistanceType) END)
+          = 'M' THEN '[DoubleQuoteLabelMiles]' ELSE '[DoubleQuoteLabelKilometers]' END)
+          Else
+          (CASE WHEN
+          (CASE WHEN IsNull(EKCategorybillGroup.DistanceType, EKCategory.DistanceType) Is Null Then IsNull(EKCategory2billGroup.DistanceType, EKCategory2.DistanceType) Else IsNull(EKCategorybillGroup.DistanceType, EKCategory.DistanceType) END)
+          = 'M' THEN '[DoubleQuoteLabelMiles]' ELSE '[DoubleQuoteLabelKilometers]' END) END AS DistanceType,
+          CAST(@BillingCurrencyCode as varchar) As CurrencyCode
+          FROM billConDetail
+          left join BT on BT.WBS1=billConDetail.WBS1 and BT.WBS2=' '
+          left join
+          (SELECT
+          billInvSums.invoice as sumInvoice,
+          billInvSums.mainWBS1 as sumMainWBS1,
+          billInvSums.BillWBS1 as sumBillWBS1,
+          billInvSums.BillWBS2 as sumBillWBS2,
+          billInvSums.BillWBS3 as sumBillWBS3,
+          sum(billInvSums.finalAmount) AS finalAmount
+          FROM billInvSums
+          WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And ArrayType = 'I' AND Section = /*N*/'C' AND 	  @showBillingBackup = 'Y'
+          AND (Invoice = @parmInvoice)
+          AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~')
+          AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~')
+          AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~')
+          AND (BillWBS3 = @parmWBS3 OR BillWBS3 = /*N*/'~')
+          GROUP BY billInvSums.invoice,
+          billInvSums.mainWBS1,
+          billInvSums.BillWBS1,
+          billInvSums.BillWBS2,
+          billInvSums.BillWBS3
+          ) AS summary ON billConDetail.invoice = summary.sumInvoice
+          AND billConDetail.mainWBS1 = summary.sumMainWBS1
+          AND billConDetail.BillWBS1 = summary.sumBillWBS1
+          AND billConDetail.BillWBS2 = summary.sumBillWBS2
+          AND billConDetail.BillWBS3 = summary.sumBillWBS3
+          left join
+          (SELECT Invoice As sumInvoice, MainWBS1 As sumMainWBS1,  BillWBS1 As sumBillWBS1,  BillWBS2 As sumBillWBS2, BillWBS3 As sumBillWBS3,
+          sum(Amount) AS finalAmount
+          FROM billConDetail
+          WHERE @PreInvoice = 'N' And Invoice = '&lt;Draft&gt;' And
+          (Invoice = @parmInvoice) And RateFlag = 'N'
+          AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~')
+          AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~')
+          AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~')
+          AND (BillWBS3 = @parmWBS3 OR BillWBS3 = /*N*/'~')
+          AND @showBillingBackup = 'Y'
+          GROUP BY Invoice, MainWBS1,  BillWBS1, BillWBS2, BillWBS3)
+          AS summaryNonBill ON billConDetail.invoice = summaryNonBill.sumInvoice
+          AND billConDetail.mainWBS1 = summaryNonBill.sumMainWBS1
+          AND billConDetail.BillWBS1 = summaryNonBill.sumBillWBS1
+          AND billConDetail.BillWBS2 = summaryNonBill.sumBillWBS2
+          AND billConDetail.BillWBS3 = summaryNonBill.sumBillWBS3
+          left join
+          (SELECT
+          billInvSums.invoice as sumInvoice,
+          billInvSums.mainWBS1 as sumMainWBS1,
+          billInvSums.BillWBS1 as sumBillWBS1,
+          billInvSums.BillWBS2 as sumBillWBS2,
+          billInvSums.BillWBS3 as sumBillWBS3,
+          billInvSums.subSection as sumSubSection,
+          sum(billInvSums.finalAmount) AS subAmount
+          FROM billInvSums
+          WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And ArrayType = 'I' AND Section = /*N*/'C' AND 	  @showBillingBackup = 'Y'
+          AND (Invoice = @parmInvoice)
+          AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~')
+          AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~')
+          AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~')
+          AND (BillWBS3 = @parmWBS3 OR BillWBS3 = /*N*/'~')
+          GROUP BY billInvSums.invoice,
+          billInvSums.mainWBS1,
+          billInvSums.BillWBS1,
+          billInvSums.BillWBS2,
+          billInvSums.BillWBS3,
+          billInvSums.subSection
+          ) AS summary2 ON (billConDetail.sortKey = summary2.sumSubSection OR summary2.sumSubSection = '' OR summary2.sumSubSection = '0')
+          AND billConDetail.invoice = summary2.sumInvoice
+          AND billConDetail.mainWBS1 = summary2.sumMainWBS1
+          AND billConDetail.BillWBS1 = summary2.sumBillWBS1
+          AND billConDetail.BillWBS2 = summary2.sumBillWBS2
+          AND billConDetail.BillWBS3 = summary2.sumBillWBS3
+       
+          /*SubQuery to get employee expense comments for billing groups*/
+          left join
+          (Select LedgerEX.PKey, ekDetail.Reason, ekDetail.Miles, ekDetail.AmountPerMile, CFGEKMain.DistanceType
+          From BTBGSubs, LedgerEX Inner Join EX On LedgerEX.Voucher = EX.Voucher And LedgerEX.Employee = EX.Employee
+          Inner Join ekDetail On EX.Employee = ekDetail.Employee
+          And EX.ReportDate = ekDetail.ReportDate And EX.ReportName = ekDetail.ReportName
+          And case when LedgerEX.EKOriginalLine=0 then LedgerEX.Line else LedgerEX.EKOriginalLine end = ekDetail.SortOrder
+          Inner Join (CFGPostControl INNER JOIN CFGEKMain On CFGPostControl.Company = CFGEKMain.Company)
+          On LedgerEX.Period = CFGPostControl.Period And LedgerEX.PostSeq = CFGPostControl.PostSeq
+          Where @PreInvoice = 'N' And @BGConsolidatePrint = 'Y' And BTBGSubs.MainWBS1 = Convert(/*N*/varchar, @parmMainWBS1) And
+          (LedgerEX.WBS1 = BTBGSubs.SubWBS1)
+          AND @showBillingBackup = 'Y') ek1billGroup
+          On billConDetail.OriginalPKey = ek1billGroup.PKey
+          And billConDetail.OriginalTable = /*N*/'LedgerEX'
+
+          /*SubQuery to get employee expense comments non-bill groups*/
+          left join
+          (Select LedgerEX.PKey, ekDetail.Reason, ekDetail.Miles, ekDetail.AmountPerMile, CFGEKMain.DistanceType
+          From LedgerEX Inner Join EX On LedgerEX.Voucher = EX.Voucher And LedgerEX.Employee = EX.Employee
+          Inner Join ekDetail On EX.Employee = ekDetail.Employee
+          And EX.ReportDate = ekDetail.ReportDate And EX.ReportName = ekDetail.ReportName
+          And case when LedgerEX.EKOriginalLine=0 then LedgerEX.Line else LedgerEX.EKOriginalLine end = ekDetail.SortOrder
+          Inner Join (CFGPostControl INNER JOIN CFGEKMain On CFGPostControl.Company = CFGEKMain.Company)
+          On LedgerEX.Period = CFGPostControl.Period And LedgerEX.PostSeq = CFGPostControl.PostSeq
+          Where @PreInvoice = 'N' And @BGConsolidatePrint = 'N' And
+          LedgerEX.WBS1 = Convert(/*N*/varchar, @parmWBS1)
+          AND @showBillingBackup = 'Y') ek1
+          On billConDetail.OriginalPKey = ek1.PKey
+          And billConDetail.OriginalTable = /*N*/'LedgerEX'
+
+          left join
+          (Select BIED.PKey, ekDetail.Reason, ekDetail.Miles, ekDetail.AmountPerMile, CFGEKMain.DistanceType
+          From BTBGSubs, BIED Inner Join EX On BIED.Voucher = EX.Voucher And BIED.Employee = EX.Employee
+          Inner Join ekDetail On EX.Employee = ekDetail.Employee
+          And EX.ReportDate = ekDetail.ReportDate And EX.ReportName = ekDetail.ReportName
+          And case when BIED.EKOriginalLine=0 then BIED.Line else BIED.EKOriginalLine end = ekDetail.SortOrder
+          Inner Join (CFGPostControl INNER JOIN CFGEKMain On CFGPostControl.Company = CFGEKMain.Company)
+          On BIED.Period = CFGPostControl.Period And BIED.PostSeq = CFGPostControl.PostSeq
+          Where @PreInvoice = 'N' And @BGConsolidatePrint = 'Y' And BTBGSubs.MainWBS1 = Convert(/*N*/varchar, @parmMainWBS1) And
+          (BIED.WBS1 = BTBGSubs.SubWBS1)
+          AND @showBillingBackup = 'Y') ek2billGroup
+          On billConDetail.OriginalPKey = ek2billGroup.PKey
+          And billConDetail.OriginalTable = /*N*/'BIED'
+
+          left join
+          (Select BIED.PKey, ekDetail.Reason, ekDetail.Miles, ekDetail.AmountPerMile, CFGEKMain.DistanceType
+          From BIED Inner Join EX On BIED.Voucher = EX.Voucher And BIED.Employee = EX.Employee
+          Inner Join ekDetail On EX.Employee = ekDetail.Employee
+          And EX.ReportDate = ekDetail.ReportDate And EX.ReportName = ekDetail.ReportName
+          And case when BIED.EKOriginalLine=0 then BIED.Line else BIED.EKOriginalLine end = ekDetail.SortOrder
+          Inner Join (CFGPostControl INNER JOIN CFGEKMain On CFGPostControl.Company = CFGEKMain.Company)
+          On BIED.Period = CFGPostControl.Period And BIED.PostSeq = CFGPostControl.PostSeq
+          Where @PreInvoice = 'N' And @BGConsolidatePrint = 'N' And
+          BIED.WBS1 = Convert(/*N*/varchar, @parmWBS1)
+          AND @showBillingBackup = 'Y') ek2
+          On billConDetail.OriginalPKey = ek2.PKey
+          And billConDetail.OriginalTable = /*N*/'BIED'
+
+          /*ARD subquery to get Distance Type from CFGEKCategory for billing groups*/
+          left join
+          (Select LedgerEX.PKey, CFGEKCategory.DistanceType From BTBGSubs, CFGEKCategory, EKDetail, CFGPostControl, LedgerEX, EX
+          Where @PreInvoice = 'N' And @showBillingBackup = 'Y' AND CFGEKCategory.Category = EKDetail.Category And CFGEKCategory.EKGroup = EKDetail.EKGroup
+          And CFGEKCategory.Company = CFGPostControl.Company
+          And LedgerEX.Voucher = EX.Voucher And LedgerEX.Employee = EX.Employee
+          And EX.Employee = ekDetail.Employee
+          And EX.ReportDate = ekDetail.ReportDate And EX.ReportName = ekDetail.ReportName
+          And case when LedgerEX.EKOriginalLine=0 then LedgerEX.Line else LedgerEX.EKOriginalLine end = ekDetail.SortOrder
+          And @BGConsolidatePrint = 'Y' And BTBGSubs.MainWBS1 = Convert(/*N*/varchar, @parmMainWBS1) And
+          (LedgerEX.WBS1 = BTBGSubs.SubWBS1)
+          And LedgerEX.PostSeq = CFGPostControl.PostSeq And LedgerEX.Period = CFGPostControl.Period) EKCategorybillGroup
+          On billConDetail.OriginalPKey = EKCategorybillGroup.PKey
+          And billConDetail.OriginalTable = /*N*/'LedgerEX'
+
+          /*ARD subquery to get Distance Type from CFGEKCategory for nonbill groups*/
+          left join
+          (Select LedgerEX.PKey, CFGEKCategory.DistanceType From CFGEKCategory, EKDetail, CFGPostControl, LedgerEX, EX
+          Where @PreInvoice = 'N' And @showBillingBackup = 'Y' AND CFGEKCategory.Category = EKDetail.Category And CFGEKCategory.EKGroup = EKDetail.EKGroup
+          And CFGEKCategory.Company = CFGPostControl.Company
+          And LedgerEX.Voucher = EX.Voucher And LedgerEX.Employee = EX.Employee
+          And EX.Employee = ekDetail.Employee
+          And EX.ReportDate = ekDetail.ReportDate And EX.ReportName = ekDetail.ReportName
+          And case when LedgerEX.EKOriginalLine=0 then LedgerEX.Line else LedgerEX.EKOriginalLine end = ekDetail.SortOrder
+          And @BGConsolidatePrint = 'N' And
+          LedgerEX.WBS1 = Convert(/*N*/varchar, @parmWBS1)
+          And LedgerEX.PostSeq = CFGPostControl.PostSeq And LedgerEX.Period = CFGPostControl.Period) EKCategory
+          On billConDetail.OriginalPKey = EKCategory.PKey
+          And billConDetail.OriginalTable = /*N*/'LedgerEX'
+
+          /*ARD subquery to get Distance Type from CFGEKCategory billing groups*/
+          left join
+          (Select BIED.PKey, CFGEKCategory.DistanceType From BTBGSubs, CFGEKCategory, EKDetail, CFGPostControl, BIED, EX
+          Where @PreInvoice = 'N' And @showBillingBackup = 'Y' AND CFGEKCategory.Category = EKDetail.Category And CFGEKCategory.EKGroup = EKDetail.EKGroup
+          And CFGEKCategory.Company = CFGPostControl.Company
+          And BIED.Voucher = EX.Voucher And BIED.Employee = EX.Employee
+          And EX.Employee = ekDetail.Employee
+          And EX.ReportDate = ekDetail.ReportDate And EX.ReportName = ekDetail.ReportName
+          And case when BIED.EKOriginalLine=0 then BIED.Line else BIED.EKOriginalLine end = ekDetail.SortOrder
+          And @BGConsolidatePrint = 'Y' And BTBGSubs.MainWBS1 = Convert(/*N*/varchar, @parmMainWBS1) And
+          (BIED.WBS1 = BTBGSubs.SubWBS1)
+          And BIED.PostSeq = CFGPostControl.PostSeq And BIED.Period = CFGPostControl.Period) EKCategory2billGroup
+          On billConDetail.OriginalPKey = EKCategory2billGroup.PKey
+          And billConDetail.OriginalTable = /*N*/'BIED'
+
+          /*ARD subquery to get Distance Type from CFGEKCategory non bill groups*/
+          left join
+          (Select BIED.PKey, CFGEKCategory.DistanceType From CFGEKCategory, EKDetail, CFGPostControl, BIED, EX
+          Where @PreInvoice = 'N' And @showBillingBackup = 'Y' AND CFGEKCategory.Category = EKDetail.Category And CFGEKCategory.EKGroup = EKDetail.EKGroup
+          And CFGEKCategory.Company = CFGPostControl.Company
+          And BIED.Voucher = EX.Voucher And BIED.Employee = EX.Employee
+          And EX.Employee = ekDetail.Employee
+          And EX.ReportDate = ekDetail.ReportDate And EX.ReportName = ekDetail.ReportName
+          And case when BIED.EKOriginalLine=0 then BIED.Line else BIED.EKOriginalLine end = ekDetail.SortOrder
+          And @BGConsolidatePrint = 'N' And
+          BIED.WBS1 = Convert(/*N*/varchar, @parmWBS1)
+          And BIED.PostSeq = CFGPostControl.PostSeq And BIED.Period = CFGPostControl.Period) EKCategory2
+          On billConDetail.OriginalPKey = EKCategory2.PKey
+          And billConDetail.OriginalTable = /*N*/'BIED'
+
+          WHERE @PreInvoice = 'N' And billConDetail.Amount &lt;&gt; 0 AND @showBillingBackup = 'Y'
+          AND (Invoice = @parmInvoice) AND (IsNull(billConDetail.RateFlag, '') &lt;&gt; 'N' Or billConDetail.Invoice = '&lt;Draft&gt;')
+          AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~')
+          AND (billConDetail.BillWBS1 = @parmWBS1 OR billConDetail.BillWBS1 = /*N*/'~')
+          AND (billConDetail.BillWBS2 = @parmWBS2 OR billConDetail.BillWBS2 = /*N*/'~')
+          AND (billConDetail.BillWBS3 = @parmWBS3 OR billConDetail.BillWBS3 = /*N*/'~')
+          ORDER BY sortKey, transDate</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="sortKey">
+          <DataField>sortKey</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="sortLabel">
+          <DataField>sortLabel</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="transDate">
+          <DataField>transDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="description1">
+          <DataField>description1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="description2">
+          <DataField>description2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="invoiceNumber">
+          <DataField>invoiceNumber</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="invoiceDate">
+          <DataField>invoiceDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="transType">
+          <DataField>transType</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="refno">
+          <DataField>refno</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Documents">
+          <DataField>Documents</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="OriginalPeriod">
+          <DataField>OriginalPeriod</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="amount">
+          <DataField>amount</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="OriginalPostSeq">
+          <DataField>OriginalPostSeq</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="multiplier">
+          <DataField>multiplier</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="OriginalPKey">
+          <DataField>OriginalPKey</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="showMult">
+          <DataField>showMult</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="expenseDetail">
+          <DataField>expenseDetail</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="diffMult">
+          <DataField>diffMult</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="sortKey2">
+          <DataField>SortKey2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="sortLabel2">
+          <DataField>sortLabel2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SubSectionTotal">
+          <DataField>SubSectionTotal</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="SectionTotal">
+          <DataField>SectionTotal</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="Reason">
+          <DataField>Reason</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Miles">
+          <DataField>Miles</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="AmountPerMile">
+          <DataField>AmountPerMile</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="DistanceType">
+          <DataField>DistanceType</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CurrencyCode">
+          <DataField>CurrencyCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="ConsultantSubReport">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>0.375in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.95in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.85in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.19792in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.70208in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.88in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.92in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.2in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_Consultant">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelConsultants]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>17</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>9</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader1_Label">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!sortLabel.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>16</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>9</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="dateExpense">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!transType.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>5</ZIndex>
+                          <Style>
+                            <PaddingLeft>8pt</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Parameters!parmPrintInvoiceLeadingZeros.Value = "N" And Fields!transType.Value = "AP", Code.LeadingZeros(Fields!refno.Value), Fields!refno.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox4</rd:DefaultName>
+                          <ZIndex>4</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox6">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!transDate.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>d</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox6</rd:DefaultName>
+                          <ZIndex>3</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Image Name="detail_Documents">
+                          <Source>Embedded</Source>
+                          <Value>SupportingDocumentIndicator</Value>
+                          <Sizing>Clip</Sizing>
+                          <ActionInfo>
+                            <Actions>
+                              <Action>
+                                <Hyperlink>
+                                  =IIf(Globals!RenderFormat.IsInteractive, Parameters!RootURL.Value
+                                  &amp; "/personal/GetSupportingDocumentsPDF?params=Deltek.Vision.Expensekeeper.Server.SupportingDocuments"
+                                  &amp; "|ApplicationType|Ledger"
+                                  &amp; "|Period|" &amp; Fields!OriginalPeriod.Value
+                                  &amp; "|PostSeq|" &amp; Fields!OriginalPostSeq.Value
+                                  &amp; "|PKey|" &amp; Fields!OriginalPKey.Value
+                                  &amp; "|Filename|" &amp; "Supporting Document for " &amp; Globals!ReportName &amp; "-" &amp; Fields!OriginalPeriod.Value &amp; "-" &amp; Fields!OriginalPostSeq.Value
+                                  &amp; "-" &amp; Fields!refno.Value &amp; "-" &amp; Fields!description1.Value &amp; "-" &amp; Fields!description2.Value
+                                  &amp; ".pdf|DownloadFromReport|Y"
+                                  &amp; "|PrintWithInvoice|Y"
+                                  &amp; "&amp;Token=" &amp; Parameters!SessionID.Value, Nothing)
+                                </Hyperlink>
+                              </Action>
+                            </Actions>
+                          </ActionInfo>
+                          <Visibility>
+                            <Hidden>=IIf(Fields!Documents.Value = "Y", False, True)</Hidden>
+                          </Visibility>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>3pt</PaddingLeft>
+                            <PaddingTop>1pt</PaddingTop>
+                          </Style>
+                        </Image>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_Description1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!description1.Value &amp;
+
+iif(Not IsNothing(Fields!description2.Value) AND 
+ ((Fields!transType.Value = "AP" AndAlso Parameters!parmShowBillingBackupAPDescription.Value = "Y")
+   OrElse 
+  (Fields!transType.Value = "EX" AndAlso Parameters!parmShowBillingBackupEXDescription.Value = "Y")
+   OrElse 
+  (Fields!transType.Value &lt;&gt; "AP" AndAlso Fields!transType.Value &lt;&gt; "EX")), 
+   String.Format("[Label0]", Fields!description2.Value), "") &amp;
+   
+iif(Parameters!parmShowBillingBackupVendorInvoice.Value = "Y" AndAlso Fields!invoiceNumber.Value &lt;&gt; "", 
+   String.Format("[LabelInvoice:01]", Fields!invoiceNumber.Value, Format(Fields!invoiceDate.Value, "d")), "") &amp;
+   
+iif(Parameters!parmShowBillingBackupEKDescription.Value = "Y" AndAlso Fields!Reason.Value &lt;&gt; "", 
+   String.Format("[Label0]", Fields!Reason.Value), "") &amp;
+   
+iif(Parameters!parmShowBillingBackupMileage.Value = "Y" AndAlso Fields!Miles.Value &lt;&gt; 0,
+   String.Format("[LabelMileInfo]", 
+      Code.FormatForCulture(Fields!Miles.Value, "#,##0.00##;-#,##0.00##;0.00", User!Language), 
+      Fields!DistanceType.Value, 
+      Code.FormatForCulture(Fields!AmountPerMile.Value, "#,##0.00##;-#,##0.00##;0.00", User!Language)), "")</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>2</ZIndex>
+                          <Style>
+                            <PaddingRight>36pt</PaddingRight>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>3</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_Amount">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!amount.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>1</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox11">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupFooter1_Label">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!sortLabel.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>9</ZIndex>
+                          <Style>
+                            <PaddingLeft>19pt</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>6</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupFooter1_Mulitplier">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!multiplier.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>#,##0.0### "[LabelTimes]";-#,##0.0### "[LabelTimes]";#</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>8</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif(Fields!showMult.Value = "N" or Fields!diffMult.Value = "N", true, false)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupFooter1_Amount">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!amount.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>7</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupFooter1_SectionTotal">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!SubSectionTotal.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>6</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif (Fields!showMult.Value = "N" or Fields!diffMult.Value = "N", true, false)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox2</rd:DefaultName>
+                          <ZIndex>14</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>2</ColSpan>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="footer_TotalConsultant">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelTotalConsultants]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>13</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>4</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="reportFinal_Multiplier">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!multiplier.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>#,##0.0### "[LabelTimes]";-#,##0.0### "[LabelTimes]";#</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>12</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif (Fields!showMult.Value = "N" or Fields!diffMult.Value = "Y", true, false)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="reportFinal_Amount">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!amount.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>11</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="reportFinal_SectionTotal">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!SectionTotal.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>10</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.07in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox1</rd:DefaultName>
+                          <ZIndex>15</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>9</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="LaborSubReport_SortKey1">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!sortKey.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <TablixMembers>
+                    <TablixMember>
+                      <Visibility>
+                        <Hidden>=iif(isNothing(Fields!sortKey.Value), true, false)</Hidden>
+                      </Visibility>
+                      <KeepWithGroup>After</KeepWithGroup>
+                      <KeepTogether>true</KeepTogether>
+                    </TablixMember>
+                    <TablixMember>
+                      <Group Name="ConsultantSubReport_Details_Group">
+                        <DataElementName>Detail</DataElementName>
+                      </Group>
+                      <TablixMembers>
+                        <TablixMember />
+                      </TablixMembers>
+                      <DataElementName>Detail_Collection</DataElementName>
+                      <DataElementOutput>Output</DataElementOutput>
+                      <KeepTogether>true</KeepTogether>
+                    </TablixMember>
+                    <TablixMember>
+                      <Visibility>
+                        <Hidden>=iif(((isNothing(Fields!sortKey.Value) or Fields!sortKey.Value = "0" or Fields!expenseDetail.Value = "Y")
+and (Fields!showMult.Value = "N" or Fields!diffMult.Value = "N") OR Not (Fields!showMult.Value = "Y" And Fields!diffMult.Value = "Y")), true, false)</Hidden>
+                      </Visibility>
+                      <KeepWithGroup>Before</KeepWithGroup>
+                      <KeepTogether>true</KeepTogether>
+                    </TablixMember>
+                  </TablixMembers>
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>ConsultantDataset</DataSetName>
+            <Height>0.91in</Height>
+            <Width>6.875in</Width>
+            <Style>
+              <FontSize>9pt</FontSize>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>0.91in</Height>
+        <Style />
+      </Body>
+      <Width>6.875in</Width>
+      <Page>
+        <LeftMargin>1in</LeftMargin>
+        <RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin>
+        <BottomMargin>1in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="parmInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>&lt;Draft&gt;</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmMainWBS1">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>1999009.00</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmMainWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS1">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1999009.00</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS2">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>000</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS2</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS3">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS3</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmShowBillingBackupAPDescription">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmShowBillingBackupAPDescription</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmShowBillingBackupEXDescription">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmShowBillingBackupEXDescription</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmShowBillingBackupEKDescription">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmShowBillingBackupEKDescription</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmShowBillingBackupVendorInvoice">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmShowBillingBackupVendorInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmShowBillingBackupMileage">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmShowBillingBackupMileage</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmPrintInvoiceLeadingZeros">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmPrintInvoiceLeadingZeros</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BackupExpenseSort">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>0</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>BackupExpenseSort</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmShowBillingBackupTransType">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmShowBillingBackupTransType</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="showBillingBackup">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>showBillingBackup</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BillingCurrencyCode">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>BillingCurrencyCode</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BGConsolidatePrint">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>BGConsolidatePrint</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="PreInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>PreInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="RootURL">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Root URL</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="SessionID">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Session ID</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+  </ReportParameters>
+  <CustomProperties>
+    <CustomProperty>
+      <Name>ReportType</Name>
+      <Value>SubReport</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ResourceFileName</Name>
+      <Value>BackupConsultant</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ReportVersion</Name>
+      <Value>2.0.5.5170</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>LookupType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>GroupingType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AutoGroupQuery</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>OptionForm</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>HelpFile</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>UseColumnSelection</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowUserDefinedFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowCalcFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>Modules</Name>
+      <Value />
+    </CustomProperty>
+  </CustomProperties>
+  <Code>Public Function FormatForCulture(ByVal wkDecimal As Decimal, ByVal wkFormat As String, ByVal wkCultureName As String) As String
+    Dim curCulture As New System.Globalization.CultureInfo(wkCultureName)
+
+    Return wkDecimal.ToString(wkFormat, curCulture)
+End Function
+
+public function LeadingZeros(byVal Invoice as String) as String
+Dim i As Integer
+Dim wkstr As String
+	i = 1
+	wkstr =Invoice
+	Do While Mid$(wkstr, i, 1) = "0"
+		i = i + 1
+	Loop
+	wkstr = Mid$(wkstr, i)
+	 LeadingZeros = wkstr
+end function
+
+</Code>
+  <EmbeddedImages>
+    <EmbeddedImage Name="SupportingDocumentIndicator">
+      <MIMEType>image/png</MIMEType>
+      <ImageData>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</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
+  <Language>=User.Language</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>f40b5e89-9ca0-4aa9-a1d5-3d1c188652b0</rd:ReportID>
+</Report>

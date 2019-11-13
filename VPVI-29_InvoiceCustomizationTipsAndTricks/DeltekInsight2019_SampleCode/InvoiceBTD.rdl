@@ -1,0 +1,1383 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition">
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="BTDSubReport">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>1.875in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.2in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_BTD">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Parameters!btdSummarize.Value = "Y", "", "[LabelBillingstodate]")</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>24</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>6</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox55">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox55</rd:DefaultName>
+                          <ZIndex>23</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_Current">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelCurrent]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>22</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_Prior">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelPrior]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>21</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_Total">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelTotal]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>20</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_Received">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelReceived]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>19</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_AR">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelARBalance]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>18</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_Description">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Fields!section.Value = "F", Parameters!BTDFee.Value,
+IIF(Fields!section.Value = "L", Parameters!BTDLabor.Value,
+IIF(Fields!section.Value = "C", Parameters!BTDConsultant.Value,
+IIF(Fields!section.Value = "E", Parameters!BTDExpense.Value,
+IIF(Fields!section.Value = "U", Parameters!BTDUnit.Value,
+IIF(Fields!section.Value = "A", Parameters!BTDAddOn.Value,
+IIF(Fields!section.Value = "L", "[LabelLimit]",
+IIF(Fields!section.Value = "T", Parameters!BTDTax.Value,
+IIF(Fields!section.Value = "I", Parameters!BTDInterest.Value,
+IIF(Fields!section.Value = "C", "[LabelRetainage]",Fields!description.Value))))))))))</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>5</ZIndex>
+                          <Style>
+                            <PaddingLeft>19pt</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_Current">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!currentAmt.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>4</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_Prior">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!priorAmt.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>3</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_Total">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!total.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>2</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox12">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>1</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox11">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox11</rd:DefaultName>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="footer_lblTotalBTD">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Parameters!btdSummarize.Value = "Y", "[LabelBillingstodate]", "[LabelTotal]")</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>11</ZIndex>
+                          <Style>
+                            <PaddingLeft>=IIF(Parameters!btdSummarize.Value="Y", "0pt", "19pt")</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="footer_Current">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!currentAmt.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>10</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="footer_Prior">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!priorAmt.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>9</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="footer_Total">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!total.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>8</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="footer_Received">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!ReceivedAmt.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>7</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="footer_AR">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!ARBalanceAmt.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>6</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.07in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox1</rd:DefaultName>
+                          <ZIndex>17</ZIndex>
+                          <Style>
+                            <PaddingLeft>=IIF(Parameters!btdSummarize.Value = "Y", "0pt", "19pt")</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox2</rd:DefaultName>
+                          <ZIndex>16</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox3</rd:DefaultName>
+                          <ZIndex>15</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox4</rd:DefaultName>
+                          <ZIndex>14</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox5">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox5</rd:DefaultName>
+                          <ZIndex>13</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox6">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox6</rd:DefaultName>
+                          <ZIndex>12</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=iif(Fields!PrintBTDReceivedTotal.Value = "N", True, False)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=iif(Fields!PrintBTDARBalanceTotal.Value = "N", True, False)</Hidden>
+                  </Visibility>
+                </TablixMember>
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="BTDSubReport_Details_Group">
+                    <DataElementName>Detail</DataElementName>
+                  </Group>
+                  <TablixMembers>
+                    <TablixMember>
+                      <Visibility>
+                        <Hidden>=IIF(Fields!description.Value="Received/AR Balance" Or Parameters!btdSummarize.Value = "Y", True, False)</Hidden>
+                      </Visibility>
+                    </TablixMember>
+                  </TablixMembers>
+                  <DataElementName>Detail_Collection</DataElementName>
+                  <DataElementOutput>Output</DataElementOutput>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>BTDDataset</DataSetName>
+            <Height>0.77in</Height>
+            <Width>6.875in</Width>
+            <Style>
+              <FontSize>9pt</FontSize>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>0.77in</Height>
+        <Style />
+      </Body>
+      <Width>6.875in</Width>
+      <Page>
+        <LeftMargin>1in</LeftMargin>
+        <RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin>
+        <BottomMargin>1in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <DataSources>
+    <DataSource Name="VisionDemo51__camdb7_">
+      <DataSourceReference>DefaultDataSource</DataSourceReference>
+      <rd:DataSourceID>fdc62d2f-d38a-4285-ac4a-3e011f99d64d</rd:DataSourceID>
+      <rd:SecurityType>None</rd:SecurityType>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="BTDDataset">
+      <Fields>
+        <Field Name="recType">
+          <DataField>recType</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="recdSeq">
+          <DataField>recdSeq</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="section">
+          <DataField>section</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="description">
+          <DataField>description</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="printWBS2BTD">
+          <DataField>printWBS2BTD</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="printBTDWBS2Totals">
+          <DataField>printBTDWBS2Totals</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="billGroup">
+          <DataField>billGroup</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="printWBS1BTD">
+          <DataField>printWBS1BTD</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PrintBTDReceivedTotal">
+          <DataField>PrintBTDReceivedTotal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PrintBTDARBalanceTotal">
+          <DataField>PrintBTDARBalanceTotal</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="currentAmt">
+          <DataField>currentAmt</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="priorAmt">
+          <DataField>priorAmt</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="total">
+          <DataField>total</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ReceivedAmt">
+          <DataField>ReceivedAmt</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ARBalanceAmt">
+          <DataField>ARBalanceAmt</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="CurrencyCode">
+          <DataField>CurrencyCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <Query>
+        <DataSourceName>VisionDemo51__camdb7_</DataSourceName>
+        <CommandText>/******************************************************************** WBS3 ******************************************************/
+SELECT  0 As recType,  
+min(billBTDDetail.recdSeq) As recdSeq, 
+/*****TO Do, create tag for section (from template)****/
+CASE WHEN IsNull(billBTDDetail.section, /*N*/'') = /*N*/'' Then billBTDDetail.description ELSE billBTDDetail.section END As section,
+min(billBTDDetail.description) As description,
+'' As printWBS2BTD,
+'' AS printBTDWBS2Totals, 
+'' AS billGroup, 
+'' AS printWBS1BTD,
+printBTD.PrintBTDReceivedTotal,
+printBTD.PrintBTDARBalanceTotal, 
+sum(billBTDDetail.currentAmt) As currentAmt,  sum(billBTDDetail.priorAmt) As priorAmt,  sum(billBTDDetail.total) As total,  sum(billBTDDetail.ReceivedAmt) As ReceivedAmt,  sum(billBTDDetail.ARBalanceAmt) As ARBalanceAmt, 
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode
+ FROM billBTDDetail
+ left join  (
+Select
+billInvMaster.invoice as invInvoice,
+billInvMaster.mainWBS1 as invMainWBS1,
+billInvMaster.BillWBS1 As invBillWBS1,
+billInvMaster.BillWBS2 As invBillWBS2,
+billInvMaster.BillWBS3 As invBillWBS3,
+PrintBTDReceivedTotal,
+PrintBTDARBalanceTotal
+From billInvMaster 
+WHERE @PreInvoice = 'N' And (billInvMaster.Invoice = @parmInvoice) 
+AND (billInvMaster.MainWBS1 = @parmMainWBS1 OR billInvMaster.MainWBS1 = /*N*/'~') 
+AND (billInvMaster.BillWBS1 = @parmWBS1 OR billInvMaster.BillWBS1 = /*N*/'~') 
+AND (billInvMaster.BillWBS2 = @parmWBS2 OR billInvMaster.BillWBS2 = /*N*/'~') 
+AND (billInvMaster.BillWBS3 = @parmWBS3 OR billInvMaster.BillWBS3 = /*N*/'~') 
+Group By billInvMaster.invoice, billInvMaster.mainWBS1, billInvMaster.BillWBS1, billInvMaster.BillWBS2, billInvMaster.BillWBS3,
+PrintBTDReceivedTotal, PrintBTDARBalanceTotal) As printBTD On 
+(billBTDDetail.invoice = printBTD.invInvoice) AND  
+(billBTDDetail.mainWBS1 = printBTD.invMainWBS1) AND  
+(billBTDDetail.BillWBS1 = printBTD.invBillWBS1) AND
+(billBTDDetail.BillWBS2 = printBTD.invBillWBS2) AND
+(billBTDDetail.BillWBS3 = printBTD.invBillWBS3), CFGBillMain
+Where @PreInvoice = 'N' And cfgBillMain.Company = @ActiveCompany 
+AND (billBTDDetail.Invoice = @parmInvoice) 
+AND (billBTDDetail.MainWBS1 = @parmMainWBS1 OR billBTDDetail.MainWBS1 = /*N*/'~') 
+AND (billBTDDetail.BillWBS1 = @parmWBS1 OR billBTDDetail.BillWBS1 = /*N*/'~') 
+AND (billBTDDetail.BillWBS2 = @parmWBS2 OR billBTDDetail.BillWBS2 = /*N*/'~') 
+AND (billBTDDetail.BillWBS3 = @parmWBS3 OR billBTDDetail.BillWBS3 = /*N*/'~') 
+AND billBTDDetail.BillWBS3 &lt;&gt; /*N*/'~'
+AND @parmOnWBS3 = 'Y'
+GROUP BY CASE WHEN IsNull(billBTDDetail.section, /*N*/'') = /*N*/'' Then billBTDDetail.description ELSE billBTDDetail.section END, printBTD.PrintBTDReceivedTotal,
+printBTD.PrintBTDARBalanceTotal
+
+/******************************************************************** WBS2 ***************************************************/
+UNION ALL SELECT  0 As recType,  min(billBTDDetail.recdSeq) As recdSeq, 
+/*****TO Do, create tag for section (from template)****/
+CASE WHEN IsNull(billBTDDetail.section, /*N*/'') = /*N*/'' Then billBTDDetail.description ELSE billBTDDetail.section END As section,
+min(billBTDDetail.description) As description, 
+printBTD.printWBS2BTD,
+printBTD.printBTDWBS2Totals, 
+'' AS billGroup, 
+'' AS printWBS1BTD,
+printBTD.PrintBTDReceivedTotal, 
+printBTD.PrintBTDARBalanceTotal, 
+sum(billBTDDetail.currentAmt) As currentAmt,  
+sum(billBTDDetail.priorAmt) As priorAmt,  
+sum(billBTDDetail.total) As total,  
+sum(billBTDDetail.ReceivedAmt) As ReceivedAmt,  
+sum(billBTDDetail.ARBalanceAmt) As ARBalanceAmt,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode
+ FROM billBTDDetail
+ left join  (
+Select billInvMaster.invoice as invInvoice,billInvMaster.mainWBS1 as invMainWBS1,billInvMaster.BillWBS1 As invBillWBS1,billInvMaster.BillWBS2 AS invBillWBS2,printWBS2BTD, printBTDWBS2Totals, PrintBTDReceivedTotal, PrintBTDARBalanceTotal 
+From billInvMaster  
+WHERE @PreInvoice = 'N' And (billInvMaster.Invoice = @parmInvoice) 
+AND (billInvMaster.MainWBS1 = @parmMainWBS1 OR billInvMaster.MainWBS1 = /*N*/'~') 
+AND (billInvMaster.BillWBS1 = @parmWBS1 OR billInvMaster.BillWBS1 = /*N*/'~') 
+AND (billInvMaster.BillWBS2 = @parmWBS2 OR billInvMaster.BillWBS2 = /*N*/'~') 
+Group By billInvMaster.invoice, billInvMaster.mainWBS1, billInvMaster.BillWBS1, billInvMaster.BillWBS2, printWBS2BTD, printBTDWBS2Totals, PrintBTDReceivedTotal, PrintBTDARBalanceTotal
+) As printBTD On  (billBTDDetail.invoice = printBTD.invInvoice) AND  (billBTDDetail.mainWBS1 = printBTD.invMainWBS1) AND  (billBTDDetail.BillWBS1 = printBTD.invBillWBS1) AND  (billBTDDetail.BillWBS2 = printBTD.invBillWBS2) , cfgBillMain  
+Where @PreInvoice = 'N' And cfgBillMain.Company = @ActiveCompany 
+AND (billBTDDetail.Invoice = @parmInvoice) 
+AND (billBTDDetail.MainWBS1 = @parmMainWBS1 OR billBTDDetail.MainWBS1 = /*N*/'~') 
+AND (billBTDDetail.BillWBS1 = @parmWBS1 OR billBTDDetail.BillWBS1 = /*N*/'~') 
+AND (billBTDDetail.BillWBS2 = @parmWBS2 OR billBTDDetail.BillWBS2 = /*N*/'~') 
+AND billBTDDetail.BillWBS2 &lt;&gt; /*N*/'~' And billBTDDetail.BillWBS2 &lt;&gt; /*N*/' ' And (billBTDDetail.BillWBS3 = /*N*/' ' Or billBTDDetail.BillWBS3 = /*N*/'~' Or printBTDWBS2Totals = 'Y')
+AND @parmOnWBS2 = 'Y' 
+GROUP BY CASE WHEN IsNull(billBTDDetail.section, /*N*/'') = /*N*/'' Then billBTDDetail.description ELSE billBTDDetail.section END, printBTD.printWBS2BTD, printBTD.printBTDWBS2Totals, printBTD.PrintBTDReceivedTotal, printBTD.PrintBTDARBalanceTotal  
+
+/******************************************************************** WBS1 **************************************************/
+
+UNION ALL SELECT  0 As recType,  min(billBTDDetail.recdSeq) As recdSeq, 
+/*****TO Do, create tag for section (from template)****/
+CASE WHEN IsNull(billBTDDetail.section, /*N*/'') = /*N*/'' Then billBTDDetail.description ELSE billBTDDetail.section END As section,
+min(billBTDDetail.description) As description, 
+'' As printWBS2BTD,
+'' AS printBTDWBS2Totals, 
+'' AS billGroup, 
+printBTD.printWBS1BTD,
+printBTD.PrintBTDReceivedTotal,
+printBTD.PrintBTDARBalanceTotal,
+sum(billBTDDetail.currentAmt) As currentAmt, 
+sum(billBTDDetail.priorAmt) As priorAmt, 
+sum(billBTDDetail.total) As total, 
+sum(billBTDDetail.ReceivedAmt) As ReceivedAmt, 
+sum(billBTDDetail.ARBalanceAmt) As ARBalanceAmt,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode
+ FROM billBTDDetail
+ left join  (
+Select
+billInvMaster.invoice as invInvoice,
+billInvMaster.mainWBS1 as invMainWBS1,
+billInvMaster.BillWBS1 As invBillWBS1,
+printWBS1BTD,
+PrintBTDReceivedTotal,
+PrintBTDARBalanceTotal
+From billInvMaster 
+WHERE @PreInvoice = 'N' And (billInvMaster.Invoice = @parmInvoice) 
+AND (billInvMaster.MainWBS1 = @parmMainWBS1 OR billInvMaster.MainWBS1 = /*N*/'~') 
+AND (billInvMaster.BillWBS1 = @parmWBS1 OR billInvMaster.BillWBS1 = /*N*/'~') 
+Group By billInvMaster.invoice, billInvMaster.mainWBS1, billInvMaster.BillWBS1,
+printWBS1BTD, PrintBTDReceivedTotal, PrintBTDARBalanceTotal) As printBTD On 
+(billBTDDetail.invoice = printBTD.invInvoice) AND  
+(billBTDDetail.mainWBS1 = printBTD.invMainWBS1) AND  
+(billBTDDetail.BillWBS1 = printBTD.invBillWBS1), CFGBillMain
+Where @PreInvoice = 'N' And cfgBillMain.Company = @ActiveCompany 
+AND (billBTDDetail.Invoice = @parmInvoice) 
+AND (billBTDDetail.MainWBS1 = @parmMainWBS1 OR billBTDDetail.MainWBS1 = /*N*/'~') 
+AND (billBTDDetail.BillWBS1 = @parmWBS1 OR billBTDDetail.BillWBS1 = /*N*/'~') 
+and billBTDDetail.billwbs1 &lt;&gt; /*N*/'~' And (billBTDDetail.billWBS2 = /*N*/' ' Or billBTDDetail.billWBS2 = /*N*/'~' Or printWBS1BTD = 'Y') 
+AND @parmOnWBS1 = 'Y'
+GROUP BY
+/*****TO Do, create tag for section (from template)****/
+CASE WHEN IsNull(billBTDDetail.section, /*N*/'') = /*N*/'' Then billBTDDetail.description ELSE billBTDDetail.section END, printBTD.printWBS1BTD, printBTD.PrintBTDReceivedTotal, printBTD.PrintBTDARBalanceTotal 
+
+/******************************************************************** GROUP *****************************************************/
+UNION ALL SELECT  0 As recType,  min(billBTDDetail.recdSeq) As recdSeq, 
+/*****TO Do, create tag for section (from template)****/
+CASE WHEN IsNull(billBTDDetail.section, /*N*/'') = /*N*/'' Then billBTDDetail.description ELSE billBTDDetail.section END As section,
+min(billBTDDetail.description) As description,
+'' As printWBS2BTD,
+'' AS printBTDWBS2Totals, 
+printBTD.billGroup, 
+printBTD.printWBS1BTD, 
+printBTD.PrintBTDReceivedTotal, 
+printBTD.PrintBTDARBalanceTotal, 
+sum(billBTDDetail.currentAmt) As currentAmt,  
+sum(billBTDDetail.priorAmt) As priorAmt,  
+sum(billBTDDetail.total) As total,  
+sum(billBTDDetail.ReceivedAmt + CASE WHEN section = 'F' THEN AR.PreInvRecieved ELSE 0 END) As ReceivedAmt,  
+sum(billBTDDetail.ARBalanceAmt-CASE WHEN section = 'F' THEN AR.PreInvRecieved ELSE 0 END) As ARBalanceAmt,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode
+ FROM billBTDDetail
+ 
+ left join (
+Select AR.WBS1, Sum(PaidAmount) As PreInvRecieved From ARPreInvoiceDetail ARD Inner Join ARPreInvoice AR On ARD.WBS1 = AR.WBS1 And ARD.WBS2 = AR.WBS2 And ARD.WBS3 = AR.WBS3 And ARD.PreInvoice = AR.PreInvoice Where ARD.InvoiceSection = 'F' And AR.WBS1 = @parmMainWBS1 And (AppliedInvoice = @parmInvoice Or (AppliedInvoice is Null And @parmInvoice='&lt;Draft&gt;')) Group By AR.WBS1) AS AR On
+billBTDDetail.MainWBS1 = AR.WBS1 
+left join (
+Select billInvMaster.invoice as invInvoice,billGroup,printWBS1BTD,PrintBTDReceivedTotal,PrintBTDARBalanceTotal 
+From billInvMaster  
+WHERE @PreInvoice = 'N' And (billInvMaster.Invoice = @parmInvoice) 
+AND (billInvMaster.MainWBS1 = @parmMainWBS1 OR billInvMaster.MainWBS1 = /*N*/'~') 
+and MainType &lt;&gt; 'S' 
+Group By billInvMaster.invoice, billGroup, printWBS1BTD, PrintBTDReceivedTotal, PrintBTDARBalanceTotal) As printBTD On  (billBTDDetail.invoice = printBTD.invInvoice) , cfgBillMain  
+Where @PreInvoice = 'N' And 
+cfgBillMain.Company = @ActiveCompany 
+AND (billBTDDetail.Invoice = @parmInvoice) 
+AND (billBTDDetail.MainWBS1 = @parmMainWBS1 OR billBTDDetail.MainWBS1 = /*N*/'~') 
+AND (billBTDDetail.billwbs1 = /*N*/'~' Or (billGroup &lt;&gt; 'Y' And (billBTDDetail.billWBS2 = /*N*/' ' Or billBTDDetail.billWBS2 = /*N*/'~' Or printWBS1BTD = 'Y')))  
+AND @parmOnGroup = 'Y'
+GROUP BY 
+/*****TO Do, create tag for section (from template)****/
+CASE WHEN IsNull(billBTDDetail.section, /*N*/'') = /*N*/'' Then billBTDDetail.description ELSE billBTDDetail.section END, printBTD.billGroup, printBTD.printWBS1BTD, printBTD.PrintBTDReceivedTotal, printBTD.PrintBTDARBalanceTotal 
+
+ORDER BY 1, 2</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@parmInvoice">
+            <Value>=Parameters!parmInvoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@PreInvoice">
+            <Value>=Parameters!PreInvoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@BillingCurrencyCode">
+            <Value>=Parameters!BillingCurrencyCode.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmMainWBS1">
+            <Value>=Parameters!parmMainWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS1">
+            <Value>=Parameters!parmWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS2">
+            <Value>=Parameters!parmWBS2.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS3">
+            <Value>=Parameters!parmWBS3.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@ActiveCompany">
+            <Value>=Parameters!ActiveCompany.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnWBS3">
+            <Value>=Parameters!parmOnWBS3.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnWBS2">
+            <Value>=Parameters!parmOnWBS2.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnWBS1">
+            <Value>=Parameters!parmOnWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnGroup">
+            <Value>=Parameters!parmOnGroup.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@BTDFee">
+            <Value>=Parameters!BTDFee.Value</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
+          <QueryParameter Name="@BTDLabor">
+            <Value>=Parameters!BTDLabor.Value</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
+          <QueryParameter Name="@BTDConsultant">
+            <Value>=Parameters!BTDConsultant.Value</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
+          <QueryParameter Name="@BTDExpense">
+            <Value>=Parameters!BTDExpense.Value</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
+          <QueryParameter Name="@BTDUnit">
+            <Value>=Parameters!BTDUnit.Value</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
+          <QueryParameter Name="@BTDAddOn">
+            <Value>=Parameters!BTDAddOn.Value</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
+          <QueryParameter Name="@BTDTax">
+            <Value>=Parameters!BTDTax.Value</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
+          <QueryParameter Name="@BTDInterest">
+            <Value>=Parameters!BTDInterest.Value</Value>
+            <rd:UserDefined>true</rd:UserDefined>
+          </QueryParameter>
+        </QueryParameters>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+    </DataSet>
+  </DataSets>
+  <ReportParameters>
+    <ReportParameter Name="parmInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>&lt;Draft&gt;</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmMainWBS1">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>1999009.00</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmMainWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS1">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1999009.00</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS2">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>002</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS2</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS3">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>001</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS3</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnWBS1">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_6</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnWBS2">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_7</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnWBS3">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_8</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnGroup">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_9</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="ActiveCompany">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ActiveCompany</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="btdSummarize">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_10</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="retainageFormat">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_11</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BTDFee">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>BTDFee</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BTDLabor">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>BTDLabor</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BTDConsultant">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>BTDConsultant</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BTDExpense">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>BTDExpense</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BTDUnit">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>BTDUnit</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BTDAddOn">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>BTDAddOn</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BTDTax">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>BTDTax</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BTDInterest">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>BTDInterest</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BillingCurrencyCode">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>BillingCurrencyCode</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="PreInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>PreInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+  </ReportParameters>
+  <CustomProperties>
+    <CustomProperty>
+      <Name>ReportType</Name>
+      <Value>SubReport</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ResourceFileName</Name>
+      <Value>InvoiceBTD</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ReportVersion</Name>
+      <Value>2.0.5.5170</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>LookupType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>GroupingType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AutoGroupQuery</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>OptionForm</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>HelpFile</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>UseColumnSelection</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowUserDefinedFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowCalcFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>Modules</Name>
+      <Value />
+    </CustomProperty>
+  </CustomProperties>
+  <Language>=User.Language</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportID>f40b5e89-9ca0-4aa9-a1d5-3d1c188652b0</rd:ReportID>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+</Report>

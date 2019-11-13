@@ -1,0 +1,1095 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition">
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="PreInvoiceSubReport">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>0.29in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.76in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.15in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.875in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.9in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.9in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_preInvoiceRow">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>26</ZIndex>
+                          <DataElementName>header_preInvoiceRow</DataElementName>
+                          <Style>
+                            <UnicodeBiDi>Embed</UnicodeBiDi>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_DatePreInv">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelDate]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>24</ZIndex>
+                          <DataElementName>header_DatePreInv</DataElementName>
+                          <Style>
+                            <UnicodeBiDi>Embed</UnicodeBiDi>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_InvoiceNumberPreInv">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelInvoiceNumber]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>25</ZIndex>
+                          <DataElementName>header_InvoiceNumberPreInv</DataElementName>
+                          <Style>
+                            <UnicodeBiDi>Embed</UnicodeBiDi>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_AmountPreInv">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelAmount]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>24</ZIndex>
+                          <DataElementName>header_AmountPreInv</DataElementName>
+                          <Style>
+                            <UnicodeBiDi>Embed</UnicodeBiDi>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_NotePreInv">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelNote]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>23</ZIndex>
+                          <DataElementName>header_NotePreInv</DataElementName>
+                          <Style>
+                            <UnicodeBiDi>Embed</UnicodeBiDi>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_PaidPreInv">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelPaid]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>22</ZIndex>
+                          <DataElementName>header_PaidPreInv</DataElementName>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style>
+                            <UnicodeBiDi>Embed</UnicodeBiDi>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_CancelledPreInv">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelCancelled]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>21</ZIndex>
+                          <DataElementName>header_CancelledPreInv</DataElementName>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_AppliedPreInv">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelApplied]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <DataElementName>header_AppliedPreInv</DataElementName>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox21">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox21</rd:DefaultName>
+                          <ZIndex>6</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_DatePreInv">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!invoiceDate.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>d</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>4</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_InvoiceNumberPreInv">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Parameters!parmPrintInvoiceLeadingZeros.Value = "N", ("" &amp; Fields!invoiceNumber.Value).TrimStart("0"c), Fields!invoiceNumber.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>5</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_AmountPreInv">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!amount.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>4</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_NotePreInv">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!note.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>3</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_PaidPreInv">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!paid.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>2</ZIndex>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_CancelledPreInv">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!cancelled.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>1</ZIndex>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_AppliedPreInv">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!applied.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>true</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>true</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>true</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>true</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>true</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>true</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>true</Hidden>
+                  </Visibility>
+                </TablixMember>
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="PreInvSubReport_Details_Group">
+                    <DataElementName>Detail</DataElementName>
+                  </Group>
+                  <TablixMembers>
+                    <TablixMember />
+                  </TablixMembers>
+                  <DataElementName>Detail_Collection</DataElementName>
+                  <DataElementOutput>Output</DataElementOutput>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>PreInvoiceDataset</DataSetName>
+            <Top>0.21in</Top>
+            <Height>0.32in</Height>
+            <Width>6.875in</Width>
+            <Style>
+              <FontSize>9pt</FontSize>
+            </Style>
+          </Tablix>
+          <Tablix Name="PreInvTotalTable">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>5.0175in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.8575in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="footer_TotalPreInv">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelPreInvTotal]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>14</ZIndex>
+                          <Style>
+                            <Border />
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="PreInv_SectionTotal">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!applied.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>13</ZIndex>
+                          <Style>
+                            <Border />
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.07in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox11">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox11</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>2</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>PreInvoiceDataset</DataSetName>
+            <Top>0.54in</Top>
+            <Height>0.23in</Height>
+            <Width>6.875in</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Tablix Name="PreInvoiceHeaderTable">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>6.875in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.2in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_PreInvoice">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelPreInvoice]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>27</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember />
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>PreInvoiceDataset</DataSetName>
+            <Height>0.2in</Height>
+            <Width>6.875in</Width>
+            <ZIndex>2</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>0.77in</Height>
+        <Style />
+      </Body>
+      <Width>6.875in</Width>
+      <Page>
+        <LeftMargin>1in</LeftMargin>
+        <RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin>
+        <BottomMargin>1in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <DataSources>
+    <DataSource Name="VisionQA51MCMC__alisond_">
+      <DataSourceReference>DefaultDataSource</DataSourceReference>
+      <rd:DataSourceID>fdc62d2f-d38a-4285-ac4a-3e011f99d64d</rd:DataSourceID>
+      <rd:SecurityType>None</rd:SecurityType>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="PreInvoiceDataset">
+      <Fields>
+        <Field Name="invoiceNumber">
+          <DataField>invoiceNumber</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="invoiceDate">
+          <DataField>invoiceDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="note">
+          <DataField>note</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="amount">
+          <DataField>amount</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="paid">
+          <DataField>paid</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="cancelled">
+          <DataField>cancelled</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="applied">
+          <DataField>applied</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="CurrencyCode">
+          <DataField>CurrencyCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <Query>
+        <DataSourceName>VisionQA51MCMC__alisond_</DataSourceName>
+        <CommandText>/***PreInvoice Query ***/
+
+SELECT Ar.preInvoice as invoiceNumber,AR.invoiceDate as invoiceDate,max(AR.Note) as note,
+sum(ARD.amount) as amount, sum(ARD.paidAmount) as paid, sum(case when AR.Cancelled = 'Y' then ARD.amount else (case when AppliedInvoice is not null And ARD.amount-ARD.paidAmount &gt; 0 then ARD.amount-ARD.paidAmount else 0 end) end) as cancelled, sum(IsNull(billPreInvoice.AppliedAmount, 0)) as applied,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode
+FROM  ARPreInvoice AR inner join ARPreInvoiceDetail ARD on AR.WBS1 = ARD.WBS1 AND 
+AR.WBS2 = ARD.WBS2 AND AR.WBS3 = ARD.WBS3 AND AR.PreInvoice = ARD.PreInvoice 
+left join billPreInvoice on AR.WBS1 = billPreInvoice.WBS1 AND 
+AR.PreInvoice = billPreInvoice.PreInvoice AND billPreInvoice.Invoice = @parmInvoice
+
+left join (
+Select billInvMaster.mainWBS1, billInvMaster.invoice as invInvoice,billGroup
+From billInvMaster  
+WHERE PreInvoice = 'Y' And (billInvMaster.MainWBS1 = @parmMainWBS1) 
+and MainType &lt;&gt; 'S'
+Group By billInvMaster.mainWBS1, billInvMaster.invoice, billGroup) As billInv On (AR.WBS1 = billInv.MainWBS1) And (AR.PreInvoice = billInv.invInvoice) 
+
+WHERE @PreInvoice = 'Y' And billInv.billGroup = 'N' And @parmOnWBS1 = 'Y' And
+((AR.PreInvoice &lt; CASE WHEN IsNumeric(@parmInvoice)=1
+        THEN CAST(@parmInvoice AS INT)
+        ELSE AR.PreInvoice+1
+    END
+)
+ Or (@parmInvoice = '&lt;Draft&gt;' And AppliedInvoice is Null))
+
+
+And @PreInvoiceEnabled = 'Y' And ARD.InvoiceSection = 'F'
+AND ARD.WBS1 = @parmMainWBS1 AND amount &lt;&gt; 0 
+GROUP BY AR.preInvoice, AR.invoiceDate
+
+/*** Final Invoice Query***/
+UNION ALL SELECT Ar.preInvoice as invoiceNumber,AR.invoiceDate as invoiceDate,max(AR.Note) as note,
+sum(ARD.amount) as amount, sum(ARD.paidAmount) as paid, sum(case when ARD.amount-ARD.paidAmount &gt; 0 then ARD.amount-ARD.paidAmount else 0 end) as cancelled, sum(IsNull(billPreInvoice.AppliedAmount, 0)) as applied,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode
+FROM  ARPreInvoice AR inner join ARPreInvoiceDetail ARD on AR.WBS1 = ARD.WBS1 AND 
+AR.WBS2 = ARD.WBS2 AND AR.WBS3 = ARD.WBS3 AND AR.PreInvoice = ARD.PreInvoice 
+left join billPreInvoice on AR.WBS1 = billPreInvoice.WBS1 AND 
+AR.PreInvoice = billPreInvoice.PreInvoice AND billPreInvoice.Invoice = @parmInvoice
+
+left join (
+Select billInvMaster.mainWBS1, billInvMaster.invoice as invInvoice,billGroup
+From billInvMaster  
+WHERE PreInvoice = 'N' AND (billInvMaster.MainWBS1 = @parmMainWBS1) 
+and MainType &lt;&gt; 'S'
+Group By billInvMaster.mainWBS1, billInvMaster.invoice, billGroup) As billInv On (billPreInvoice.WBS1 = billInv.MainWBS1) And (billPreInvoice.Invoice = billInv.invInvoice) 
+
+WHERE @PreInvoice &lt;&gt; 'Y' And billInv.billGroup = 'N' And @parmOnWBS1 = 'Y' And
+(AppliedInvoice = @parmInvoice
+ Or (@parmInvoice = '&lt;Draft&gt;' And AppliedInvoice is Null))
+
+And @PreInvoiceEnabled = 'Y' And ARD.InvoiceSection = 'F'
+AND ARD.WBS1 = @parmMainWBS1 AND amount &lt;&gt; 0 
+GROUP BY AR.preInvoice, AR.invoiceDate
+
+/*******************************GROUP ***************************************/
+/***PreInvoice Query ***/
+
+UNION SELECT Ar.preInvoice as invoiceNumber,AR.invoiceDate as invoiceDate,max(AR.Note) as note,
+sum(ARD.amount) as amount, sum(ARD.paidAmount) as paid, sum(case when AR.Cancelled = 'Y' then ARD.amount else (case when AppliedInvoice is not null And ARD.amount-ARD.paidAmount &gt; 0 then ARD.amount-ARD.paidAmount else 0 end) end) as cancelled, sum(IsNull(billPreInvoice.AppliedAmount, 0)) as applied,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode
+FROM  ARPreInvoice AR inner join ARPreInvoiceDetail ARD on AR.WBS1 = ARD.WBS1 AND 
+AR.WBS2 = ARD.WBS2 AND AR.WBS3 = ARD.WBS3 AND AR.PreInvoice = ARD.PreInvoice 
+left join billPreInvoice on AR.WBS1 = billPreInvoice.WBS1 AND 
+AR.PreInvoice = billPreInvoice.PreInvoice AND billPreInvoice.Invoice = @parmInvoice
+
+left join (
+Select billInvMaster.mainWBS1, billInvMaster.invoice as invInvoice,billGroup
+From billInvMaster  
+WHERE PreInvoice = 'Y' And (billInvMaster.MainWBS1 = @parmMainWBS1 OR billInvMaster.MainWBS1 = /*N*/'~') 
+and MainType &lt;&gt; 'S'
+Group By billInvMaster.mainWBS1, billInvMaster.invoice, billGroup) As billInv On (AR.WBS1 = billInv.MainWBS1) And (AR.PreInvoice = billInv.invInvoice) 
+
+WHERE @PreInvoice = 'Y' And billInv.billGroup = 'Y' And @parmOnGroup = 'Y' And
+((AR.PreInvoice &lt; CASE WHEN IsNumeric(@parmInvoice)=1
+        THEN CAST(@parmInvoice AS INT)
+        ELSE AR.PreInvoice+1
+    END
+)
+ Or (@parmInvoice = '&lt;Draft&gt;' And AppliedInvoice is Null))
+
+
+And @PreInvoiceEnabled = 'Y' And ARD.InvoiceSection = 'F'
+AND ARD.WBS1 = @parmMainWBS1 AND amount &lt;&gt; 0 
+GROUP BY AR.preInvoice, AR.invoiceDate
+
+/*** Final Invoice Query***/
+UNION ALL SELECT Ar.preInvoice as invoiceNumber,AR.invoiceDate as invoiceDate,max(AR.Note) as note,
+sum(ARD.amount) as amount, sum(ARD.paidAmount) as paid, sum(case when ARD.amount-ARD.paidAmount &gt; 0 then ARD.amount-ARD.paidAmount else 0 end) as cancelled, sum(IsNull(billPreInvoice.AppliedAmount, 0)) as applied,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode
+FROM  ARPreInvoice AR inner join ARPreInvoiceDetail ARD on AR.WBS1 = ARD.WBS1 AND 
+AR.WBS2 = ARD.WBS2 AND AR.WBS3 = ARD.WBS3 AND AR.PreInvoice = ARD.PreInvoice 
+left join billPreInvoice on AR.WBS1 = billPreInvoice.WBS1 AND 
+AR.PreInvoice = billPreInvoice.PreInvoice AND billPreInvoice.Invoice = @parmInvoice
+
+left join (
+Select billInvMaster.mainWBS1, billInvMaster.invoice as invInvoice,billGroup
+From billInvMaster  
+WHERE PreInvoice = 'N' AND (billInvMaster.MainWBS1 = @parmMainWBS1 OR billInvMaster.MainWBS1 = /*N*/'~') 
+and MainType &lt;&gt; 'S'
+Group By billInvMaster.mainWBS1, billInvMaster.invoice, billGroup) As billInv On (billPreInvoice.WBS1 = billInv.MainWBS1) And (billPreInvoice.Invoice = billInv.invInvoice) 
+
+WHERE @PreInvoice &lt;&gt; 'Y' And billInv.billGroup = 'Y' And @parmOnGroup = 'Y' And
+(AppliedInvoice = @parmInvoice
+ Or (@parmInvoice = '&lt;Draft&gt;' And AppliedInvoice is Null))
+
+And @PreInvoiceEnabled = 'Y' And ARD.InvoiceSection = 'F'
+AND ARD.WBS1 = @parmMainWBS1 AND amount &lt;&gt; 0 
+GROUP BY AR.preInvoice, AR.invoiceDate
+
+ ORDER BY Ar.preInvoice</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@parmInvoice">
+            <Value>=Parameters!parmInvoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@PreInvoice">
+            <Value>=Parameters!PreInvoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@BillingCurrencyCode">
+            <Value>=Parameters!BillingCurrencyCode.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmMainWBS1">
+            <Value>=Parameters!parmMainWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@PreInvoiceEnabled">
+            <Value>=Parameters!PreInvoiceEnabled.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnWBS1">
+            <Value>=Parameters!parmOnWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnGroup">
+            <Value>=Parameters!parmOnGroup.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+    </DataSet>
+  </DataSets>
+  <ReportParameters>
+    <ReportParameter Name="parmInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>&lt;Draft&gt;</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmMainWBS1">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>0A199900.900</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmMainWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmPrintInvoiceLeadingZeros">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmPrintInvoiceLeadingZeros</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BillingCurrencyCode">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>BillingCurrencyCode</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="PreInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>PreInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="PreInvoiceEnabled">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>PreInvoiceEnabled</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnWBS1">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmOnWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnGroup">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmOnGroup</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+  </ReportParameters>
+  <CustomProperties>
+    <CustomProperty>
+      <Name>ReportType</Name>
+      <Value>SubReport</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ResourceFileName</Name>
+      <Value>InvoicePreInvoice</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ReportVersion</Name>
+      <Value>2.0.5.5170</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>LookupType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>GroupingType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AutoGroupQuery</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>OptionForm</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>HelpFile</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>UseColumnSelection</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowUserDefinedFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowCalcFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>Modules</Name>
+      <Value />
+    </CustomProperty>
+  </CustomProperties>
+  <Code>Public Function InvoiceLeadingZeros (ByVal DisplayInvoice As String) As String
+	Dim i AS Integer
+		i = 1
+		Do While Mid(DisplayInvoice, i, 1) = "0"
+			i = i + 1
+		Loop
+		DisplayInvoice = Mid(DisplayInvoice, i)
+	Return DisplayInvoice
+End Function</Code>
+  <Language>=User.Language</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportID>f40b5e89-9ca0-4aa9-a1d5-3d1c188652b0</rd:ReportID>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+</Report>

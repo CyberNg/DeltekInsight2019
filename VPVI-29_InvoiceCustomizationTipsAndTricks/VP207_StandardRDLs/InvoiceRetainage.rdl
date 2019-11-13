@@ -1,0 +1,961 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="VisionQA51MCMC__alisond_">
+      <DataSourceReference>DefaultDataSource</DataSourceReference>
+      <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>fdc62d2f-d38a-4285-ac4a-3e011f99d64d</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="RetainageDataset">
+      <Query>
+        <DataSourceName>VisionQA51MCMC__alisond_</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@parmInvoice">
+            <Value>=Parameters!parmInvoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@BillingCurrencyCode">
+            <Value>=Parameters!BillingCurrencyCode.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmMainWBS1">
+            <Value>=Parameters!parmMainWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@PreInvoice">
+            <Value>=Parameters!PreInvoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@DecimalPlaces">
+            <Value>=Parameters!DecimalPlaces.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS1">
+            <Value>=Parameters!parmWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS2">
+            <Value>=Parameters!parmWBS2.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS3">
+            <Value>=Parameters!parmWBS3.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnWBS3">
+            <Value>=Parameters!parmOnWBS3.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnWBS2">
+            <Value>=Parameters!parmOnWBS2.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnWBS1">
+            <Value>=Parameters!parmOnWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnGroup">
+            <Value>=Parameters!parmOnGroup.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>/******************************************************************** WBS3 ******************************************/
+SELECT
+prior,
+limit,
+pct/100 AS pct,
+amount,
+retainage,
+IsNull(summary.finalAmount, 0) As SectionTotal,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode,
+CAST(@DecimalPlaces as int) As DecimalPlaces
+ FROM billRetDetail
+ left join
+/*SubQuery to get invoice totals*/
+ (SELECT 
+  billInvSums.invoice as sumInvoice,
+  billInvSums.mainWBS1 as sumMainWBS1,
+  billInvSums.BillWBS1 as sumBillWBS1, 
+  billInvSums.BillWBS2 as sumBillWBS2,
+  billInvSums.BillWBS3 as sumBillWBS3,
+  sum(billInvSums.finalAmount) AS finalAmount
+  FROM billInvSums 
+  WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And 
+ ArrayType = 'I' AND Section = /*N*/'Ret' AND
+ (Invoice = @parmInvoice) 
+ AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+ AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+ AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~') 
+ AND (BillWBS3 = @parmWBS3 OR BillWBS3 = /*N*/'~') 
+ GROUP BY billInvSums.invoice, billInvSums.mainWBS1,
+ billInvSums.BillWBS1, billInvSums.BillWBS2, billInvSums.BillWBS3) AS summary ON 
+ (billRetDetail.invoice = summary.sumInvoice) AND 
+ (billRetDetail.mainWBS1 = summary.sumMainWBS1) AND 
+ (billRetDetail.BillWBS1 = summary.sumBillWBS1) AND
+ (billRetDetail.BillWBS2 = summary.sumBillWBS2) AND
+ (billRetDetail.BillWBS3 = summary.sumBillWBS3)
+ WHERE @PreInvoice = 'N' And (billRetDetail.Invoice = @parmInvoice) 
+ AND (billRetDetail.MainWBS1 = @parmMainWBS1 OR billRetDetail.MainWBS1 = /*N*/'~') 
+ AND (billRetDetail.BillWBS1 = @parmWBS1 OR billRetDetail.BillWBS1 = /*N*/'~') 
+ AND (billRetDetail.BillWBS2 = @parmWBS2 OR billRetDetail.BillWBS2 = /*N*/'~') 
+ AND (billRetDetail.BillWBS3 = @parmWBS3 OR billRetDetail.BillWBS3 = /*N*/'~') 
+ And billRetDetail.billWBS3 &lt;&gt; /*N*/'~' And billRetDetail.billWBS3 &lt;&gt; /*N*/' ' 
+ And @parmOnWBS3 = 'Y'
+
+/******************************************************************** WBS2 *****************************************/
+
+UNION ALL SELECT
+prior,
+limit,
+pct/100 AS pct,
+amount,
+retainage,
+IsNull(summary.finalAmount, 0) As SectionTotal,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode,
+CAST(@DecimalPlaces as int) As DecimalPlaces
+ FROM billRetDetail
+ left join
+/*SubQuery to get invoice totals*/
+ (SELECT 
+  billInvSums.invoice as sumInvoice,
+  billInvSums.mainWBS1 as sumMainWBS1,
+  billInvSums.BillWBS1 as sumBillWBS1, 
+  billInvSums.BillWBS2 as sumBillWBS2,
+  sum(billInvSums.finalAmount) AS finalAmount
+  FROM billInvSums 
+  WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And 
+ ArrayType = 'I' AND Section = /*N*/'Ret' AND
+ (Invoice = @parmInvoice) 
+ AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+ AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+ AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~') 
+ GROUP BY billInvSums.invoice, billInvSums.mainWBS1,
+ billInvSums.BillWBS1, billInvSums.BillWBS2) AS summary ON 
+ (billRetDetail.invoice = summary.sumInvoice) AND 
+ (billRetDetail.mainWBS1 = summary.sumMainWBS1) AND 
+ (billRetDetail.BillWBS1 = summary.sumBillWBS1) AND
+ (billRetDetail.BillWBS2 = summary.sumBillWBS2)
+ WHERE @PreInvoice = 'N' And (billRetDetail.Invoice = @parmInvoice) 
+ AND (billRetDetail.MainWBS1 = @parmMainWBS1 OR billRetDetail.MainWBS1 = /*N*/'~') 
+ AND (billRetDetail.BillWBS1 = @parmWBS1 OR billRetDetail.BillWBS1 = /*N*/'~') 
+ AND (billRetDetail.BillWBS2 = @parmWBS2 OR billRetDetail.BillWBS2 = /*N*/'~') 
+And billRetDetail.billWBS2 &lt;&gt; /*N*/'~' And billRetDetail.billWBS2 &lt;&gt; /*N*/' ' And (billRetDetail.billWBS3 = /*N*/'~' Or billRetDetail.billWBS3 = /*N*/' ')
+ And @parmOnWBS2 = 'Y'
+
+/******************************************************************** WBS1 *******************************************/
+
+UNION ALL SELECT
+prior,
+limit,
+pct/100 AS pct,
+amount,
+retainage,
+IsNull(summary.finalAmount, 0) As SectionTotal,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode,
+CAST(@DecimalPlaces as int) As DecimalPlaces
+ FROM billRetDetail
+ left join
+/*SubQuery to get invoice totals*/
+ (SELECT 
+  billInvSums.invoice as sumInvoice,
+  billInvSums.mainWBS1 as sumMainWBS1,
+  billInvSums.BillWBS1 as sumBillWBS1, 
+  sum(billInvSums.finalAmount) AS finalAmount
+  FROM billInvSums 
+  WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And 
+ ArrayType = 'I' AND Section = /*N*/'Ret' AND
+ (Invoice = @parmInvoice) 
+ AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+ AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+ GROUP BY billInvSums.invoice, billInvSums.mainWBS1,
+ billInvSums.BillWBS1) AS summary ON 
+ (billRetDetail.invoice = summary.sumInvoice) AND 
+ (billRetDetail.mainWBS1 = summary.sumMainWBS1) AND 
+ (billRetDetail.BillWBS1 = summary.sumBillWBS1) 
+ WHERE @PreInvoice = 'N' And (billRetDetail.Invoice = @parmInvoice) 
+ AND (billRetDetail.MainWBS1 = @parmMainWBS1 OR billRetDetail.MainWBS1 = /*N*/'~') 
+ AND (billRetDetail.BillWBS1 = @parmWBS1 OR billRetDetail.BillWBS1 = /*N*/'~') 
+ And billRetDetail.billWBS1 &lt;&gt; /*N*/'~' And ((billRetDetail.billWBS2 = /*N*/'~' And billRetDetail.BillWBS3 = /*N*/'~') Or (billRetDetail.billWBS2 = /*N*/' ' And billRetDetail.billWBS3 = /*N*/' '))
+ And @parmOnWBS1 = 'Y'
+
+/******************************************************************** GROUP *****************************************/
+
+UNION ALL SELECT
+prior,
+limit,
+pct/100 AS pct,
+amount,
+retainage,
+IsNull(summary.finalAmount, 0) As SectionTotal,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode,
+CAST(@DecimalPlaces as int) As DecimalPlaces
+ FROM billRetDetail
+ left join
+/*SubQuery to get invoice totals*/
+ (SELECT 
+  billInvSums.invoice as sumInvoice,
+  billInvSums.mainWBS1 as sumMainWBS1,
+  sum(billInvSums.finalAmount) AS finalAmount
+  FROM billInvSums 
+  WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And 
+ ArrayType = 'I' AND Section = /*N*/'Ret' AND
+ (Invoice = @parmInvoice) 
+ AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+ GROUP BY billInvSums.invoice, billInvSums.mainWBS1) AS summary ON 
+ (billRetDetail.invoice = summary.sumInvoice) AND 
+ (billRetDetail.mainWBS1 = summary.sumMainWBS1)
+ WHERE @PreInvoice = 'N' And (billRetDetail.Invoice = @parmInvoice) 
+ AND (billRetDetail.MainWBS1 = @parmMainWBS1 OR billRetDetail.MainWBS1 = /*N*/'~') 
+ And (billRetDetail.billWBS1 = /*N*/'~' And billRetDetail.billWBS2 = /*N*/'~' And billRetDetail.billWBS3 = /*N*/'~')
+ And @parmOnGroup = 'Y'
+
+ ORDER BY 1</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="prior">
+          <DataField>prior</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="limit">
+          <DataField>limit</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="pct">
+          <DataField>pct</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="amount">
+          <DataField>amount</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="retainage">
+          <DataField>retainage</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="SectionTotal">
+          <DataField>SectionTotal</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="CurrencyCode">
+          <DataField>CurrencyCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DecimalPlaces">
+          <DataField>DecimalPlaces</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="RetainageSubReport">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>2.25in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.25in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.25in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.125in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.2in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_Retainage">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelRetainage]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>13</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>3</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="reportHeader_SectionTotal">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!SectionTotal.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Visibility>
+                            <Hidden>=IIF(Parameters!HideRetDetail.Value="Y", False, True)</Hidden>
+                          </Visibility>
+                          <Style>
+                            <Border />
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail1_lblCurrentRetainage">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelCurrentRetainage]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>12</ZIndex>
+                          <Style>
+                            <PaddingLeft>19pt</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail1_CurrentRetainage">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(-Fields!retainage.Value, "RetainageSubReport")</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>11</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="txtCalculation">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=iif(fields!retainage.Value = 0, "", 
+String.Format("[LabelPctOfAmount]", 
+Code.FormatForCulture(Fields!pct.value, "#,##0.00## %;-#,##0.00## %;0.00 %", User!Language), 
+Code.FormatForCulture(Fields!amount.value, "#,##0." &amp; Left(StrDup(Parameters!DecimalPlaces.Value, "0") &amp; "####", 4) &amp; ";-#,##0." &amp; Left(StrDup(Parameters!DecimalPlaces.Value, "0") &amp; "####", 4) &amp; ";0." &amp; StrDup(Parameters!DecimalPlaces.Value, "0"), User!Language)))</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>10</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_SectionTotal">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!SectionTotal.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>9</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail2_lblPriorRetainage">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelPriorRetainage]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>8</ZIndex>
+                          <Style>
+                            <PaddingLeft>19pt</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail2_PriorRetainage">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!prior.Value, "RetainageSubReport")</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>7</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox4</rd:DefaultName>
+                          <ZIndex>6</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox13">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox13</rd:DefaultName>
+                          <ZIndex>5</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail3_lblToDateRetainage">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelRetainagetoDate]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>3</ZIndex>
+                          <Style>
+                            <PaddingLeft>19pt</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail3_ToDateRetainage">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!prior.Value, "RetainageSubReport") - Sum(Fields!retainage.Value, "RetainageSubReport")</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>2</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="txtLimit">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=iif(Fields!limit.value = 0, "",
+String.Format("[LabelLimit]", 
+Code.FormatForCulture(Fields!limit.value, "#,##0." &amp; Left(StrDup(Parameters!DecimalPlaces.Value, "0") &amp; "####", 4) &amp; ";-#,##0." &amp; Left(StrDup(Parameters!DecimalPlaces.Value, "0") &amp; "####", 4) &amp; ";0." &amp; StrDup(Parameters!DecimalPlaces.Value, "0"), User!Language)))</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>1</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox10">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox10</rd:DefaultName>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.07in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox3</rd:DefaultName>
+                          <ZIndex>4</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>4</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="RetainageSubReport_Details_Group">
+                    <DataElementName>Detail</DataElementName>
+                  </Group>
+                  <TablixMembers>
+                    <TablixMember>
+                      <Visibility>
+                        <Hidden>=IIF(Parameters!HideRetDetail.Value="Y", True, iif(Fields!retainage.Value = 0, True, False))</Hidden>
+                      </Visibility>
+                    </TablixMember>
+                    <TablixMember>
+                      <Visibility>
+                        <Hidden>=IIF(Parameters!HideRetDetail.Value="Y", True, iif(Fields!prior.Value = 0 Or Fields!retainage.Value = 0, True, False))</Hidden>
+                      </Visibility>
+                    </TablixMember>
+                    <TablixMember>
+                      <Visibility>
+                        <Hidden>=IIF(Parameters!HideRetDetail.Value="Y", True, False)</Hidden>
+                      </Visibility>
+                    </TablixMember>
+                  </TablixMembers>
+                  <DataElementName>Detail_Collection</DataElementName>
+                  <DataElementOutput>Output</DataElementOutput>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>RetainageDataset</DataSetName>
+            <Height>0.75in</Height>
+            <Width>6.875in</Width>
+            <Style>
+              <FontSize>9pt</FontSize>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>0.75in</Height>
+        <Style />
+      </Body>
+      <Width>6.875in</Width>
+      <Page>
+        <LeftMargin>1in</LeftMargin>
+        <RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin>
+        <BottomMargin>1in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="parmInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>&lt;Draft&gt;</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmMainWBS1">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>1999009.00</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmMainWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS1">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1999009.00</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS2">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>000</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS2</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS3">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS3</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnWBS3">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmOnWBS3</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnWBS2">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmOnWBS2</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnWBS1">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmOnWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnGroup">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmOnGroup</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BillingCurrencyCode">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>BillingCurrencyCode</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="DecimalPlaces">
+      <DataType>Integer</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>DecimalPlaces</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HideRetDetail">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HideRetDetail</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="PreInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>PreInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+  </ReportParameters>
+  <CustomProperties>
+    <CustomProperty>
+      <Name>ReportType</Name>
+      <Value>SubReport</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ResourceFileName</Name>
+      <Value>InvoiceRetainage</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ReportVersion</Name>
+      <Value>2.0.5.5170</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>LookupType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>GroupingType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AutoGroupQuery</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>OptionForm</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>HelpFile</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>UseColumnSelection</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowUserDefinedFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowCalcFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>Modules</Name>
+      <Value />
+    </CustomProperty>
+  </CustomProperties>
+  <Code>Public Function FormatForCulture(ByVal wkDecimal As Decimal, ByVal wkFormat As String, ByVal wkCultureName As String) As String
+    Dim curCulture As New System.Globalization.CultureInfo(wkCultureName)
+
+    Return wkDecimal.ToString(wkFormat, curCulture)
+End Function</Code>
+  <Language>=User.Language</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>f40b5e89-9ca0-4aa9-a1d5-3d1c188652b0</rd:ReportID>
+</Report>

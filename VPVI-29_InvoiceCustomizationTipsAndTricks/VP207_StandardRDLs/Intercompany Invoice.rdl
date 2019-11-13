@@ -1,0 +1,2983 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="VisionDemo51">
+      <DataSourceReference>DefaultDataSource</DataSourceReference>
+      <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>572e68bb-abe2-425a-9ab8-5c06f3651344</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="ReportDataset">
+      <Query>
+        <DataSourceName>VisionDemo51</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@printFirm">
+            <Value>=Parameters!printFirm.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@printByline">
+            <Value>=Parameters!printByline.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@printAddress">
+            <Value>=Parameters!printAddress.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@PrintAuthPrefix">
+            <Value>=Parameters!PrintAuthPrefix.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@PrintAuthSuffix">
+            <Value>=Parameters!PrintAuthSuffix.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@printWBSLongName">
+            <Value>=Parameters!printWBSLongName.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@printWBS2LongName">
+            <Value>=Parameters!printWBS2LongName.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@printWBS3LongName">
+            <Value>=Parameters!printWBS3LongName.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@MainWBS1">
+            <Value>=Parameters!MainWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@Invoice">
+            <Value>=Parameters!Invoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@ActiveCompany">
+            <Value>=Parameters!ActiveCompany.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>SELECT ICBillInvMaster.invoice + ICBillInvMaster.mainWBS1 As invoiceKey, ICBillInvMaster.Invoice, ICBillInvMaster.Invoice As DisplayInvoice, 'N' As AssignedInvoice, ICBillInvMaster.MainWBS1, ICBillInvMaster.BillWBS1, ICBillInvMaster.BillWBS2, ICBillInvMaster.BillWBS3, ICBillInvMaster.InvoiceDate, ICBillInvMaster.MainName, ICBillInvMaster.MainType, ICBillInvMaster.BillGroup, ICBillInvMaster.ConsolidatePrint, ICBillInvMaster.ARByGroup, ICBillInvMaster.BTDByGroup, ICBillInvMaster.InterestByGroup, ICBillInvMaster.TaxByGroup, ICBillInvMaster.ByGroupWBS1, ICBillInvMaster.BillName, ICBillInvMaster.Description, '' As Footer, ICBillInvMaster.ConsolidateWBS2, ICBillInvMaster.ConsolidateWBS3, ICBillInvMaster.BillWBS2Name, ICBillInvMaster.BillWBS3Name, ICBillInvMaster.FromDate, ICBillInvMaster.ToDate, ICBillInvMaster.Addressee, ICBillInvMaster.Address1, ICBillInvMaster.Address2, ICBillInvMaster.Address3, ICBillInvMaster.Address4, ICBillInvMaster.Address5, ICBillInvMaster.Address6, ICBillInvMaster.Address7, ICBillInvMaster.Address8, ICBillInvMaster.RetByGroup, ICBillInvMaster.WBS2Rollup, ICBillInvMaster.WBS3Rollup, ICBillInvMaster.TaxCountryCode, case when CFGMainData.TaxAuditingEnabled='Y' then CFGMainData.TaxRegistrationNumber else '' end as TaxRegistrationNumber, ICBillInvMaster.PrintWBS1AR, ICBillInvMaster.PrintWBS2AR, ICBillInvMaster.PrintARWBS2Totals, ICBillInvMaster.PrintWBS1BTD, ICBillInvMaster.PrintWBS2BTD, ICBillInvMaster.PrintBTDWBS2Totals,
+
+CASE WHEN @printFirm = 'Y' THEN CFGMainData.firmname ELSE '' END As FirmName, CASE WHEN @printByline = 'Y' THEN CFGMainData.byline ELSE '' END As FirmByLine, 
+CASE WHEN @printAddress = 'Y' THEN CFGMainData.address1 ELSE '' END As FirmAddress1, CASE WHEN @printAddress = 'Y' THEN CFGMainData.address2 ELSE '' END As FirmAddress2, 
+CASE WHEN @printAddress = 'Y' THEN CFGMainData.address3 ELSE '' END As FirmAddress3, CASE WHEN @printAddress = 'Y' THEN CFGMainData.address4 ELSE '' END As FirmAddress4, 
+CASE WHEN @PrintAuthPrefix = 'Y' THEN ISNULL(EM1.Salutation+' ',/*N*/'')  ELSE '' END + EM1.FirstName + ' ' + EM1.LastName + CASE WHEN @PrintAuthSuffix = 'Y' THEN  ' ' + ISNULL(EM1.Suffix,'') ELSE '' END As ProjMgrName, 
+CASE WHEN @PrintAuthPrefix = 'Y' THEN ISNULL(EM2.Salutation+' ',/*N*/'') ELSE '' END + EM2.FirstName + ' ' + EM2.LastName
++ CASE WHEN @PrintAuthSuffix = 'Y' THEN ' ' + ISNULL(EM2.Suffix,/*N*/'') ELSE '' END As PrincipalName, 
+CASE WHEN @PrintAuthPrefix = 'Y' THEN ISNULL(EM3.Salutation+' ',/*N*/'') ELSE '' END + EM3.FirstName + ' ' + EM3.LastName 
++ CASE WHEN @PrintAuthSuffix = 'Y' THEN ' ' + ISNULL(EM3.Suffix,/*N*/'') ELSE '' END As SupervisorName,
+PR.Org As Org, FW_CFGCurrency.code As currencyCode, PR.FeeBillingCurrency As Fee, PR.ReimbAllowBillingCurrency As ReimbAllow, PR.ConsultFeeBillingCurrency As ConsultFee, PR.FeeBillingCurrency + PR.ReimbAllowBillingCurrency + PR.ConsultFeeBillingCurrency  As TotalComp,
+CASE WHEN @printWBSLongName='Y' THEN IsNull(PR1.LongName, PR1.Name) ELSE '' END As LongName,
+CASE WHEN @printWBSLongName='Y' THEN IsNull(PR.LongName, PR.Name) ELSE '' END As MainLongName,
+CASE WHEN @printWBS2LongName='Y' THEN IsNull(PR2.LongName, PR2.Name) ELSE '' END As WBS2LongName, 
+CASE WHEN @printWBS3LongName='Y' THEN IsNull(PR3.LongName, PR3.Name) ELSE '' END As WBS3LongName,
+PR1.SubLevel As wbs1SubLevel, PR2.SubLevel As wsb2SubLevel, 
+IsNull(wbs3Section.wbs3Amount, 0) AS wbs3Total, 
+IsNull(wbs2Section.wbs2Amount, 0) AS wbs2Total, 
+IsNull(wbs1Section.wbs1Amount, 0) AS wbs1Total, 
+IsNull(invSection.invAmount, 0) As invTotal, 
+ICBillInvMaster.Company, ICBillInvMaster.RunSeq, ICBillInvMaster.Period  
+/***ADDITIONAL_COLUMNS***/
+
+FROM  PR left join EM AS EM1 ON PR.Projmgr = EM1.Employee  left join EM AS EM2 ON PR.Principal = EM2.Employee  left join EM AS EM3 ON PR.Supervisor = EM3.Employee
+LEFT Join ProjectCustomTabFields On PR.WBS1 = ProjectCustomTabFields.WBS1 And ProjectCustomTabFields.WBS2 = /*N*/' ' And ProjectCustomTabFields.WBS3 = /*N*/' '
+, CFGMainData,  FW_CFGCurrency,  ICBillInvMaster left join  PR As PR1 On PR1.WBS1 = ICBillInvMaster.BillWBS1 And PR1.WBS2 = /*N*/' ' And PR1.WBS3 = /*N*/' '  Left Join  PR As PR2 On PR2.WBS1 = ICBillInvMaster.BillWBS1 And PR2.WBS2 = ICBillInvMaster.BillWBS2 And PR2.WBS3 = /*N*/' '  Left Join  PR As PR3 On PR3.WBS1 = ICBillInvMaster.BillWBS1 And PR3.WBS2 = ICBillInvMaster.BillWBS2 And PR3.WBS3 = ICBillInvMaster.BillWBS3  
+Left Join 
+
+/*SubQuery to get wbs3 totals - left join ICBillInvMaster to subQuery*/
+ (SELECT   ICBillInvSums.invoice as sumInvoice,  ICBillInvSums.mainWBS1 as sumMainWBS1,  ICBillInvSums.BillWBS1 as sumBillWBS1,  ICBillInvSums.BillWBS2 as sumBillWBS2,  ICBillInvSums.BillWBS3 as sumBillWBS3,   sum(ICBillInvSums.finalAmount) AS wbs3Amount  
+FROM ICBillInvSums   WHERE ArrayType = 'I'  
+AND MainWBS1 LIKE  IsNull(@MainWBS1, /*N*/'') + '%'  
+AND Invoice LIKE IsNull(@Invoice, /*N*/'') + '%'
+/***EXTEND WHERE CLAUSE***/
+GROUP BY ICBillInvSums.invoice, ICBillInvSums.mainWBS1,  ICBillInvSums.BillWBS1, ICBillInvSums.BillWBS2, ICBillInvSums.BillWBS3) AS wbs3Section ON  (ICBillInvMaster.invoice = wbs3Section.sumInvoice) AND  (ICBillInvMaster.mainWBS1 = wbs3Section.sumMainWBS1) AND  (ICBillInvMaster.BillWBS1 = wbs3Section.sumBillWBS1) AND  (ICBillInvMaster.BillWBS2 = wbs3Section.sumBillWBS2) AND  (ICBillInvMaster.BillWBS3 = wbs3Section.sumBillWBS3)  
+
+/*SubQuery to get wbs2 totals - left join ICBillInvMaster to subQuery*/
+left join  (SELECT   ICBillInvSums.invoice as sumInvoice,  ICBillInvSums.mainWBS1 as sumMainWBS1,  ICBillInvSums.BillWBS1 as sumBillWBS1,  ICBillInvSums.BillWBS2 as sumBillWBS2,  sum(ICBillInvSums.finalAmount) AS wbs2Amount  
+FROM ICBillInvSums   WHERE ArrayType = 'I'  
+AND MainWBS1 LIKE  IsNull(@MainWBS1, /*N*/'') + '%'  
+AND Invoice LIKE IsNull(@Invoice, /*N*/'') + '%'
+/***EXTEND WHERE CLAUSE***/
+GROUP BY ICBillInvSums.invoice, ICBillInvSums.mainWBS1,  ICBillInvSums.BillWBS1, ICBillInvSums.BillWBS2) AS wbs2Section ON  (ICBillInvMaster.invoice = wbs2Section.sumInvoice) AND  (ICBillInvMaster.mainWBS1 = wbs2Section.sumMainWBS1) AND  (ICBillInvMaster.BillWBS1 = wbs2Section.sumBillWBS1) AND  (ICBillInvMaster.BillWBS2 = wbs2Section.sumBillWBS2)  
+
+/*SubQuery to get wbs1 totals - left join ICBillInvMaster to subQuery*/
+left join  (SELECT   ICBillInvSums.invoice as sumInvoice,  ICBillInvSums.mainWBS1 as sumMainWBS1,  ICBillInvSums.BillWBS1 as sumBillWBS1,  sum(ICBillInvSums.finalAmount) AS wbs1Amount  
+FROM ICBillInvSums   WHERE ArrayType = 'I' 
+AND MainWBS1 LIKE  IsNull(@MainWBS1, /*N*/'') + '%'  
+AND Invoice LIKE IsNull(@Invoice, /*N*/'') + '%'
+/***EXTEND WHERE CLAUSE***/
+GROUP BY ICBillInvSums.invoice, ICBillInvSums.mainWBS1,  ICBillInvSums.BillWBS1) AS wbs1Section ON  (ICBillInvMaster.invoice = wbs1Section.sumInvoice) AND  (ICBillInvMaster.mainWBS1 = wbs1Section.sumMainWBS1) AND  (ICBillInvMaster.BillWBS1 = wbs1Section.sumBillWBS1)  
+
+/*SubQuery to get Invoice totals - left join ICBillInvMaster to subQuery*/
+left join  (SELECT   ICBillInvSums.invoice as sumInvoice,  ICBillInvSums.mainWBS1 as sumMainWBS1,  sum(ICBillInvSums.finalAmount) AS invAmount  
+FROM ICBillInvSums   
+WHERE ArrayType = 'I'
+AND MainWBS1 LIKE  IsNull(@MainWBS1, /*N*/'') + '%'  
+AND Invoice LIKE IsNull(@Invoice, /*N*/'') + '%'
+/***EXTEND WHERE CLAUSE***/
+GROUP BY ICBillInvSums.invoice, ICBillInvSums.mainWBS1) AS invSection ON  (ICBillInvMaster.invoice = invSection.sumInvoice) AND  (ICBillInvMaster.mainWBS1 = invSection.sumMainWBS1)  
+
+WHERE (ICBillInvMaster.MainWBS1 = PR.WBS1 AND PR.WBS2 = /*N*/' ' AND PR.WBS3 = /*N*/' ')  AND FW_CFGCurrency.Code = ICBillInvMaster.ICBillInvoiceCurrencyCode  AND CFGMainData.Company = @ActiveCompany
+AND MainWBS1 LIKE  IsNull(@MainWBS1, /*N*/'') + '%'  
+AND Invoice LIKE IsNull(@Invoice, /*N*/'') + '%'
+/***mainWhereClause***/
+ORDER BY ICBillInvMaster.Invoice /***EXTEND ORDER CLAUSE***/</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="invoiceKey">
+          <DataField>invoiceKey</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Invoice">
+          <DataField>Invoice</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DisplayInvoice">
+          <DataField>DisplayInvoice</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AssignedInvoice">
+          <DataField>AssignedInvoice</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MainWBS1">
+          <DataField>MainWBS1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BillWBS1">
+          <DataField>BillWBS1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BillWBS2">
+          <DataField>BillWBS2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BillWBS3">
+          <DataField>BillWBS3</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="InvoiceDate">
+          <DataField>InvoiceDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="MainName">
+          <DataField>MainName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MainType">
+          <DataField>MainType</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BillGroup">
+          <DataField>BillGroup</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ConsolidatePrint">
+          <DataField>ConsolidatePrint</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ARByGroup">
+          <DataField>ARByGroup</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BTDByGroup">
+          <DataField>BTDByGroup</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="InterestByGroup">
+          <DataField>InterestByGroup</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TaxByGroup">
+          <DataField>TaxByGroup</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ByGroupWBS1">
+          <DataField>ByGroupWBS1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BillName">
+          <DataField>BillName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Description">
+          <DataField>Description</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Footer">
+          <DataField>Footer</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ConsolidateWBS2">
+          <DataField>ConsolidateWBS2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ConsolidateWBS3">
+          <DataField>ConsolidateWBS3</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BillWBS2Name">
+          <DataField>BillWBS2Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BillWBS3Name">
+          <DataField>BillWBS3Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FromDate">
+          <DataField>FromDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="ToDate">
+          <DataField>ToDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="Addressee">
+          <DataField>Addressee</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Address1">
+          <DataField>Address1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Address2">
+          <DataField>Address2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Address3">
+          <DataField>Address3</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Address4">
+          <DataField>Address4</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Address5">
+          <DataField>Address5</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Address6">
+          <DataField>Address6</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Address7">
+          <DataField>Address7</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Address8">
+          <DataField>Address8</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RetByGroup">
+          <DataField>RetByGroup</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WBS2Rollup">
+          <DataField>WBS2Rollup</DataField>
+          <rd:TypeName>System.Int16</rd:TypeName>
+        </Field>
+        <Field Name="WBS3Rollup">
+          <DataField>WBS3Rollup</DataField>
+          <rd:TypeName>System.Int16</rd:TypeName>
+        </Field>
+        <Field Name="TaxCountryCode">
+          <DataField>TaxCountryCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TaxRegistrationNumber">
+          <DataField>TaxRegistrationNumber</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PrintWBS1AR">
+          <DataField>PrintWBS1AR</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PrintWBS2AR">
+          <DataField>PrintWBS2AR</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PrintARWBS2Totals">
+          <DataField>PrintARWBS2Totals</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PrintWBS1BTD">
+          <DataField>PrintWBS1BTD</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PrintWBS2BTD">
+          <DataField>PrintWBS2BTD</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PrintBTDWBS2Totals">
+          <DataField>PrintBTDWBS2Totals</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FirmName">
+          <DataField>FirmName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FirmByLine">
+          <DataField>FirmByLine</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FirmAddress1">
+          <DataField>FirmAddress1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FirmAddress2">
+          <DataField>FirmAddress2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FirmAddress3">
+          <DataField>FirmAddress3</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FirmAddress4">
+          <DataField>FirmAddress4</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ProjMgrName">
+          <DataField>ProjMgrName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PrincipalName">
+          <DataField>PrincipalName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SupervisorName">
+          <DataField>SupervisorName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Org">
+          <DataField>Org</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="currencyCode">
+          <DataField>currencyCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Fee">
+          <DataField>Fee</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ReimbAllow">
+          <DataField>ReimbAllow</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ConsultFee">
+          <DataField>ConsultFee</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="TotalComp">
+          <DataField>TotalComp</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="LongName">
+          <DataField>LongName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MainLongName">
+          <DataField>MainLongName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WBS2LongName">
+          <DataField>WBS2LongName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WBS3LongName">
+          <DataField>WBS3LongName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="wbs1SubLevel">
+          <DataField>wbs1SubLevel</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="wsb2SubLevel">
+          <DataField>wsb2SubLevel</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="wbs3Total">
+          <DataField>wbs3Total</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="wbs2Total">
+          <DataField>wbs2Total</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="wbs1Total">
+          <DataField>wbs1Total</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="invTotal">
+          <DataField>invTotal</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="Company">
+          <DataField>Company</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RunSeq">
+          <DataField>RunSeq</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Period">
+          <DataField>Period</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="MainInvoiceTable">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>6.9in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="ICHeader">
+                          <ReportName>ICHeader</ReportName>
+                          <Parameters>
+                            <Parameter Name="parmInvoice">
+                              <Value>=Fields!Invoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmMainWBS1">
+                              <Value>=Fields!MainWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="combineWBSInvoice">
+                              <Value>=Parameters!combineWBSInvoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="printInvoice">
+                              <Value>=Parameters!printInvoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="printWBS">
+                              <Value>=Parameters!printWBS.Value</Value>
+                            </Parameter>
+                            <Parameter Name="ActiveCompany">
+                              <Value>=Parameters!ActiveCompany.Value</Value>
+                            </Parameter>
+                            <Parameter Name="printInvoiceLeadingZeros">
+                              <Value>=Parameters!printInvoiceLeadingZeros.Value</Value>
+                            </Parameter>
+                            <Parameter Name="PrintAuthPrefix">
+                              <Value>=Parameters!PrintAuthPrefix.Value</Value>
+                            </Parameter>
+                            <Parameter Name="PrintAuthSuffix">
+                              <Value>=Parameters!PrintAuthSuffix.Value</Value>
+                            </Parameter>
+                            <Parameter Name="printFirm">
+                              <Value>=Parameters!printFirm.Value</Value>
+                            </Parameter>
+                            <Parameter Name="printByline">
+                              <Value>=Parameters!printByline.Value</Value>
+                            </Parameter>
+                            <Parameter Name="printAddress">
+                              <Value>=Parameters!printAddress.Value</Value>
+                            </Parameter>
+                            <Parameter Name="invoiceBox">
+                              <Value>=Parameters!invoiceBox.Value</Value>
+                            </Parameter>
+                            <Parameter Name="printFirmTaxReg">
+                              <Value>=Parameters!printFirmTaxReg.Value</Value>
+                            </Parameter>
+                            <Parameter Name="FirmTaxRegLabel">
+                              <Value>=Parameters!FirmTaxRegLabel.Value</Value>
+                            </Parameter>
+                            <Parameter Name="printClTaxReg">
+                              <Value>=Parameters!printClTaxReg.Value</Value>
+                            </Parameter>
+                            <Parameter Name="ClTaxRegLabel">
+                              <Value>=Parameters!ClTaxRegLabel.Value</Value>
+                            </Parameter>
+                            <Parameter Name="InvoiceTotal">
+                              <Value>=Fields!invTotal.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <KeepTogether>true</KeepTogether>
+                          <ZIndex>25</ZIndex>
+                          <Style>
+                            <Border />
+                          </Style>
+                        </Subreport>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.22in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="groupHeaderWBS1">
+                          <ReportItems>
+                            <Textbox Name="groupHeader_WBS1Label">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Parameters!wbs1HeaderLabel.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>="400"</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Height>0.16375in</Height>
+                              <Width>1.1in</Width>
+                              <Visibility>
+                                <Hidden>=IIF(Parameters!HideWBS1Header.Value = "Y", True, False)</Hidden>
+                              </Visibility>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                            <Textbox Name="groupHeader_WBS1Number">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!BillWBS1.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>="400"</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Left>1.14in</Left>
+                              <Height>0.16375in</Height>
+                              <Width>1.35in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                            <Textbox Name="groupHeader_WBS1Name">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=iif(Parameters!printWBSLongName.Value = "Y" And Parameters!printWBSName.Value = "N", Fields!LongName.Value, Fields!BillName.Value)</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>="400"</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Left>2.52in</Left>
+                              <Height>0.16375in</Height>
+                              <Width>4.35in</Width>
+                              <ZIndex>2</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                          </ReportItems>
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>24</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                              <Width>=IIF(Parameters!LineWeightWBS1.Value &gt; "", Parameters!LineWeightWBS1.Value &amp; "pt", "1.5pt")</Width>
+                            </Border>
+                            <TopBorder>
+                              <Style>=iif(Fields!MainWBS1.Value = Fields!BillWBS1.Value, "None", IIF(Parameters!LineSepWBS1.Value &gt; "",Parameters!LineSepWBS1.Value, "Dashed") )</Style>
+                            </TopBorder>
+                          </Style>
+                        </Rectangle>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader_WBS1Number2">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!BillWBS1.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>="400"</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style />
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader_WBS1Desc">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!BillName.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>="400"</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style />
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader_WBS1LongName">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!LongName.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>="400"</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>23</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader_WBS1_Description">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Description.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>="400"</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>22</ZIndex>
+                          <CustomProperties>
+                            <CustomProperty>
+                              <Name>TextFormatType</Name>
+                              <Value>HTML</Value>
+                            </CustomProperty>
+                          </CustomProperties>
+                          <Style />
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader_WBS1_ProfServices">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Fields!MainWBS1.Value &lt;&gt; Fields!BillWBS1.Value, "", String.Format("[LabelProfessionalServicesfrom0to1]", Format(Fields!FromDate.Value, "MMMM dd, yyyy"), Format(Fields!ToDate.Value, "MMMM dd, yyyy")))</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>Underline</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>21</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.22in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="groupHeader_WBS2">
+                          <ReportItems>
+                            <Textbox Name="groupHeader_WBS2Label">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Parameters!wbs2HeaderLabel.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>="400"</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Height>0.1675in</Height>
+                              <Width>1.1in</Width>
+                              <Visibility>
+                                <Hidden>=IIF(Parameters!HideWBS2Header.Value = "Y", True, False)</Hidden>
+                              </Visibility>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                            <Textbox Name="groupHeader_WBS2Number">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!BillWBS2.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>="400"</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Left>1.14in</Left>
+                              <Height>0.1675in</Height>
+                              <Width>0.9in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Visibility>
+                                <Hidden>=iif(Parameters!printWBS2Number.Value="N", True, False)</Hidden>
+                              </Visibility>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                            <Textbox Name="groupHeader_WBS2Name">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=iif(Parameters!printWBS2LongName.Value = "Y" And Parameters!printWBS2Name.Value = "N", Fields!WBS2LongName.Value, Fields!BillWBS2Name.Value)</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>="400"</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Left>2.06in</Left>
+                              <Height>0.1675in</Height>
+                              <Width>4.8in</Width>
+                              <ZIndex>2</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                          </ReportItems>
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>20</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                              <Width>=IIF(Parameters!LineWeightWBS2.Value &gt; "", Parameters!LineWeightWBS2.Value &amp; "pt", "1.5pt")</Width>
+                            </Border>
+                            <TopBorder>
+                              <Style>=IIF(Parameters!LineSepWBS2.Value &gt; "",Parameters!LineSepWBS2.Value, "Dashed")</Style>
+                            </TopBorder>
+                          </Style>
+                        </Rectangle>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader_WBS2Number2">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!BillWBS2.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>="400"</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                              <Width>=IIF(Parameters!LineWeightWBS2.Value &gt; "", Parameters!LineWeightWBS2.Value &amp; "pt", "1.5pt")</Width>
+                            </Border>
+                            <TopBorder>
+                              <Style>=IIF(Parameters!LineSepWBS2.Value &gt; "",Parameters!LineSepWBS2.Value, "Dashed")</Style>
+                            </TopBorder>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader_WBS2Desc">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!BillWBS2Name.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>="400"</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                              <Width>=IIF(Parameters!LineWeightWBS2.Value &gt; "", Parameters!LineWeightWBS2.Value &amp; "pt", "1.5pt")</Width>
+                            </Border>
+                            <TopBorder>
+                              <Style>=IIF(Parameters!LineSepWBS2.Value &gt; "",Parameters!LineSepWBS2.Value, "Dashed")</Style>
+                            </TopBorder>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader_WBS2LongName">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!WBS2LongName.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>="400"</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>19</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader_WBS2_Description">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Description.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>="400"</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>18</ZIndex>
+                          <CustomProperties>
+                            <CustomProperty>
+                              <Name>TextFormatType</Name>
+                              <Value>HTML</Value>
+                            </CustomProperty>
+                          </CustomProperties>
+                          <Style />
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.03125in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox5">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>="400"</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox5</rd:DefaultName>
+                          <ZIndex>17</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.22in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="groupHeader_WBS3">
+                          <ReportItems>
+                            <Textbox Name="groupHeader_WBS3Label">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Parameters!wbs3HeaderLabel.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>="400"</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Height>0.17in</Height>
+                              <Width>1.1in</Width>
+                              <Visibility>
+                                <Hidden>=IIF(Parameters!HideWBS3Header.Value = "Y", True, False)</Hidden>
+                              </Visibility>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                            <Textbox Name="groupHeader_WBS3Number">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!BillWBS3.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>="400"</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Left>1.14in</Left>
+                              <Height>0.17in</Height>
+                              <Width>0.9in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Visibility>
+                                <Hidden>=iif(Parameters!printWBS3Number.Value="N", True, False)</Hidden>
+                              </Visibility>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                            <Textbox Name="groupHeader_WBS3Name">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=iif(Parameters!printWBS3LongName.Value = "Y" And Parameters!printWBS3Name.Value = "N", Fields!WBS3LongName.Value, Fields!BillWBS3Name.Value)</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>="400"</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Left>2.06in</Left>
+                              <Height>0.17in</Height>
+                              <Width>4.8in</Width>
+                              <ZIndex>2</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                          </ReportItems>
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>16</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                              <Width>=IIF(Parameters!LineWeightWBS3.Value &gt; "", Parameters!LineWeightWBS3.Value &amp; "pt", "1.5pt")</Width>
+                            </Border>
+                            <TopBorder>
+                              <Style>=IIF(Parameters!LineSepWBS3.Value &gt; "", Parameters!LineSepWBS3.Value, "Dashed")</Style>
+                            </TopBorder>
+                          </Style>
+                        </Rectangle>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader_WBS3Number2">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!BillWBS3.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>="400"</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                              <Width>=IIF(Parameters!LineWeightWBS3.Value &gt; "", Parameters!LineWeightWBS3.Value &amp; "pt", "1.5pt")</Width>
+                            </Border>
+                            <TopBorder>
+                              <Style>=IIF(Parameters!LineSepWBS3.Value &gt; "", Parameters!LineSepWBS3.Value, "Dashed")</Style>
+                            </TopBorder>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader_WBS3Desc">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!BillWBS3Name.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>="400"</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                              <Width>=IIF(Parameters!LineWeightWBS3.Value &gt; "", Parameters!LineWeightWBS3.Value &amp; "pt", "1.5pt")</Width>
+                            </Border>
+                            <TopBorder>
+                              <Style>=IIF(Parameters!LineSepWBS3.Value &gt; "", Parameters!LineSepWBS3.Value, "Dashed")</Style>
+                            </TopBorder>
+                          </Style>
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader_WBS3LongName">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!WBS3LongName.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>="400"</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>15</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader_WBS3_Description">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Description.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>="400"</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>14</ZIndex>
+                          <CustomProperties>
+                            <CustomProperty>
+                              <Name>TextFormatType</Name>
+                              <Value>HTML</Value>
+                            </CustomProperty>
+                          </CustomProperties>
+                          <Style />
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.03125in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox6">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>="400"</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox6</rd:DefaultName>
+                          <ZIndex>13</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="ICLabor">
+                          <ReportName>ICLabor</ReportName>
+                          <Parameters>
+                            <Parameter Name="parmInvoice">
+                              <Value>=Fields!Invoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmMainWBS1">
+                              <Value>=Fields!MainWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS1">
+                              <Value>=Fields!BillWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS2">
+                              <Value>=Fields!BillWBS2.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS3">
+                              <Value>=Fields!BillWBS3.Value</Value>
+                            </Parameter>
+                            <Parameter Name="HideLabDetail">
+                              <Value>=Parameters!HideLabDetail.Value</Value>
+                            </Parameter>
+                            <Parameter Name="HideLabSubtotal">
+                              <Value>=Parameters!HideLabSubtotal.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <ZIndex>12</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Subreport>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="ICExpense">
+                          <ReportName>ICExpense</ReportName>
+                          <Parameters>
+                            <Parameter Name="parmInvoice">
+                              <Value>=Fields!Invoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmMainWBS1">
+                              <Value>=Fields!MainWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS1">
+                              <Value>=Fields!BillWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS2">
+                              <Value>=Fields!BillWBS2.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS3">
+                              <Value>=Fields!BillWBS3.Value</Value>
+                            </Parameter>
+                            <Parameter Name="HideExpSubtotal">
+                              <Value>=Parameters!HideExpSubtotal.Value</Value>
+                            </Parameter>
+                            <Parameter Name="HideExpDetail">
+                              <Value>=Parameters!HideExpDetail.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Subreport>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.35in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="rectangleWBS3Total">
+                          <ReportItems>
+                            <Textbox Name="groupFooter_WBS3Total">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!wbs3Total.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                        <Format>c</Format>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Left>5.47in</Left>
+                              <Height>0.16251in</Height>
+                              <Width>1.41in</Width>
+                              <Style />
+                            </Textbox>
+                            <Textbox Name="groupFooter_WBS3Label">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>[LabelTotalthisWBS3]</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Left>1.9in</Left>
+                              <Height>0.16251in</Height>
+                              <Width>3.55in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style />
+                            </Textbox>
+                          </ReportItems>
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>1</ZIndex>
+                          <Style />
+                        </Rectangle>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="groupFooter_WBS3PageBreak">
+                          <ReportName>PageBreak</ReportName>
+                          <Parameters>
+                            <Parameter Name="parmWBS">
+                              <Value>=Fields!BillWBS3.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <KeepTogether>true</KeepTogether>
+                          <ZIndex>2</ZIndex>
+                          <Style />
+                        </Subreport>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.35in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="rectangleWBS2Total">
+                          <ReportItems>
+                            <Textbox Name="groupFooter_WBS2Total">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!wbs2Total.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                        <Format>c</Format>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Left>5.47in</Left>
+                              <Height>0.16626in</Height>
+                              <Width>1.41in</Width>
+                              <Style />
+                            </Textbox>
+                            <Textbox Name="groupFooter_WBS2Label">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>[LabelTotalthisWBS2]</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Left>1.9in</Left>
+                              <Height>0.16626in</Height>
+                              <Width>3.55in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style />
+                            </Textbox>
+                          </ReportItems>
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>3</ZIndex>
+                          <Style />
+                        </Rectangle>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="groupFooter_WBS2PageBreak">
+                          <ReportName>PageBreak</ReportName>
+                          <Parameters>
+                            <Parameter Name="parmWBS">
+                              <Value>=Fields!BillWBS2.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <KeepTogether>true</KeepTogether>
+                          <ZIndex>4</ZIndex>
+                          <Style />
+                        </Subreport>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.35in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="rectangleWBS1Total">
+                          <ReportItems>
+                            <Textbox Name="groupFooter_WBS1Total">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!wbs1Total.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                        <Format>c</Format>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Left>5.47in</Left>
+                              <Height>0.17002in</Height>
+                              <Width>1.41in</Width>
+                              <Style />
+                            </Textbox>
+                            <Textbox Name="groupFooter_WBS1Label">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>[LabelTotalthisWBS1]</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Left>1.9in</Left>
+                              <Height>0.165in</Height>
+                              <Width>3.55in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style />
+                            </Textbox>
+                          </ReportItems>
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>5</ZIndex>
+                          <Style />
+                        </Rectangle>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="groupFooter_WBS1PageBreak">
+                          <ReportName>PageBreak</ReportName>
+                          <Parameters>
+                            <Parameter Name="parmWBS">
+                              <Value>=Fields!BillWBS1.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <KeepTogether>true</KeepTogether>
+                          <ZIndex>6</ZIndex>
+                          <Style>
+                            <NumeralVariant>2</NumeralVariant>
+                          </Style>
+                        </Subreport>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="InvoiceFooter_ICTaxes">
+                          <ReportName>ICTaxes</ReportName>
+                          <Parameters>
+                            <Parameter Name="parmInvoice">
+                              <Value>=Fields!Invoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmMainWBS1">
+                              <Value>=Fields!MainWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS1">
+                              <Value>=Fields!BillWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS2">
+                              <Value>=Fields!BillWBS2.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS3">
+                              <Value>=Fields!BillWBS3.Value</Value>
+                            </Parameter>
+                            <Parameter Name="HideTaxDetail">
+                              <Value>=Parameters!HideTaxDetail.Value</Value>
+                            </Parameter>
+                            <Parameter Name="HideTaxSubtotal">
+                              <Value>=Parameters!HideTaxSubtotal.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <ZIndex>7</ZIndex>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Subreport>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.35in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="rectangleInvoiceTotal">
+                          <ReportItems>
+                            <Textbox Name="groupFooter_InvoiceTotal">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!invTotal.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                        <Format>c</Format>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Left>5.47in</Left>
+                              <Height>0.1671in</Height>
+                              <Width>1.41in</Width>
+                              <Style />
+                            </Textbox>
+                            <Textbox Name="textbox4">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>[LabelTotalthisInvoice]</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Left>1.9in</Left>
+                              <Height>0.1671in</Height>
+                              <Width>3.55in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style />
+                            </Textbox>
+                          </ReportItems>
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>8</ZIndex>
+                          <Style />
+                        </Rectangle>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Invoice_Footer">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Footer.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>9</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.5625in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="groupfooter">
+                          <ReportItems>
+                            <Textbox Name="groupFooter_Signature">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=iif(Parameters!useSignature.Value ="" or Parameters!useSignature.Value = "N", "", iif(Parameters!sigLabel.Value="", "[LabelAuthorizedBy:]", Parameters!sigLabel.Value))</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>="400"</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.19792in</Top>
+                              <Height>0.16in</Height>
+                              <Width>0.875in</Width>
+                              <Visibility>
+                                <Hidden>=iif(Parameters!useSignature.Value = "N" or Parameters!useSignature.Value = "", true, false)</Hidden>
+                              </Visibility>
+                              <Style />
+                            </Textbox>
+                            <Line Name="SignatureLine">
+                              <Top>0.32292in</Top>
+                              <Left>1in</Left>
+                              <Height>0in</Height>
+                              <Width>2.875in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Visibility>
+                                <Hidden>=iif(Parameters!useSignature.Value = "N" or Parameters!useSignature.Value = "", true, false)</Hidden>
+                              </Visibility>
+                              <Style>
+                                <Border>
+                                  <Style>Solid</Style>
+                                </Border>
+                              </Style>
+                            </Line>
+                            <Textbox Name="groupFooter_Date">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=iif(Parameters!useSignature.Value="N" or Parameters!useSignature.Value="", "", iif(Parameters!sigDateLabel.Value= "", "[LabelDate:]", Parameters!sigDateLabel.Value))</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>="400"</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.19792in</Top>
+                              <Left>4.125in</Left>
+                              <Height>0.16in</Height>
+                              <Width>0.375in</Width>
+                              <ZIndex>2</ZIndex>
+                              <Visibility>
+                                <Hidden>=iif(Parameters!useSignature.Value = "N" or Parameters!useSignature.Value = "", true, false)</Hidden>
+                              </Visibility>
+                              <Style />
+                            </Textbox>
+                            <Line Name="dateLine">
+                              <Top>0.32292in</Top>
+                              <Left>4.625in</Left>
+                              <Height>0in</Height>
+                              <Width>2.125in</Width>
+                              <ZIndex>3</ZIndex>
+                              <Visibility>
+                                <Hidden>=iif(Parameters!useSignature.Value = "N" or Parameters!useSignature.Value = "", true, false)</Hidden>
+                              </Visibility>
+                              <Style>
+                                <Border>
+                                  <Style>Solid</Style>
+                                </Border>
+                              </Style>
+                            </Line>
+                            <Textbox Name="groupFooterAuthorized">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=iif(Parameters!useSignature.Value = "" or Parameters!useSignature.Value = "N", "", iif(Parameters!sigAuthorizedBy.Value = "", "[LabelProjMgrName]", Parameters!sigAuthorizedBy.Value))</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>="400"</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Left</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.34292in</Top>
+                              <Left>1in</Left>
+                              <Height>0.16in</Height>
+                              <Width>2.875in</Width>
+                              <ZIndex>4</ZIndex>
+                              <Visibility>
+                                <Hidden>=iif(Parameters!useSignature.Value = "N" or Parameters!useSignature.Value = "", true, false)</Hidden>
+                              </Visibility>
+                              <Style />
+                            </Textbox>
+                          </ReportItems>
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>10</ZIndex>
+                          <Style />
+                        </Rectangle>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="Footer">
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>11</ZIndex>
+                          <Style />
+                        </Rectangle>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="MainInvoiceTable_Invoice">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!invoiceKey.Value</GroupExpression>
+                    </GroupExpressions>
+                    <PageBreak>
+                      <BreakLocation>End</BreakLocation>
+                    </PageBreak>
+                  </Group>
+                  <TablixMembers>
+                    <TablixMember />
+                    <TablixMember>
+                      <Group Name="MainInvoiceTable_WBS1">
+                        <GroupExpressions>
+                          <GroupExpression>=Fields!BillWBS1.Value</GroupExpression>
+                        </GroupExpressions>
+                      </Group>
+                      <TablixMembers>
+                        <TablixMember>
+                          <Visibility>
+                            <Hidden>=iif(Parameters!HideWBS1Header.Value = "Y" Andalso Parameters!printWBS.Value="N", True, iif(Parameters!printWBSName.Value = "N" And Parameters!printWBSLongName.Value = "N", True, False))</Hidden>
+                          </Visibility>
+                        </TablixMember>
+                        <TablixMember>
+                          <Visibility>
+                            <Hidden>=iif(Parameters!printWBSName.Value = "N" AndAlso Parameters!printWBSLongName.Value = "N" AndAlso Parameters!HideWBS1Header.Value = "Y" Andalso Parameters!printWBS.Value="Y", False, True)</Hidden>
+                          </Visibility>
+                        </TablixMember>
+                        <TablixMember>
+                          <Visibility>
+                            <Hidden>=iif(Parameters!printWBSName.Value = "Y" AndAlso Parameters!printWBSLongName.Value = "N" AndAlso Parameters!HideWBS1Header.Value = "Y" Andalso Parameters!printWBS.Value="N", False, True)</Hidden>
+                          </Visibility>
+                        </TablixMember>
+                        <TablixMember>
+                          <Visibility>
+                            <Hidden>=iif((Parameters!printWBSName.Value = "N" AndAlso Not (Parameters!HideWBS1Header.Value = "Y" Andalso Parameters!printWBS.Value="N")) OrElse Parameters!printWBSLongName.Value = "N", True, False)</Hidden>
+                          </Visibility>
+                        </TablixMember>
+                        <TablixMember>
+                          <Visibility>
+                            <Hidden>=iif(Fields!Description.Value &gt; "",False, True)</Hidden>
+                          </Visibility>
+                        </TablixMember>
+                        <TablixMember />
+                        <TablixMember>
+                          <Group Name="MainInvoiceTable_WBS2">
+                            <GroupExpressions>
+                              <GroupExpression>=Fields!BillWBS2.Value</GroupExpression>
+                            </GroupExpressions>
+                          </Group>
+                          <TablixMembers>
+                            <TablixMember>
+                              <Visibility>
+                                <Hidden>=iif(Parameters!HideWBS2Header.Value = "Y" Andalso Parameters!printWBS2Number.Value="N", True, iif(Fields!BillWBS2.Value = " " OrElse (Parameters!printWBS2Name.Value = "N" AndAlso Parameters!printWBS2LongName.Value = "N"), true, false))</Hidden>
+                              </Visibility>
+                            </TablixMember>
+                            <TablixMember>
+                              <Visibility>
+                                <Hidden>=iif(Fields!BillWBS2.Value &gt; " " AndAlso Parameters!printWBS2Name.Value = "N" AndAlso Parameters!printWBS2LongName.Value = "N" AndAlso Parameters!HideWBS2Header.Value = "Y" Andalso Parameters!printWBS2Number.Value="Y", False, True)</Hidden>
+                              </Visibility>
+                            </TablixMember>
+                            <TablixMember>
+                              <Visibility>
+                                <Hidden>=iif(Fields!BillWBS2.Value &gt; " " AndAlso Parameters!printWBS2Name.Value = "Y" AndAlso Parameters!printWBS2LongName.Value = "N" AndAlso Parameters!HideWBS2Header.Value = "Y" Andalso Parameters!printWBS2Number.Value="N", False, True)</Hidden>
+                              </Visibility>
+                            </TablixMember>
+                            <TablixMember>
+                              <Visibility>
+                                <Hidden>=iif(Fields!BillWBS2.Value = " " OrElse (Parameters!printWBS2Name.Value = "N" AndAlso Not (Parameters!HideWBS2Header.Value = "Y" Andalso Parameters!printWBS2Number.Value="N")) OrElse Parameters!printWBS2LongName.Value = "N", True, False)</Hidden>
+                              </Visibility>
+                            </TablixMember>
+                            <TablixMember>
+                              <Visibility>
+                                <Hidden>=iif(Fields!Description.Value &gt; "" Andalso 
+Fields!Description.Value &lt;&gt; First(Fields!Description.Value, "MainInvoiceTable_WBS1") 
+AndAlso Fields!BillWBS2.Value &lt;&gt; " ", False, True)</Hidden>
+                              </Visibility>
+                            </TablixMember>
+                            <TablixMember />
+                            <TablixMember>
+                              <Group Name="MainInvoiceTable_WBS3">
+                                <GroupExpressions>
+                                  <GroupExpression>=Fields!BillWBS3.Value</GroupExpression>
+                                </GroupExpressions>
+                              </Group>
+                              <TablixMembers>
+                                <TablixMember>
+                                  <Visibility>
+                                    <Hidden>=iif(Parameters!HideWBS3Header.Value = "Y" Andalso Parameters!printWBS3Number.Value="N", True, iif(Fields!BillWBS3.Value = " " OrElse (Parameters!printWBS3Name.Value = "N" AndAlso Parameters!printWBS3LongName.Value = "N"), true, false))</Hidden>
+                                  </Visibility>
+                                </TablixMember>
+                                <TablixMember>
+                                  <Visibility>
+                                    <Hidden>=iif(Fields!BillWBS3.Value &gt; " " AndAlso Parameters!printWBS3Name.Value = "N" AndAlso Parameters!printWBS3LongName.Value = "N" AndAlso Parameters!HideWBS3Header.Value = "Y" Andalso Parameters!printWBS3Number.Value="Y", False, True)</Hidden>
+                                  </Visibility>
+                                </TablixMember>
+                                <TablixMember>
+                                  <Visibility>
+                                    <Hidden>=iif(Fields!BillWBS3.Value &gt; " " AndAlso Parameters!printWBS3Name.Value = "Y" AndAlso Parameters!printWBS3LongName.Value = "N" AndAlso Parameters!HideWBS3Header.Value = "Y" Andalso Parameters!printWBS3Number.Value="N", False, True)</Hidden>
+                                  </Visibility>
+                                </TablixMember>
+                                <TablixMember>
+                                  <Visibility>
+                                    <Hidden>=iif(Fields!BillWBS3.Value = " " OrElse (Parameters!printWBS3Name.Value = "N" AndAlso Not(Parameters!HideWBS3Header.Value = "Y" Andalso Parameters!printWBS3Number.Value="N")) OrElse Parameters!printWBS3LongName.Value = "N", True, False)</Hidden>
+                                  </Visibility>
+                                </TablixMember>
+                                <TablixMember>
+                                  <Visibility>
+                                    <Hidden>=iif(Fields!Description.Value &gt; "" Andalso 
+Fields!Description.Value &lt;&gt; First(Fields!Description.Value, "MainInvoiceTable_WBS2") 
+AndAlso Fields!BillWBS3.Value &lt;&gt; " ", False, True)</Hidden>
+                                  </Visibility>
+                                </TablixMember>
+                                <TablixMember />
+                                <TablixMember>
+                                  <Group Name="MainInvoiceTable_Details_Group">
+                                    <DataElementName>Detail</DataElementName>
+                                  </Group>
+                                  <TablixMembers>
+                                    <TablixMember />
+                                    <TablixMember />
+                                  </TablixMembers>
+                                  <DataElementName>Detail_Collection</DataElementName>
+                                  <DataElementOutput>Output</DataElementOutput>
+                                </TablixMember>
+                                <TablixMember>
+                                  <Visibility>
+                                    <Hidden>=iif(Fields!BillWBS3.Value = " ", true, false)</Hidden>
+                                  </Visibility>
+                                </TablixMember>
+                                <TablixMember />
+                              </TablixMembers>
+                            </TablixMember>
+                            <TablixMember>
+                              <Visibility>
+                                <Hidden>=iif(Fields!BillWBS2.Value = " ", true, false)</Hidden>
+                              </Visibility>
+                            </TablixMember>
+                            <TablixMember />
+                          </TablixMembers>
+                        </TablixMember>
+                        <TablixMember />
+                        <TablixMember />
+                      </TablixMembers>
+                    </TablixMember>
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                    <TablixMember />
+                  </TablixMembers>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <NoRowsMessage>="[LabelNoDataFound]"</NoRowsMessage>
+            <DataSetName>ReportDataset</DataSetName>
+            <Height>6.485in</Height>
+            <Width>6.9in</Width>
+            <Style>
+              <FontSize>9pt</FontSize>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>6.485in</Height>
+        <Style />
+      </Body>
+      <Width>6.9in</Width>
+      <Page>
+        <PageFooter>
+          <Height>0.21917in</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="pagefooter_PageNumber">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=String.Format("[LabelPage0of1]", Globals!PageNumber, Globals!TotalPages)</Value>
+                      <Style>
+                        <FontSize>9pt</FontSize>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.04in</Top>
+              <Left>5.95791in</Left>
+              <Height>0.16166in</Height>
+              <Width>0.89792in</Width>
+              <Visibility>
+                <Hidden>=IIF(Parameters!printPageNumbers.Value = "N", True, False)</Hidden>
+              </Visibility>
+              <DataElementOutput>NoOutput</DataElementOutput>
+              <Style />
+            </Textbox>
+            <Textbox Name="pagefooter_FooterText">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value />
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.04in</Top>
+              <Height>0.16in</Height>
+              <Width>5.86833in</Width>
+              <ZIndex>1</ZIndex>
+              <Style />
+            </Textbox>
+            <Line Name="pageFooterLine">
+              <Top>0.015in</Top>
+              <Left>0.00514in</Left>
+              <Height>0in</Height>
+              <Width>6.875in</Width>
+              <ZIndex>2</ZIndex>
+              <Visibility>
+                <Hidden>=iif(Parameters!printFooterLine.Value = "N", true, false)</Hidden>
+              </Visibility>
+              <DataElementOutput>NoOutput</DataElementOutput>
+              <Style>
+                <Border>
+                  <Style>Solid</Style>
+                </Border>
+              </Style>
+            </Line>
+          </ReportItems>
+          <Style />
+        </PageFooter>
+        <InteractiveHeight>0in</InteractiveHeight>
+        <LeftMargin>0.7in</LeftMargin>
+        <RightMargin>0.7in</RightMargin>
+        <TopMargin>0.5in</TopMargin>
+        <BottomMargin>0.5in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="printFirm">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printFirm</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printByline">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printByline</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printAddress">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printAddress</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="PrintAuthPrefix">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>PrintAuthPrefix</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="PrintAuthSuffix">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>PrintAuthSuffix</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printWBSLongName">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printWBSLongName</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printWBS2LongName">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printWBS2LongName</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printWBS3LongName">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printWBS3LongName</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="ActiveCompany">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ActiveCompany</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printWBSName">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_14</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printWBS2Name">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printWBS2Name</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printWBS3Name">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printWBS3Name</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printInvoiceLeadingZeros">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_15</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="ActivePeriod">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_16</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printInvoice">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_27</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printWBS">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_28</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="combineWBSInvoice">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_29</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="Description">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_30</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="MainWBS1">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>MainWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="Invoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Invoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="useSignature">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>useSignature</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="sigDateLabel">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_19</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="sigLabel">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_20</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="sigAuthorizedBy">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_21</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printPageNumbers">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printPageNumbers</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printFooterLine">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printFooterLine</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="defaultPage2Top">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>defaultPage2Top</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="invoiceBox">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>invoiceBox</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="AddressStart">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>AddressStart</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="pageFooter">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>pageFooter</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="PrintAssignedInvoiceNo">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>PrintAssignedInvoiceNo</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printTotalNowDue">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printTotalNowDue</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printFirmTaxReg">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printFirmTaxReg</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="FirmTaxRegLabel">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Tax Registration Number:</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>FirmTaxRegLabel</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printClTaxReg">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printClTaxReg</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="ClTaxRegLabel">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Tax Registration Number:</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ClTaxRegLabel</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HideLabDetail">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HideLabDetail</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HideExpDetail">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HideExpDetail</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HideTaxDetail">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HideTaxDetail</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HideTaxSubtotal">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HideTaxSubtotal</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="hide2ndPageHeader">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>hide2ndPageHeader</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="LineSepWBS1">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>LineSepWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="LineSepWBS2">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>LineSepWBS2</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="LineSepWBS3">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>LineSepWBS3</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="LineWeightWBS1">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>LineWeightWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="LineWeightWBS2">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>LineWeightWBS2</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="LineWeightWBS3">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>LineWeightWBS3</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HideLabSubtotal">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HideLabSubtotal</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HideExpSubtotal">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HideExpSubtotal</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HideWBS1Header">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HideWBS1Header</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HideWBS2Header">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HideWBS2Header</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HideWBS3Header">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HideWBS3Header</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HideWBS1Total">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HideWBS1Total</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HideWBS2Total">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HideWBS2Total</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HideWBS3Total">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HideWBS3Total</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printWBS2Number">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printWBS2Number</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printWBS3Number">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printWBS3Number</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="wbs1HeaderLabel">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>wbs1HeaderLabel</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="wbs2HeaderLabel">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>wbs2HeaderLabel</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="wbs3HeaderLabel">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>wbs3HeaderLabel</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+  </ReportParameters>
+  <CustomProperties>
+    <CustomProperty>
+      <Name>ReportType</Name>
+      <Value>Intercompany Invoice</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ResourceFileName</Name>
+      <Value>Intercompany Invoice</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ReportVersion</Name>
+      <Value>2.0.5.5170</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>LookupType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>GroupingType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AutoGroupQuery</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>OptionForm</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>HelpFile</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ReportBO</Name>
+      <Value>Deltek.Vision.ReportingInvoice.Server.InvoiceBO</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>UseColumnSelection</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowUserDefinedFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowCalcFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ConvertRDL</Name>
+      <Value>Y</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>Modules</Name>
+      <Value />
+    </CustomProperty>
+  </CustomProperties>
+  <Code>public function dltkSafeDivide(byVal numerator as Decimal, byVal denominator as Decimal) as Decimal
+    if (denominator = 0) then
+    return 0
+ else
+  return numerator / denominator
+ end if
+end function</Code>
+  <Language>=User.Language</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>834fbe54-9333-45f3-b1e6-575227c61595</rd:ReportID>
+</Report>

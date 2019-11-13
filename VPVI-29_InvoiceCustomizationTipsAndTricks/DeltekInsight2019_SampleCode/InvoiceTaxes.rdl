@@ -1,0 +1,1220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="VisionQA51MCMC__alisond_">
+      <DataSourceReference>DefaultDataSource</DataSourceReference>
+      <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>fdc62d2f-d38a-4285-ac4a-3e011f99d64d</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="TaxesDataset">
+      <Query>
+        <DataSourceName>VisionQA51MCMC__alisond_</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@parmInvoice">
+            <Value>=Parameters!parmInvoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@BillingCurrencyCode">
+            <Value>=Parameters!BillingCurrencyCode.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmMainWBS1">
+            <Value>=Parameters!parmMainWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@DecimalPlaces">
+            <Value>=Parameters!DecimalPlaces.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS1">
+            <Value>=Parameters!parmWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS2">
+            <Value>=Parameters!parmWBS2.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS3">
+            <Value>=Parameters!parmWBS3.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnWBS3">
+            <Value>=Parameters!parmOnWBS3.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnWBS2">
+            <Value>=Parameters!parmOnWBS2.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnWBS1">
+            <Value>=Parameters!parmOnWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@PreInvoice">
+            <Value>=Parameters!PreInvoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnGroup">
+            <Value>=Parameters!parmOnGroup.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>/******************************************************************** WBS3 ***********************************************/
+
+SELECT 
+billTaxDetail.RecdSeq,
+billTaxDetail.code,
+billTaxDetail.description,
+computation,
+rate,
+basis,
+amount, 
+TaxCurrencyCode, AmountTaxCurrency,
+IsNull(summary.TaxSub, 0) As TaxSubtotal,
+IsNull(summary.SubTaxCurrency, 0) As SubtotalTaxCurrency,
+IsNull(summary.sumTaxCurrencyCode, '') AS subTaxCurrencyCode,
+IsNull(summary.finalAmount, 0) As SectionTotal,
+0 As AppliedTotal,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode,
+CAST(@DecimalPlaces as int) As DecimalPlaces
+ FROM billTaxDetail left join
+/*SubQuery to get invoice totals*/
+ (SELECT 
+  billInvSums.invoice as sumInvoice,
+  billInvSums.mainWBS1 as sumMainWBS1,
+  billInvSums.BillWBS1 as sumBillWBS1,
+billInvSums.BillWBS2 as sumBillWBS2,  
+billInvSums.BillWBS3 as sumBillWBS3,
+  sum(CASE WHEN (Section &lt;&gt; 'T') THEN billInvSums.finalAmount ELSE 0 END) AS TaxSub,
+  sum(CASE WHEN (Section &lt;&gt; 'T') THEN billInvSums.FinalAmountTaxCurrency ELSE 0 END) AS SubTaxCurrency,
+  min(billInvSums.TaxCurrencyCode) AS sumTaxCurrencyCode,
+  sum(CASE WHEN (Section = 'T') THEN billInvSums.finalAmount ELSE 0 END) AS finalAmount
+  FROM billInvSums 
+  WHERE
+ArrayType = 'I' AND PreInvoice = 'N' /***taxSubTotal***/
+ AND (Invoice = @parmInvoice) 
+ AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+ AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+ AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~') 
+ AND (BillWBS3 = @parmWBS3 OR BillWBS3 = /*N*/'~') 
+ GROUP BY billInvSums.invoice, billInvSums.mainWBS1, 
+ billInvSums.BillWBS1, billInvSums.BillWBS2, billInvSums.BillWBS3) AS summary ON 
+ (billTaxDetail.invoice = summary.sumInvoice) AND 
+ (billTaxDetail.mainWBS1 = summary.sumMainWBS1) AND 
+ (billTaxDetail.BillWBS1 = summary.sumBillWBS1) AND
+ (billTaxDetail.BillWBS2 = summary.sumBillWBS2) AND 
+ (billTaxDetail.BillWBS3 = summary.sumBillWBS3)
+
+ WHERE RetainageInvoice &lt;&gt; 'Y' AND PreInvoice = 'N'
+ AND (billTaxDetail.Invoice = @parmInvoice) 
+ AND (billTaxDetail.MainWBS1 = @parmMainWBS1 OR billTaxDetail.MainWBS1 = /*N*/'~') 
+ AND (billTaxDetail.BillWBS1 = @parmWBS1 OR billTaxDetail.BillWBS1 = /*N*/'~') 
+ AND (billTaxDetail.BillWBS2 = @parmWBS2 OR billTaxDetail.BillWBS2 = /*N*/'~') 
+ AND (billTaxDetail.BillWBS3 = @parmWBS3 OR billTaxDetail.BillWBS3 = /*N*/'~') 
+And billTaxDetail.billWBS3 &lt;&gt; /*N*/'~' And billTaxDetail.billWBS3 &lt;&gt; /*N*/' ' 
+And @parmOnWBS3 = 'Y'
+
+/******************************************************************** WBS2 ***********************************************/
+
+UNION ALL SELECT 
+billTaxDetail.RecdSeq,
+billTaxDetail.code,
+billTaxDetail.description,
+computation,
+rate,
+basis,
+amount, 
+TaxCurrencyCode, AmountTaxCurrency,
+IsNull(summary.TaxSub, 0) As TaxSubtotal,
+IsNull(summary.SubTaxCurrency, 0) As SubtotalTaxCurrency,
+IsNull(summary.sumTaxCurrencyCode, '') AS subTaxCurrencyCode,
+IsNull(summary.finalAmount, 0) As SectionTotal,
+0 As AppliedTotal,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode,
+CAST(@DecimalPlaces as int) As DecimalPlaces
+ FROM billTaxDetail left join
+/*SubQuery to get invoice totals*/
+ (SELECT 
+  billInvSums.invoice as sumInvoice,
+  billInvSums.mainWBS1 as sumMainWBS1,
+  billInvSums.BillWBS1 as sumBillWBS1,
+  billInvSums.BillWBS2 as sumBillWBS2,  
+  sum(CASE WHEN (Section &lt;&gt; 'T') THEN billInvSums.finalAmount ELSE 0 END) AS TaxSub,
+  sum(CASE WHEN (Section &lt;&gt; 'T') THEN billInvSums.FinalAmountTaxCurrency ELSE 0 END) AS SubTaxCurrency,
+  min(billInvSums.TaxCurrencyCode) AS sumTaxCurrencyCode,
+  sum(CASE WHEN (Section = 'T') THEN billInvSums.finalAmount ELSE 0 END) AS finalAmount
+  FROM billInvSums 
+  WHERE
+ArrayType = 'I' AND PreInvoice = 'N' /***taxSubTotal***/
+ AND (Invoice = @parmInvoice) 
+ AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+ AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+ AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~') 
+ GROUP BY billInvSums.invoice, billInvSums.mainWBS1, 
+ billInvSums.BillWBS1, billInvSums.BillWBS2) AS summary ON 
+ (billTaxDetail.invoice = summary.sumInvoice) AND 
+ (billTaxDetail.mainWBS1 = summary.sumMainWBS1) AND 
+ (billTaxDetail.BillWBS1 = summary.sumBillWBS1) AND
+ (billTaxDetail.BillWBS2 = summary.sumBillWBS2) 
+
+ WHERE RetainageInvoice &lt;&gt; 'Y' AND PreInvoice = 'N'
+ AND (billTaxDetail.Invoice = @parmInvoice) 
+ AND (billTaxDetail.MainWBS1 = @parmMainWBS1 OR billTaxDetail.MainWBS1 = /*N*/'~') 
+ AND (billTaxDetail.BillWBS1 = @parmWBS1 OR billTaxDetail.BillWBS1 = /*N*/'~') 
+ AND (billTaxDetail.BillWBS2 = @parmWBS2 OR billTaxDetail.BillWBS2 = /*N*/'~') 
+And billTaxDetail.billWBS2 &lt;&gt; /*N*/'~' And billTaxDetail.billWBS2 &lt;&gt; /*N*/' ' And (billTaxDetail.billWBS3 = /*N*/'~' Or billTaxDetail.billWBS3 = /*N*/' ')
+And @parmOnWBS2 = 'Y'
+
+/******************************************************************** WBS1 **************************************************/
+
+UNION ALL SELECT
+billTaxDetail.RecdSeq,
+billTaxDetail.code,
+billTaxDetail.description,
+computation,
+rate,
+basis,
+amount, TaxCurrencyCode, AmountTaxCurrency,
+IsNull(summary.TaxSub, 0) As TaxSubtotal,
+IsNull(summary.SubTaxCurrency, 0) As SubtotalTaxCurrency,
+IsNull(summary.sumTaxCurrencyCode, '') AS subTaxCurrencyCode,
+IsNull(summary.finalAmount, 0) As SectionTotal,
+IsNull(preInvTot.AppliedAmount, 0) As AppliedTotal,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode,
+CAST(@DecimalPlaces as int) As DecimalPlaces
+ FROM billTaxDetail left join
+/*SubQuery to get invoice totals*/
+ (SELECT 
+  billInvSums.invoice as sumInvoice,
+  billInvSums.mainWBS1 as sumMainWBS1,
+  billInvSums.BillWBS1 as sumBillWBS1,
+  sum(CASE WHEN (Section &lt;&gt; 'T') THEN billInvSums.finalAmount ELSE 0 END) AS TaxSub,
+  sum(CASE WHEN (Section &lt;&gt; 'T') THEN billInvSums.FinalAmountTaxCurrency ELSE 0 END) AS SubTaxCurrency,
+  min(billInvSums.TaxCurrencyCode) AS sumTaxCurrencyCode,
+  sum(CASE WHEN (Section = 'T') THEN billInvSums.finalAmount ELSE 0 END) AS finalAmount
+  FROM billInvSums 
+  WHERE
+ArrayType = 'I' AND PreInvoice = @PreInvoice /***taxSubTotal***/
+ AND (Invoice = @parmInvoice) 
+ AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+ AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+ GROUP BY billInvSums.invoice, billInvSums.mainWBS1, 
+ billInvSums.BillWBS1) AS summary ON 
+ (billTaxDetail.invoice = summary.sumInvoice) AND 
+ (billTaxDetail.mainWBS1 = summary.sumMainWBS1) AND 
+ (billTaxDetail.BillWBS1 = summary.sumBillWBS1) 
+
+/*SubQuery to get PreInvoice totals*/
+left join  (SELECT 
+  billPreInvoice.invoice as sumInvoice,
+  billPreInvoice.WBS1 as sumMainWBS1,
+  sum(billPreInvoice.AppliedAmount) AS AppliedAmount
+  FROM billPreInvoice
+  WHERE billPreInvoice.WBS1 = IsNull(@parmMainWBS1, /*N*/'')
+AND billPreInvoice.Invoice = IsNull(@parmInvoice, /*N*/'')
+/***EXTEND WHERE CLAUSE***/
+ GROUP BY billPreInvoice.invoice, billPreInvoice.WBS1) AS preInvTot ON 
+ (billTaxDetail.invoice = preInvTot.sumInvoice) AND 
+ (billTaxDetail.mainWBS1 = preInvTot.sumMainWBS1)
+
+ WHERE RetainageInvoice &lt;&gt; 'Y' AND PreInvoice = @PreInvoice
+ AND (billTaxDetail.Invoice = @parmInvoice) 
+ AND (billTaxDetail.MainWBS1 = @parmMainWBS1 OR billTaxDetail.MainWBS1 = /*N*/'~') 
+ AND (billTaxDetail.BillWBS1 = @parmWBS1 OR billTaxDetail.BillWBS1 = /*N*/'~') 
+And billTaxDetail.billWBS1 &lt;&gt; /*N*/'~' And ((billTaxDetail.billWBS2 = /*N*/'~' And billTaxDetail.billWBS3 = /*N*/'~') Or (billTaxDetail.billWBS2 = /*N*/' ' And billTaxDetail.billWBS3 = /*N*/' '))
+And @parmOnWBS1 = 'Y'
+
+/******************************************************************** GROUP *****************************************/
+
+UNION ALL SELECT
+billTaxDetail.RecdSeq,
+billTaxDetail.code,
+billTaxDetail.description,
+computation,
+rate,
+basis,
+amount, TaxCurrencyCode, AmountTaxCurrency,
+IsNull(summary.TaxSub, 0) As TaxSubtotal,
+IsNull(summary.SubTaxCurrency, 0) As SubtotalTaxCurrency,
+IsNull(summary.sumTaxCurrencyCode, '') AS subTaxCurrencyCode,
+IsNull(summary.finalAmount, 0) As SectionTotal,
+IsNull(preInvTot.AppliedAmount, 0) As AppliedTotal,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode,
+CAST(@DecimalPlaces as int) As DecimalPlaces
+ FROM billTaxDetail left join
+/*SubQuery to get invoice totals*/
+ (SELECT 
+  billInvSums.invoice as sumInvoice,
+  billInvSums.mainWBS1 as sumMainWBS1,
+  sum(CASE WHEN (Section &lt;&gt; 'T') THEN billInvSums.finalAmount ELSE 0 END) AS TaxSub,
+  sum(CASE WHEN (Section &lt;&gt; 'T') THEN billInvSums.FinalAmountTaxCurrency ELSE 0 END) AS SubTaxCurrency,
+  min(billInvSums.TaxCurrencyCode) AS sumTaxCurrencyCode,
+  sum(CASE WHEN (Section = 'T') THEN billInvSums.finalAmount ELSE 0 END) AS finalAmount
+  FROM billInvSums 
+  WHERE
+ArrayType = 'I' AND PreInvoice = @PreInvoice /***taxSubTotal***/
+ AND (Invoice = @parmInvoice) 
+ AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+ GROUP BY billInvSums.invoice, billInvSums.mainWBS1) AS summary ON 
+ (billTaxDetail.invoice = summary.sumInvoice) AND 
+ (billTaxDetail.mainWBS1 = summary.sumMainWBS1)
+
+/*SubQuery to get PreInvoice totals*/
+ left join (SELECT 
+  billPreInvoice.invoice as sumInvoice,
+  billPreInvoice.WBS1 as sumMainWBS1,
+  sum(billPreInvoice.AppliedAmount) AS AppliedAmount
+  FROM billPreInvoice
+  WHERE billPreInvoice.WBS1 = IsNull(@parmMainWBS1, /*N*/'')
+AND billPreInvoice.Invoice = IsNull(@parmInvoice, /*N*/'')
+/***EXTEND WHERE CLAUSE***/
+ GROUP BY billPreInvoice.invoice, billPreInvoice.WBS1) AS preInvTot ON 
+ (billTaxDetail.invoice = preInvTot.sumInvoice) AND 
+ (billTaxDetail.mainWBS1 = preInvTot.sumMainWBS1)
+
+ WHERE RetainageInvoice &lt;&gt; 'Y' AND PreInvoice = @PreInvoice
+ AND (billTaxDetail.Invoice = @parmInvoice) 
+ AND (billTaxDetail.MainWBS1 = @parmMainWBS1 OR billTaxDetail.MainWBS1 = /*N*/'~') 
+And (billTaxDetail.billWBS1 = /*N*/'~' And billTaxDetail.billWBS2 = /*N*/'~' And billTaxDetail.billWBS3 = /*N*/'~')
+And @parmOnGroup = 'Y'
+
+ ORDER BY 1</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="code">
+          <DataField>code</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RecdSeq">
+          <DataField>RecdSeq</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="description">
+          <DataField>description</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="computation">
+          <DataField>computation</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="rate">
+          <DataField>rate</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="basis">
+          <DataField>basis</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="amount">
+          <DataField>amount</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="TaxCurrencyCode">
+          <DataField>TaxCurrencyCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AmountTaxCurrency">
+          <DataField>AmountTaxCurrency</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="SectionTotal">
+          <DataField>SectionTotal</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="SubtotalTaxCurrency">
+          <DataField>SubtotalTaxCurrency</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="subTaxCurrencyCode">
+          <DataField>subTaxCurrencyCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TaxSubtotal">
+          <DataField>TaxSubtotal</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="AppliedTotal">
+          <DataField>AppliedTotal</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="CurrencyCode">
+          <DataField>CurrencyCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DecimalPlaces">
+          <DataField>DecimalPlaces</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="TaxesSubReport">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>1.275in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.125in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.475in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_SubtotalTaxCurrency">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Replace(Parameters!SubtotalTaxCurrency.Value,
+"[tax currency code]", Fields!subTaxCurrencyCode.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Visibility>
+                            <Hidden>=IIF(Parameters!PrintSubtotalTaxCurrency.Value = "N" OrElse String.IsNullOrEmpty(Fields!subTaxCurrencyCode.Value), True, False)</Hidden>
+                          </Visibility>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>2</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_SubtotalTaxCurrencyAmount">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!SubtotalTaxCurrency.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Visibility>
+                            <Hidden>=IIF(Parameters!PrintSubtotalTaxCurrency.Value = "N" OrElse String.IsNullOrEmpty(Fields!subTaxCurrencyCode.Value), True, False)</Hidden>
+                          </Visibility>
+                          <CustomProperties>
+                            <CustomProperty>
+                              <Name>CurrencyCodeColumn</Name>
+                              <Value>subTaxCurrencyCode</Value>
+                            </CustomProperty>
+                          </CustomProperties>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_TaxSubtotalBefore">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelSubtotalBeforeTaxes]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Visibility>
+                            <Hidden>=IIF(Parameters!PrintSubtotal.Value = "N", True, False)</Hidden>
+                          </Visibility>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>2</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_TaxSubtotalBeforeAmount">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!TaxSubtotal.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Visibility>
+                            <Hidden>=IIF(Parameters!PrintSubtotal.Value = "N", True, False)</Hidden>
+                          </Visibility>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.2in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_Taxes">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelTaxes]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>11</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>5</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="reportHeader_SectionTotal">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!SectionTotal.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Visibility>
+                            <Hidden>=IIF(Parameters!HideTaxDetail.Value="Y", False, True)</Hidden>
+                          </Visibility>
+                          <Style>
+                            <Border />
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_Description">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!description.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>10</ZIndex>
+                          <Style>
+                            <PaddingLeft>19pt</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>3</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_Computation">
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Parameters!chkDisplayTaxCalc.Value = "Y", String.Format("[LabelComputation]", Code.FormatForCulture(Fields!rate.value / 100, "#,##0.00## %;-#,##0.00## %;0.00 %", User!Language), 
+Code.FormatForCulture(Fields!basis.value, "#,##0." &amp; Left(StrDup(Parameters!DecimalPlaces.Value, "0") &amp; "####", 4) &amp; ";-#,##0." &amp; Left(StrDup(Parameters!DecimalPlaces.Value, "0") &amp; "####", 4) &amp; ";0." &amp; StrDup(Parameters!DecimalPlaces.Value, "0"), User!Language)), "")</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>9</ZIndex>
+                          <Style>
+                            <Border />
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_Amount">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!amount.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>8</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="AmountTaxCurrency">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!AmountTaxCurrency.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>7</ZIndex>
+                          <Visibility>
+                            <Hidden>true</Hidden>
+                          </Visibility>
+                          <CustomProperties>
+                            <CustomProperty>
+                              <Name>CurrencyCodeColumn</Name>
+                              <Value>TaxCurrencyCode</Value>
+                            </CustomProperty>
+                          </CustomProperties>
+                          <Style />
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail2_Description">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Replace(
+Replace(
+Replace(
+Replace(Parameters!TaxCurrency.Value, "[tax code description]", Fields!description.Value), 
+"[tax code]", Fields!description.Value), 
+"[tax currency amount]", ReportItems!AmountTaxCurrency.value), 
+"[tax currency code]", Fields!TaxCurrencyCode.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <PaddingLeft>36pt</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>6</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox28">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox28</rd:DefaultName>
+                          <ZIndex>5</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="footer_TotalTax">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelTotalTaxes]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>4</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>3</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="footer_Amount">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!amount.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>2</ZIndex>
+                          <Visibility>
+                            <Hidden>=IIF(Parameters!HideTaxSubtotal.Value="Y", True, False)</Hidden>
+                          </Visibility>
+                          <Style>
+                            <Border />
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="reportFinal_SectionTotal">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!SectionTotal.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>1</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.07in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox1</rd:DefaultName>
+                          <ZIndex>6</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>6</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=IIF(Parameters!PrintSubtotalTaxCurrency.Value &lt;&gt; "Y" AndAlso Parameters!PrintSubtotal.Value &lt;&gt; "Y", True, False)</Hidden>
+                  </Visibility>
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="TaxesSubReport_Details_Group">
+                    <DataElementName>Detail</DataElementName>
+                  </Group>
+                  <TablixMembers>
+                    <TablixMember>
+                      <Visibility>
+                        <Hidden>=IIF(Parameters!HideTaxDetail.Value="Y", True, False)</Hidden>
+                      </Visibility>
+                    </TablixMember>
+                    <TablixMember>
+                      <Visibility>
+                        <Hidden>=IIF(Parameters!HideTaxDetail.Value="Y", True, IIF(Parameters!TaxCurrency.Value = "" Or Fields!AmountTaxCurrency.Value = 0, True, False))</Hidden>
+                      </Visibility>
+                    </TablixMember>
+                  </TablixMembers>
+                  <DataElementName>Detail_Collection</DataElementName>
+                  <DataElementOutput>Output</DataElementOutput>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=IIF(Parameters!HideTaxDetail.Value="Y", True, False)</Hidden>
+                  </Visibility>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>TaxesDataset</DataSetName>
+            <Height>0.93in</Height>
+            <Width>6.875in</Width>
+            <Style>
+              <FontSize>9pt</FontSize>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>0.93in</Height>
+        <Style />
+      </Body>
+      <Width>6.875in</Width>
+      <Page>
+        <LeftMargin>1in</LeftMargin>
+        <RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin>
+        <BottomMargin>1in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="parmInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>'&lt;Draft&gt;'</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmMainWBS1">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>0092009.00</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmMainWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS1">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>0092009.00</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS2">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>0</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS2</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS3">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS3</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnGroup">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmOnGroup</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnWBS1">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmOnWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnWBS2">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmOnWBS2</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnWBS3">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmOnWBS3</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="TaxCurrency">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>TaxCurrency</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="PrintSubtotal">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>PrintSubtotal</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="SubtotalTaxCurrency">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>SubtotalTaxCurrency</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="DecimalPlaces">
+      <DataType>Integer</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>DecimalPlaces</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BillingCurrencyCode">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>BillingCurrencyCode</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="PrintSubtotalTaxCurrency">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>PrintSubtotalTaxCurrency</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="chkDisplayTaxCalc">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>chkDisplayTaxCalc</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="PreInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>PreInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HideTaxDetail">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HideTaxDetail</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HideTaxSubtotal">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HideTaxSubtotal</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+  </ReportParameters>
+  <CustomProperties>
+    <CustomProperty>
+      <Name>ReportType</Name>
+      <Value>SubReport</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ResourceFileName</Name>
+      <Value>InvoiceTaxes</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ReportVersion</Name>
+      <Value>2.0.5.5170</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>LookupType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>GroupingType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AutoGroupQuery</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>OptionForm</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>HelpFile</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>UseColumnSelection</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowUserDefinedFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowCalcFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>Modules</Name>
+      <Value />
+    </CustomProperty>
+  </CustomProperties>
+  <Code>Public Function FormatForCulture(ByVal wkDecimal As Decimal, ByVal wkFormat As String, ByVal wkCultureName As String) As String
+    Dim curCulture As New System.Globalization.CultureInfo(wkCultureName)
+
+    Return wkDecimal.ToString(wkFormat, curCulture)
+End Function</Code>
+  <Language>=User.Language</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>f40b5e89-9ca0-4aa9-a1d5-3d1c188652b0</rd:ReportID>
+</Report>

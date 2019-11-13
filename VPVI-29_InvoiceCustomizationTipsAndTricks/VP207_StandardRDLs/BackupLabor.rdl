@@ -1,0 +1,3531 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="VisionDemo50__CAMDB7_">
+      <DataSourceReference>DefaultDataSource</DataSourceReference>
+      <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>fdc62d2f-d38a-4285-ac4a-3e011f99d64d</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="LaborDataset">
+      <Query>
+        <DataSourceName>VisionDemo50__CAMDB7_</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@BackupLaborSort">
+            <Value>=Parameters!BackupLaborSort.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmFixedFee">
+            <Value>=Parameters!parmFixedFee.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@BillingCurrencyCode">
+            <Value>=Parameters!BillingCurrencyCode.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmInvoice">
+            <Value>=Parameters!parmInvoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@PreInvoice">
+            <Value>=Parameters!PreInvoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@DecimalPlaces">
+            <Value>=Parameters!DecimalPlaces.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmMainWBS1">
+            <Value>=Parameters!parmMainWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS1">
+            <Value>=Parameters!parmWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@showBillingBackup">
+            <Value>=Parameters!showBillingBackup.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS2">
+            <Value>=Parameters!parmWBS2.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS3">
+            <Value>=Parameters!parmWBS3.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmShowLabExt">
+            <Value>=Parameters!parmShowLabExt.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmshowBillingBackupComments">
+            <Value>=Parameters!parmshowBillingBackupComments.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>/***************************************************************** NOT FIXED FEE  ****************************************************/
+
+SELECT sortKey1, 
+sortLabel1, 
+sortKey2, 
+sortLabel2, 
+employee, 
+name, 
+BackupEmpName,
+overtimeFlag, 
+rateFlag, 
+timeSheetDate, 
+hours, 
+rate, 
+extension, 
+transComment, 
+subjectToMarkup, 
+overtimePremium, 
+method, 
+multiplier1, 
+multiplier2, 
+multiplier3, 
+ovtMultiplier, 
+laborDetail, 
+showComment, 
+showRate, 
+showDate, 
+showMults, 
+showOvtMult, 
+sortMeth1, 
+sortMeth2,
+laborCode, 
+specialOvertimePremium, 
+specialOvtMultiplier, 
+detailGroup,
+IsNull(billLabDetailSub.SectionTotal, 0) as SectionTotal, 
+sumOvertimePremium,
+sumSpecialOvertimePremium,
+sumSubjectToMarkup,
+sumExtension, 
+sortKey3, 
+sortLabel3, 
+LaborCategory,
+CASE WHEN @BackupLaborSort = '2' THEN CONVERT(char(10), TimesheetDate, 20) ELSE CASE WHEN @BackupLaborSort = '3' THEN NULL ELSE sortKey3 END END  As SortColumn,
+CurrencyCode,
+DecimalPlaces 
+ FROM 
+(SELECT billLabDetail.Invoice, 
+billLabDetail.MainWBS1, 
+billLabDetail.BillWBS1,
+billLabDetail.BillWBS2, 
+billLabDetail.BillWBS3,
+sortKey1, 
+sortLabel1, 
+sortKey2, 
+sortLabel2, 
+employee, 
+billLabDetail.name, 
+billLabDetail.BackupEmpName, 
+overtimeFlag, 
+rateFlag, 
+timeSheetDate, 
+hours, 
+rate, 
+extension, 
+transComment, 
+subjectToMarkup, 
+overtimePremium, 
+billLabDetail.method, 
+multiplier1, 
+sortKey3, 
+sortLabel3, 
+LaborCategory, 
+CASE WHEN billLabDetail.multiplier2 = 0 THEN billLabDetail.multiplier3 ELSE billLabDetail.multiplier2 END AS multiplier2, 
+CASE WHEN billLabDetail.multiplier2 = 0 THEN 0 ELSE billLabDetail.multiplier3 END AS multiplier3, 
+ovtMultiplier, laborDetail, 
+billLabDetail.showComment, 
+billLabDetail.showRate, 
+billLabDetail.showDate, 
+billLabDetail.showMults, 
+billLabDetail.showOvtMult, 
+billLabDetail.sortMeth1, 
+billLabDetail.sortMeth2,laborCode, 
+specialOvertimePremium, 
+specialOvtMultiplier, 
+employee + CONVERT(char(10), TimesheetDate, 20) + Convert(char, Rate, 2) + IsNull(RateFlag, 'N') + CASE WHEN billLabDetail.ShowComment = 'Y' THEN Isnull(transComment, /*N*/'') ELSE '' END AS detailGroup,
+sums.sumOvertimePremium,
+sums.sumSpecialOvertimePremium,
+sums.sumSubjectToMarkup,
+sums.sumExtension,
+summary.finalAmount As SectionTotal,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode,
+CAST(@DecimalPlaces as int) As DecimalPlaces
+ FROM  billLabDetail
+ left join (Select Invoice, MainWBS1, BillWBS1,BillWBS2, BillWBS3,  
+Sum(OvertimePremium) As sumOvertimePremium,   
+Sum(SpecialOvertimePremium) As sumSpecialOvertimePremium,   
+Sum(SubjectToMarkup) As sumSubjectToMarkup,   
+Sum(Extension) As sumExtension   
+From billLabDetail  
+WHERE @PreInvoice = 'N' And 
+RateFlag &lt;&gt; 'N'  AND @parmFixedFee = 'N' AND @showBillingBackup = 'Y'
+Group By billLabDetail.Invoice, billLabDetail.MainWBS1, billLabDetail.BillWBS1, 
+billLabDetail.BillWBS2, billLabDetail.BillWBS3)  As sums On  
+(billLabDetail.invoice = sums.Invoice)  AND  
+(billLabDetail.mainWBS1 = sums.MainWBS1) AND  
+(billLabDetail.BillWBS1 = sums.BillWBS1)  AND  
+(billLabDetail.BillWBS2 = sums.BillWBS2) AND  
+(billLabDetail.BillWBS3 = sums.BillWBS3)   
+left join 
+(SELECT billInvSums.Invoice, 
+billInvSums.MainWBS1,  
+billInvSums.BillWBS1, 
+billInvSums.BillWBS2, 
+billInvSums.BillWBS3,      
+sum(billInvSums.finalAmount) AS finalAmount,  
+billInvSums.ArrayType As ArrayType, 
+billInvSums.Section As [Section] 
+FROM billInvSums    
+WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And (Invoice = @parmInvoice) AND @parmFixedFee = 'N' AND @showBillingBackup = 'Y'
+AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~') 
+AND (BillWBS3 = @parmWBS3 OR BillWBS3 = /*N*/'~') 
+GROUP BY billInvSums.Invoice, 
+billInvSums.MainWBS1,  
+billInvSums.BillWBS1, billInvSums.BillWBS2, 
+billInvSums.BillWBS3, billInvSums.Arraytype, 
+billInvSums.Section)  AS summary ON  
+(billLabDetail.invoice = summary.Invoice) 
+AND  (billLabDetail.mainWBS1 = summary.MainWBS1)  
+AND  (billLabDetail.BillWBS1 = summary.BillWBS1) 
+AND  (billLabDetail.BillWBS2 = summary.BillWBS2)  
+AND  (billLabDetail.BillWBS3 = summary.BillWBS3)  
+AND  (summary.ArrayType = 'I' AND summary.Section = /*N*/'L')) AS billLabDetailSub  
+WHERE  @PreInvoice = 'N' And (Invoice = @parmInvoice) AND @parmFixedFee = 'N' AND @showBillingBackup = 'Y'
+AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~') 
+AND (BillWBS3 = @parmWBS3 OR BillWBS3 = /*N*/'~') 
+AND RateFlag &lt;&gt; 'N' And (hours &lt;&gt; 0 OR (transComment &lt;&gt; '' AND @parmshowBillingBackupComments = 'Y'))
+
+/***************************************************************** FIXED FEE *************************************************/
+
+UNION ALL 
+SELECT sortKey1, 
+sortLabel1, 
+sortKey2, 
+sortLabel2, 
+employee, 
+name, 
+BackupEmpName,
+overtimeFlag, 
+rateFlag, 
+timeSheetDate, 
+hours, 
+rate, 
+extension, 
+transComment, 
+subjectToMarkup, 
+overtimePremium, 
+method, 
+multiplier1, 
+multiplier2, 
+multiplier3, 
+ovtMultiplier, 
+laborDetail, 
+showComment, 
+showRate, 
+showDate, 
+showMults, 
+showOvtMult, 
+sortMeth1, 
+sortMeth2,
+laborCode, 
+specialOvertimePremium, 
+specialOvtMultiplier, 
+detailGroup,
+IsNull(billLabDetailSub.SectionTotal, 0) as SectionTotal, 
+sumOvertimePremium,
+sumSpecialOvertimePremium,
+sumSubjectToMarkup,
+sumExtension, 
+sortKey3, 
+sortLabel3, 
+LaborCategory,
+CASE WHEN @BackupLaborSort = '2' THEN CONVERT(char(10), TimesheetDate, 20) ELSE CASE WHEN @BackupLaborSort = '3' THEN NULL ELSE sortKey3 END END  As SortColumn,
+CurrencyCode,
+DecimalPlaces  
+ FROM 
+(SELECT billLabDetail.Invoice, 
+billLabDetail.MainWBS1, 
+billLabDetail.BillWBS1,
+billLabDetail.BillWBS2, 
+billLabDetail.BillWBS3,
+sortKey1, 
+sortLabel1, 
+sortKey2, 
+sortLabel2, 
+employee, 
+billLabDetail.name, 
+billLabDetail.BackupEmpName, 
+overtimeFlag, 
+rateFlag, 
+timeSheetDate, 
+hours, 
+rate, 
+extension, 
+transComment, 
+subjectToMarkup, 
+overtimePremium, 
+billLabDetail.method, 
+multiplier1, 
+sortKey3, 
+sortLabel3, 
+LaborCategory, 
+FixedFee,
+CASE WHEN billLabDetail.multiplier2 = 0 THEN billLabDetail.multiplier3 ELSE billLabDetail.multiplier2 END AS multiplier2, 
+CASE WHEN billLabDetail.multiplier2 = 0 THEN 0 ELSE billLabDetail.multiplier3 END AS multiplier3, 
+ovtMultiplier, laborDetail, 
+billLabDetail.showComment, 
+billLabDetail.showRate, 
+billLabDetail.showDate, 
+billLabDetail.showMults, 
+billLabDetail.showOvtMult, 
+billLabDetail.sortMeth1, 
+billLabDetail.sortMeth2,laborCode, 
+specialOvertimePremium, 
+specialOvtMultiplier, 
+employee + CONVERT(char(10), TimesheetDate, 20) + Convert(char, Rate, 2) + IsNull(RateFlag, 'N') + CASE WHEN billLabDetail.ShowComment = 'Y' THEN Isnull(transComment, /*N*/'') ELSE '' END AS 
+detailGroup,
+sums.sumOvertimePremium,
+sums.sumSpecialOvertimePremium,
+sums.sumSubjectToMarkup,
+sums.sumExtension,
+summary.finalAmount As SectionTotal,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode,
+CAST(@DecimalPlaces as int) As DecimalPlaces
+ FROM  billLabDetail
+ left join (Select Invoice, MainWBS1, BillWBS1,BillWBS2, BillWBS3,  
+Sum(OvertimePremium) As sumOvertimePremium,   
+Sum(SpecialOvertimePremium) As sumSpecialOvertimePremium,   
+Sum(SubjectToMarkup) As sumSubjectToMarkup,   
+Sum(Extension) As sumExtension   
+From billLabDetail  
+WHERE @PreInvoice = 'N' And 
+(Invoice = @parmInvoice) 
+AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~') 
+AND (BillWBS3 = @parmWBS3 OR BillWBS3 = /*N*/'~') 
+AND (FixedFee = 'Y' Or RateFlag &lt;&gt; 'N') 
+AND @parmFixedFee = 'Y' AND @parmShowLabExt = 'N' AND @showBillingBackup = 'Y'
+Group By billLabDetail.Invoice, billLabDetail.MainWBS1, billLabDetail.BillWBS1, 
+billLabDetail.BillWBS2, billLabDetail.BillWBS3)  As sums On  
+(billLabDetail.invoice = sums.Invoice)  AND  
+(billLabDetail.mainWBS1 = sums.MainWBS1) AND  
+(billLabDetail.BillWBS1 = sums.BillWBS1)  AND  
+(billLabDetail.BillWBS2 = sums.BillWBS2) AND  
+(billLabDetail.BillWBS3 = sums.BillWBS3)   
+left join 
+(SELECT billInvSums.Invoice, 
+billInvSums.MainWBS1,  
+billInvSums.BillWBS1, 
+billInvSums.BillWBS2, 
+billInvSums.BillWBS3,      
+sum(billInvSums.finalAmount) AS finalAmount,  
+billInvSums.ArrayType As ArrayType, 
+billInvSums.Section As [Section] 
+FROM billInvSums    
+WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And (Invoice = @parmInvoice) 
+AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~') 
+AND (BillWBS3 = @parmWBS3 OR BillWBS3 = /*N*/'~') 
+AND @parmFixedFee = 'Y' AND @parmShowLabExt = 'N' AND @showBillingBackup = 'Y'
+GROUP BY billInvSums.Invoice, 
+billInvSums.MainWBS1,  
+billInvSums.BillWBS1, billInvSums.BillWBS2, 
+billInvSums.BillWBS3, billInvSums.Arraytype, 
+billInvSums.Section)  AS summary ON  
+(billLabDetail.invoice = summary.Invoice) 
+AND  (billLabDetail.mainWBS1 = summary.MainWBS1)  
+AND  (billLabDetail.BillWBS1 = summary.BillWBS1) 
+AND  (billLabDetail.BillWBS2 = summary.BillWBS2)  
+AND  (billLabDetail.BillWBS3 = summary.BillWBS3)  
+AND  (summary.ArrayType = 'I' AND summary.Section = /*N*/'L')) AS billLabDetailSub  
+WHERE  @PreInvoice = 'N' And (Invoice = @parmInvoice) 
+AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~') 
+AND (BillWBS3 = @parmWBS3 OR BillWBS3 = /*N*/'~') 
+AND (FixedFee = 'Y' Or RateFlag &lt;&gt; 'N') AND @showBillingBackup = 'Y'
+AND @parmFixedFee = 'Y' AND @parmShowLabExt = 'N' And (hours &lt;&gt; 0 OR (transComment &lt;&gt; '' AND @parmshowBillingBackupComments = 'Y'))
+
+
+/********************************************* FIXED FEE AND SHOW LAB EXTENSIONS ***************************************************/
+
+UNION ALL 
+SELECT sortKey1, 
+sortLabel1, 
+sortKey2, 
+sortLabel2, 
+employee, 
+name, 
+BackupEmpName,
+overtimeFlag, 
+rateFlag, 
+timeSheetDate, 
+hours, 
+rate, 
+extension, 
+transComment, 
+subjectToMarkup, 
+overtimePremium, 
+method, 
+multiplier1, 
+multiplier2, 
+multiplier3, 
+ovtMultiplier, 
+laborDetail, 
+showComment, 
+showRate, 
+showDate, 
+showMults, 
+showOvtMult, 
+sortMeth1, 
+sortMeth2,
+laborCode, 
+specialOvertimePremium, 
+specialOvtMultiplier, 
+detailGroup,
+IsNull(billLabDetailSub.SectionTotal, 0) as SectionTotal, 
+sumOvertimePremium,
+sumSpecialOvertimePremium,
+sumSubjectToMarkup,
+sumExtension, 
+sortKey3, 
+sortLabel3, 
+LaborCategory,
+CASE WHEN @BackupLaborSort = '2' THEN CONVERT(char(10), TimesheetDate, 20) ELSE CASE WHEN @BackupLaborSort = '3' THEN NULL ELSE sortKey3 END END  As SortColumn,
+CurrencyCode,
+DecimalPlaces  
+ FROM 
+(SELECT billLabDetail.Invoice, 
+billLabDetail.MainWBS1, 
+billLabDetail.BillWBS1,
+billLabDetail.BillWBS2, 
+billLabDetail.BillWBS3,
+sortKey1, 
+sortLabel1, 
+sortKey2, 
+sortLabel2, 
+employee, 
+billLabDetail.name, 
+billLabDetail.BackupEmpName, 
+overtimeFlag, 
+rateFlag, 
+timeSheetDate, 
+hours, 
+rate, 
+extension, 
+transComment, 
+subjectToMarkup, 
+overtimePremium, 
+billLabDetail.method, 
+multiplier1, 
+sortKey3, 
+sortLabel3, 
+LaborCategory, 
+FixedFee,
+CASE WHEN billLabDetail.multiplier2 = 0 THEN billLabDetail.multiplier3 ELSE billLabDetail.multiplier2 END AS multiplier2, 
+CASE WHEN billLabDetail.multiplier2 = 0 THEN 0 ELSE billLabDetail.multiplier3 END AS multiplier3, 
+ovtMultiplier, laborDetail, 
+billLabDetail.showComment, 
+billLabDetail.showRate, 
+billLabDetail.showDate, 
+billLabDetail.showMults, 
+billLabDetail.showOvtMult, 
+billLabDetail.sortMeth1, 
+billLabDetail.sortMeth2,laborCode, 
+specialOvertimePremium, 
+specialOvtMultiplier, 
+employee + CONVERT(char(10), TimesheetDate, 20) + Convert(char, Rate, 2) + IsNull(RateFlag, 'N') + CASE WHEN billLabDetail.ShowComment = 'Y' THEN Isnull(transComment, /*N*/'') ELSE '' END AS 
+detailGroup,
+sums.sumOvertimePremium,
+sums.sumSpecialOvertimePremium,
+sums.sumSubjectToMarkup,
+sums.sumExtension,
+summary.finalAmount As SectionTotal,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode,
+CAST(@DecimalPlaces as int) As DecimalPlaces
+ FROM  billLabDetail
+ left join (Select Invoice, MainWBS1, BillWBS1,BillWBS2, BillWBS3,  
+Sum(OvertimePremium) As sumOvertimePremium,   
+Sum(SpecialOvertimePremium) As sumSpecialOvertimePremium,   
+Sum(SubjectToMarkup) As sumSubjectToMarkup,   
+Sum(Extension) As sumExtension   
+From billLabDetail  
+WHERE @PreInvoice = 'N' And 
+(Invoice = @parmInvoice) 
+AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~') 
+AND (BillWBS3 = @parmWBS3 OR BillWBS3 = /*N*/'~') 
+AND (FixedFee = 'Y' Or RateFlag &lt;&gt; 'N') 
+AND (@parmFixedFee = 'Y' AND @parmShowLabExt = 'Y') AND @showBillingBackup = 'Y'
+Group By billLabDetail.Invoice, billLabDetail.MainWBS1, billLabDetail.BillWBS1, 
+billLabDetail.BillWBS2, billLabDetail.BillWBS3)  As sums On  
+(billLabDetail.invoice = sums.Invoice)  AND  
+(billLabDetail.mainWBS1 = sums.MainWBS1) AND  
+(billLabDetail.BillWBS1 = sums.BillWBS1)  AND  
+(billLabDetail.BillWBS2 = sums.BillWBS2) AND  
+(billLabDetail.BillWBS3 = sums.BillWBS3)   
+INNER JOIN  (
+
+SELECT Invoice, MainWBS1,  BillWBS1, BillWBS2, BillWBS3, 
+sum(Extension) AS finalAmount 
+FROM billLabDetail  
+WHERE @PreInvoice = 'N' And 
+(Invoice = @parmInvoice) 
+AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~') 
+AND (BillWBS3 = @parmWBS3 OR BillWBS3 = /*N*/'~') 
+AND (FixedFee = 'Y') 
+AND (@parmShowLabExt = 'Y') AND @showBillingBackup = 'Y'
+GROUP BY Invoice, MainWBS1,  BillWBS1, BillWBS2, BillWBS3
+
+UNION ALL
+SELECT 
+ billInvSums.Invoice, billInvSums.MainWBS1,  billInvSums.BillWBS1, billInvSums.BillWBS2, billInvSums.BillWBS3,     
+ max(billInvSums.finalAmount) AS finalAmount 
+ FROM billInvSums INNER JOIN billLabDetail ON (billLabDetail.invoice = billInvSums.Invoice) AND  (billLabDetail.mainWBS1 = billInvSums.MainWBS1) 
+ AND  (billLabDetail.BillWBS1 = billInvSums.BillWBS1) AND  (billLabDetail.BillWBS2 = billInvSums.BillWBS2) 
+ AND  (billLabDetail.BillWBS3 = billInvSums.BillWBS3) 
+ WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And (billInvSums.Invoice = @parmInvoice) 
+AND (billInvSums.MainWBS1 = @parmMainWBS1 OR billInvSums.MainWBS1 = /*N*/'~') 
+AND (billInvSums.BillWBS1 = @parmWBS1 OR billInvSums.BillWBS1 = /*N*/'~') 
+AND (billInvSums.BillWBS2 = @parmWBS2 OR billInvSums.BillWBS2 = /*N*/'~') 
+AND (billInvSums.BillWBS3 = @parmWBS3 OR billInvSums.BillWBS3 = /*N*/'~') 
+ AND (FixedFee &lt;&gt; 'Y') AND @showBillingBackup = 'Y' AND (billInvSums.ArrayType = 'I' AND billInvSums.Section = /*N*/'L') 
+ GROUP BY billInvSums.Invoice, billInvSums.MainWBS1,  billInvSums.BillWBS1, billInvSums.BillWBS2, billInvSums.BillWBS3, billInvSums.Arraytype, billInvSums.Section 
+) AS summary
+ 
+ON  (billLabDetail.invoice = summary.Invoice) AND  (billLabDetail.mainWBS1 = summary.MainWBS1) 
+AND  (billLabDetail.BillWBS1 = summary.BillWBS1) AND  (billLabDetail.BillWBS2 = summary.BillWBS2) 
+AND  (billLabDetail.BillWBS3 = summary.BillWBS3) 
+) AS billLabDetailSub  
+WHERE @PreInvoice = 'N' And  (Invoice = @parmInvoice) 
+AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~') 
+AND (BillWBS3 = @parmWBS3 OR BillWBS3 = /*N*/'~') 
+AND (FixedFee = 'Y' Or RateFlag &lt;&gt; 'N')
+AND @parmShowLabExt = 'Y' AND @showBillingBackup = 'Y' And (hours &lt;&gt; 0 OR (transComment &lt;&gt; '' AND @parmshowBillingBackupComments = 'Y'))
+
+ORDER BY sortKey1, sortKey2, 
+SortColumn,
+name, employee, detailGroup</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="sortKey1">
+          <DataField>sortKey1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="sortLabel1">
+          <DataField>sortLabel1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="sortKey2">
+          <DataField>sortKey2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="sortLabel2">
+          <DataField>sortLabel2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="employee">
+          <DataField>employee</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="name">
+          <DataField>name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BackupEmpName">
+          <DataField>BackupEmpName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="overtimeFlag">
+          <DataField>overtimeFlag</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="rateFlag">
+          <DataField>rateFlag</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="timeSheetDate">
+          <DataField>timeSheetDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="hours">
+          <DataField>hours</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="rate">
+          <DataField>rate</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="extension">
+          <DataField>extension</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="transComment">
+          <DataField>transComment</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="subjectToMarkup">
+          <DataField>subjectToMarkup</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="overtimePremium">
+          <DataField>overtimePremium</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="method">
+          <DataField>method</DataField>
+          <rd:TypeName>System.Int16</rd:TypeName>
+        </Field>
+        <Field Name="multiplier1">
+          <DataField>multiplier1</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="multiplier2">
+          <DataField>multiplier2</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="multiplier3">
+          <DataField>multiplier3</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="ovtMultiplier">
+          <DataField>ovtMultiplier</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="laborDetail">
+          <DataField>laborDetail</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="showComment">
+          <DataField>showComment</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="showRate">
+          <DataField>showRate</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="showDate">
+          <DataField>showDate</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="showMults">
+          <DataField>showMults</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="showOvtMult">
+          <DataField>showOvtMult</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="sortMeth1">
+          <DataField>sortMeth1</DataField>
+          <rd:TypeName>System.Int16</rd:TypeName>
+        </Field>
+        <Field Name="sortMeth2">
+          <DataField>sortMeth2</DataField>
+          <rd:TypeName>System.Int16</rd:TypeName>
+        </Field>
+        <Field Name="laborCode">
+          <DataField>laborCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="specialOvertimePremium">
+          <DataField>specialOvertimePremium</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="specialOvtMultiplier">
+          <DataField>specialOvtMultiplier</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="detailGroup">
+          <DataField>detailGroup</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SectionTotal">
+          <DataField>SectionTotal</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="sumOvertimePremium">
+          <DataField>sumOvertimePremium</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="sumSpecialOvertimePremium">
+          <DataField>sumSpecialOvertimePremium</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="sumSubjectToMarkup">
+          <DataField>sumSubjectToMarkup</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="sumExtension">
+          <DataField>sumExtension</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="sortKey3">
+          <DataField>sortKey3</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="sortLabel3">
+          <DataField>sortLabel3</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="LaborCategory">
+          <DataField>LaborCategory</DataField>
+          <rd:TypeName>System.Int16</rd:TypeName>
+        </Field>
+        <Field Name="SortColumn">
+          <DataField>SortColumn</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CurrencyCode">
+          <DataField>CurrencyCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DecimalPlaces">
+          <DataField>DecimalPlaces</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="LaborSubReport">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>0.75in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.4in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.78in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.355in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.72in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.7in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.165in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.2in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_Labor">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelProfessionalPersonnel]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>78</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>9</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox1</rd:DefaultName>
+                          <ZIndex>77</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>4</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_HoursLabor">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelHours]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>76</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_RateLabor">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelRate]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>75</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif((Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0)
+Or (Fields!laborDetail.Value = "N" And Not (Fields!showRate.Value = "Y" And ((Fields!method.Value = 3 And (Fields!sortMeth1.Value = 3 or Fields!sortMeth2.Value = 3)) Or (Fields!method.Value = 4 And (Fields!sortMeth1.Value = 4 or Fields!sortMeth2.Value = 4)))))
+Or (Fields!showRate.Value = "N"), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox3</rd:DefaultName>
+                          <ZIndex>74</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_AmountLabor">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelAmount]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>73</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif(Parameters!parmFixedFee.Value = "Y" And Fields!method.Value = 0, True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox33">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox33</rd:DefaultName>
+                          <ZIndex>72</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader1_Label">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!sortLabel1.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>71</ZIndex>
+                          <Style>
+                            <PaddingLeft>=iif(isNothing(Fields!sortKey2.Value) And isNothing(Fields!sortKey3.Value), "19pt", "0pt")</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>9</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader2_Label">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!sortLabel2.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>70</ZIndex>
+                          <Style>
+                            <PaddingLeft>=IIF(isNothing(Fields!sortKey1.Value) And Not isNothing(Fields!sortKey3.Value), "0pt","19pt")</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>9</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader3_Label">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!sortLabel3.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>69</ZIndex>
+                          <Style>
+                            <PaddingLeft>=iif(isNothing(Fields!sortKey1.Value) or isNothing(Fields!sortKey3.Value), "19pt", "36pt")</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>9</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail2_Name">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!employee.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>68</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox122">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=iif(Parameters!parmshowBillingBackupLaborCode.Value = "Y" AND Not IsNothing(Fields!laborCode.Value),Fields!laborCode.Value
+ &amp; iif((Parameters!parmshowBillingBackupLaborCategory.Value = "Y" AND Not IsNothing(Fields!LaborCategory.Value)) Or Not IsNothing(Fields!BackupEmpName.Value), " - ", ""), "")
+  &amp; iif(Parameters!parmshowBillingBackupLaborCategory.Value = "Y" AND Not IsNothing(Fields!LaborCategory.Value), Fields!LaborCategory.Value 
+  &amp; iif(Not IsNothing(Fields!BackupEmpName.Value), " - ", ""), "") &amp; Fields!BackupEmpName.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox122</rd:DefaultName>
+                          <ZIndex>67</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail2_TimesheetDate">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!timeSheetDate.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>d</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>66</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail2_OvtFlag">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIf(Fields!overtimeFlag.Value="Ovt" OrElse Fields!overtimeFlag.Value="OT2",Parameters!OvtIndicator.Value,Fields!overtimeFlag.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>d</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>65</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail2_Hours">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!hours.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>N2</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>64</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail2_Rate">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!rate.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>="#,##0." &amp; Left(StrDup(Parameters!DecimalPlaces.Value, "0") &amp; "####", 4) &amp; 
+";-#,##0." &amp; Left(StrDup(Parameters!DecimalPlaces.Value, "0") &amp; "####", 4) &amp; 
+";#"</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>63</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif(Fields!showRate.Value = "N" Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail2_RateFlag">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!rateFlag.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>62</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif(Fields!showRate.Value = "N" Or 
+(Parameters!parmFixedFee.Value = "Y" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail2_Amount">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!extension.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>61</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif(Fields!showRate.Value = "N" Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox38">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox38</rd:DefaultName>
+                          <ZIndex>60</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox149">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=iif(Parameters!parmshowBillingBackupLaborCode.Value = "Y" AND Not IsNothing(Fields!laborCode.Value),Fields!laborCode.Value
+ &amp; iif((Parameters!parmshowBillingBackupLaborCategory.Value = "Y" AND Not IsNothing(Fields!LaborCategory.Value)) Or Not IsNothing(Fields!BackupEmpName.Value), " - ", ""), "")
+  &amp; iif(Parameters!parmshowBillingBackupLaborCategory.Value = "Y" AND Not IsNothing(Fields!LaborCategory.Value), Fields!LaborCategory.Value 
+  &amp; iif(Not IsNothing(Fields!BackupEmpName.Value), " - ", ""), "") &amp; Fields!BackupEmpName.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>59</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>2</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox151">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!timeSheetDate.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>d</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>58</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox152">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIf(Fields!overtimeFlag.Value="Ovt" OrElse Fields!overtimeFlag.Value="OT2",Parameters!OvtIndicator.Value,Fields!overtimeFlag.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>d</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>57</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox153">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!hours.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>N2</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>56</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_Rate">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!rate.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>="#,##0." &amp; Left(StrDup(Parameters!DecimalPlaces.Value, "0") &amp; "####", 4) &amp; 
+";-#,##0." &amp; Left(StrDup(Parameters!DecimalPlaces.Value, "0") &amp; "####", 4) &amp; 
+";#"</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>55</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif(Fields!showRate.Value = "N" Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox155">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!rateFlag.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>54</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif(Fields!showRate.Value = "N" Or 
+(Parameters!parmFixedFee.Value = "Y" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox156">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!extension.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>53</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif(Fields!showRate.Value = "N" Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox157">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>52</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox139">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox139</rd:DefaultName>
+                          <ZIndex>3</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail3_Comment">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!transComment.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>2</ZIndex>
+                          <CustomProperties>
+                            <CustomProperty>
+                              <Name>TextFormatType</Name>
+                              <Value>HTMLFormat</Value>
+                            </CustomProperty>
+                          </CustomProperties>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>6</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox138">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox138</rd:DefaultName>
+                          <ZIndex>1</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox45">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox45</rd:DefaultName>
+                          <Style>
+                            <PaddingLeft>=iif(isNothing(Fields!sortKey1.Value),"54pt", "72pt")</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupFooter2_Label">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!sortLabel2.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>9</ZIndex>
+                          <Style>
+                            <PaddingLeft>=IIF(isNothing(Fields!sortKey1.Value), "0pt", "19pt")</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>4</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupFooter2_Hours">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!hours.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>N2</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>8</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupFooter2_Rate">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!rate.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>="#,##0." &amp; Left(StrDup(Parameters!DecimalPlaces.Value, "0") &amp; "####", 4) &amp; 
+";-#,##0." &amp; Left(StrDup(Parameters!DecimalPlaces.Value, "0") &amp; "####", 4) &amp; 
+";#"</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>7</ZIndex>
+                          <Visibility>
+                            <Hidden>=IIF((IIF(Fields!showRate.Value = "Y", 
+IIF(Fields!laborDetail.Value = "N", 
+IIF((Fields!method.Value = 3 And Fields!sortMeth2.Value = 3) Or (Fields!method.Value = 4 And Fields!sortMeth2.Value = 4), "true", "false")
+, "true")
+, "false")) = "false"
+Or (Fields!method.Value = 0 And Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N"), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox30">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox30</rd:DefaultName>
+                          <ZIndex>6</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupfooter2_Amount">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!extension.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>5</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif(Fields!showRate.Value = "N" Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox46">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox46</rd:DefaultName>
+                          <ZIndex>4</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupFooter1_Label">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!sortLabel1.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>15</ZIndex>
+                          <Style>
+                            <PaddingLeft>=iif(isNothing(Fields!sortKey2.Value), "19pt", "0pt")</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>4</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupFooter1_Hours">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!hours.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>N2</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>14</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupFooter1_Rate">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!rate.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>="#,##0." &amp; Left(StrDup(Parameters!DecimalPlaces.Value, "0") &amp; "####", 4) &amp; 
+";-#,##0." &amp; Left(StrDup(Parameters!DecimalPlaces.Value, "0") &amp; "####", 4) &amp; 
+";#"</Format>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>13</ZIndex>
+                          <Visibility>
+                            <Hidden>=IIF((IIF(Fields!showRate.Value = "Y", 
+IIF(Fields!laborDetail.Value = "N", 
+IIF((Fields!method.Value = 3 And Fields!sortMeth1.Value = 3) Or (Fields!method.Value = 4 And Fields!sortMeth1.Value = 4), "true", "false")
+, "true")
+, "false")) = "false"
+Or (Fields!method.Value = 0 And Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N"), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox2</rd:DefaultName>
+                          <ZIndex>12</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupFooter1_Amount">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!extension.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>11</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif(Fields!showRate.Value = "N" Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox47">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox47</rd:DefaultName>
+                          <ZIndex>10</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="reportFooter1_lblTotal">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelTotals]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>21</ZIndex>
+                          <Style>
+                            <PaddingLeft>1.275in</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>4</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="reportFooter1_Hours">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!hours.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>N2</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>20</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox20">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>N</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox20</rd:DefaultName>
+                          <ZIndex>19</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox5">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox5</rd:DefaultName>
+                          <ZIndex>18</ZIndex>
+                          <Style>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ReportFooter1_Extension">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!extension.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>17</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif(Fields!showRate.Value = "N" Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox52">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox52</rd:DefaultName>
+                          <ZIndex>16</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox13">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>27</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>3</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="reportFooter2_Mult">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!multiplier2.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>#,##0.0### "[LabelTimes]";-#,##0.0### "[LabelTimes]";#</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>26</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif((Fields!multiplier2.Value = 0 or Fields!sumSubjectToMarkup.Value = 0) Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0)
+Or ((Fields!multiplier2.Value &lt;&gt; 0 AndAlso Fields!sumSubjectToMarkup.Value &lt;&gt; 0) AndAlso 
+Fields!multiplier3.Value = 0 AndAlso (Fields!sumExtension.Value - Fields!sumSubjectToMarkup.Value) = 0 AndAlso Fields!sumOvertimePremium.Value = 0 AndAlso Fields!sumSpecialOvertimePremium.Value = 0)
+, True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>2</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox18">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!subjectToMarkup.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>25</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif((Fields!multiplier2.Value = 0 or Fields!sumSubjectToMarkup.Value = 0) Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0)
+Or ((Fields!multiplier2.Value &lt;&gt; 0 AndAlso Fields!sumSubjectToMarkup.Value &lt;&gt; 0) AndAlso 
+Fields!multiplier3.Value = 0 AndAlso (Fields!sumExtension.Value - Fields!sumSubjectToMarkup.Value) = 0 AndAlso Fields!sumOvertimePremium.Value = 0 AndAlso Fields!sumSpecialOvertimePremium.Value = 0)
+, True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox6">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox6</rd:DefaultName>
+                          <ZIndex>24</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox19">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!subjectToMarkup.Value) * Min(Fields!multiplier2.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>23</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif((Fields!multiplier2.Value = 0 or Fields!sumSubjectToMarkup.Value = 0) Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0)
+Or ((Fields!multiplier2.Value &lt;&gt; 0 AndAlso Fields!sumSubjectToMarkup.Value &lt;&gt; 0) AndAlso 
+Fields!multiplier3.Value = 0 AndAlso (Fields!sumExtension.Value - Fields!sumSubjectToMarkup.Value) = 0 AndAlso Fields!sumOvertimePremium.Value = 0 AndAlso Fields!sumSpecialOvertimePremium.Value = 0)
+, True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox53">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox53</rd:DefaultName>
+                          <ZIndex>22</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox24">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>33</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>3</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="reportFooter3_Mult">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!multiplier3.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>#,##0.0### "[LabelTimes]";-#,##0.0### "[LabelTimes]";#</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>32</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif((Fields!multiplier3.Value = 0 or Fields!sumSubjectToMarkup.Value = 0) Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>2</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox28">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!subjectToMarkup.Value) * Min(Fields!multiplier2.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>31</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif((Fields!multiplier3.Value = 0 or Fields!sumSubjectToMarkup.Value = 0) Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox8">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox8</rd:DefaultName>
+                          <ZIndex>30</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox29">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=(Math.Round((Sum(Fields!subjectToMarkup.Value)*Min(Fields!multiplier2.Value)), CInt(Parameters!DecimalPlaces.Value)))*Min(Fields!multiplier3.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>29</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif((Fields!multiplier3.Value = 0 or Fields!sumSubjectToMarkup.Value = 0) Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox54">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox54</rd:DefaultName>
+                          <ZIndex>28</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="footer_OVTLabor">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelOvtPremium]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>39</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif((Fields!sumOvertimePremium.Value = 0) Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style>
+                            <PaddingLeft>1.275in</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>3</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="reportFooter4_Mult">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!ovtMultiplier.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>#,##0.0### "[LabelTimes]";-#,##0.0### "[LabelTimes]";#</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>38</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif(Fields!showOvtMult.Value = "N" Or (Fields!sumOvertimePremium.Value = 0) Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>2</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox87">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!sumOvertimePremium.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>37</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif(Fields!showOvtMult.Value = "N" Or (Fields!sumOvertimePremium.Value = 0) Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox9">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox9</rd:DefaultName>
+                          <ZIndex>36</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox88">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Fields!showOvtMult.Value = "N", Fields!sumOvertimePremium.Value, Fields!sumOvertimePremium.Value * Fields!ovtMultiplier.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>35</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif((Fields!sumOvertimePremium.Value = 0) Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox59">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox59</rd:DefaultName>
+                          <ZIndex>34</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="footer_OVT2Labor">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelOvt2Premium]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>45</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif((Fields!sumSpecialOvertimePremium.Value = 0) Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style>
+                            <PaddingLeft>1.275in</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>3</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="reportFooter5_Mult">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!specialOvtMultiplier.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>#,##0.0### "[LabelTimes]";-#,##0.0### "[LabelTimes]";#</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>44</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif(Fields!showOvtMult.Value = "N" Or (Fields!sumSpecialOvertimePremium.Value = 0) Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>2</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox93">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!sumSpecialOvertimePremium.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>43</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif(Fields!showOvtMult.Value = "N" Or (Fields!sumSpecialOvertimePremium.Value = 0) Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox12">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox12</rd:DefaultName>
+                          <ZIndex>42</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox94">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Fields!showOvtMult.Value = "N", Fields!sumSpecialOvertimePremium.Value, Fields!sumSpecialOvertimePremium.Value * Fields!specialOvtMultiplier.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>41</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif((Fields!sumSpecialOvertimePremium.Value = 0) Or (Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0), True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox60">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox60</rd:DefaultName>
+                          <ZIndex>40</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="footer_TotalLabor">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelTotalLabor]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>50</ZIndex>
+                          <Style>
+                            <PaddingLeft>1.275in</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>5</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="reportFooter6_Mult">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!multiplier2.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>#,##0.0### "[LabelTimes]";-#,##0.0### "[LabelTimes]";#</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>48</ZIndex>
+                          <Visibility>
+                            <Hidden>=IIF((Fields!multiplier2.Value &lt;&gt; 0 AndAlso Fields!sumSubjectToMarkup.Value &lt;&gt; 0) AndAlso 
+Fields!multiplier3.Value = 0 AndAlso (Fields!sumExtension.Value - Fields!sumSubjectToMarkup.Value) = 0 AndAlso Fields!sumOvertimePremium.Value = 0 AndAlso Fields!sumSpecialOvertimePremium.Value = 0, False, True)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>2</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox7">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!subjectToMarkup.Value)</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>47</ZIndex>
+                          <Visibility>
+                            <Hidden>=IIF((Fields!multiplier2.Value &lt;&gt; 0 AndAlso Fields!sumSubjectToMarkup.Value &lt;&gt; 0) AndAlso 
+Fields!multiplier3.Value = 0 AndAlso (Fields!sumExtension.Value - Fields!sumSubjectToMarkup.Value) = 0 AndAlso Fields!sumOvertimePremium.Value = 0 AndAlso Fields!sumSpecialOvertimePremium.Value = 0, False, True)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="reportFinal_SectionTotal">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!SectionTotal.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>46</ZIndex>
+                          <Visibility>
+                            <Hidden>=iif(Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0, True, False)</Hidden>
+                          </Visibility>
+                          <DataElementOutput>NoOutput</DataElementOutput>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.07in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox4</rd:DefaultName>
+                          <ZIndex>51</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>9</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=iif(Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0, True, False)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=iif(Parameters!parmFixedFee.Value = "Y" And Parameters!parmShowLabExt.Value = "N" And Fields!method.Value = 0, True, False)</Hidden>
+                  </Visibility>
+                </TablixMember>
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="LaborSubReport_SortKey1">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!sortKey1.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <TablixMembers>
+                    <TablixMember>
+                      <Visibility>
+                        <Hidden>=iif(isNothing(Fields!sortKey1.Value), true, false)</Hidden>
+                      </Visibility>
+                      <KeepWithGroup>After</KeepWithGroup>
+                      <KeepTogether>true</KeepTogether>
+                    </TablixMember>
+                    <TablixMember>
+                      <Group Name="LaborSubReport_SortKey2">
+                        <GroupExpressions>
+                          <GroupExpression>=Fields!sortKey2.Value</GroupExpression>
+                        </GroupExpressions>
+                      </Group>
+                      <TablixMembers>
+                        <TablixMember>
+                          <Visibility>
+                            <Hidden>=iif(isNothing(Fields!sortKey2.Value), true, false)</Hidden>
+                          </Visibility>
+                          <KeepWithGroup>After</KeepWithGroup>
+                          <KeepTogether>true</KeepTogether>
+                        </TablixMember>
+                        <TablixMember>
+                          <Group Name="LaborSubReport_SortKey3">
+                            <GroupExpressions>
+                              <GroupExpression>=Fields!sortKey3.Value</GroupExpression>
+                            </GroupExpressions>
+                          </Group>
+                          <TablixMembers>
+                            <TablixMember>
+                              <Visibility>
+                                <Hidden>=iif(isNothing(Fields!sortKey3.Value) Or (Fields!sortKey3.Value = " "), true, false)</Hidden>
+                              </Visibility>
+                              <KeepWithGroup>After</KeepWithGroup>
+                              <KeepTogether>true</KeepTogether>
+                            </TablixMember>
+                            <TablixMember>
+                              <Group Name="LaborSubReport_Details_Group">
+                                <DataElementName>Detail</DataElementName>
+                              </Group>
+                              <TablixMembers>
+                                <TablixMember>
+                                  <Visibility>
+                                    <Hidden>=IIF(Parameters!parmshowBillingBackupEmployeeNumber.Value = "Y", False, True)</Hidden>
+                                  </Visibility>
+                                </TablixMember>
+                                <TablixMember>
+                                  <Visibility>
+                                    <Hidden>=IIF(Parameters!parmshowBillingBackupEmployeeNumber.Value = "Y", True, False)</Hidden>
+                                  </Visibility>
+                                </TablixMember>
+                                <TablixMember>
+                                  <Visibility>
+                                    <Hidden>=iif(Fields!transComment.Value = "" Or Parameters!parmshowBillingBackupComments.Value = "N", true, false)</Hidden>
+                                  </Visibility>
+                                </TablixMember>
+                              </TablixMembers>
+                              <DataElementName>Detail_Collection</DataElementName>
+                              <DataElementOutput>Output</DataElementOutput>
+                              <KeepTogether>true</KeepTogether>
+                            </TablixMember>
+                          </TablixMembers>
+                        </TablixMember>
+                        <TablixMember>
+                          <Visibility>
+                            <Hidden>true</Hidden>
+                          </Visibility>
+                          <KeepWithGroup>Before</KeepWithGroup>
+                          <KeepTogether>true</KeepTogether>
+                        </TablixMember>
+                      </TablixMembers>
+                    </TablixMember>
+                    <TablixMember>
+                      <Visibility>
+                        <Hidden>true</Hidden>
+                      </Visibility>
+                      <KeepWithGroup>Before</KeepWithGroup>
+                      <KeepTogether>true</KeepTogether>
+                    </TablixMember>
+                  </TablixMembers>
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=iif((Fields!multiplier2.Value = 0 OrElse Fields!sumSubjectToMarkup.Value = 0) OrElse
+(Fields!multiplier3.Value = 0 AndAlso (Fields!sumExtension.Value - Fields!sumSubjectToMarkup.Value) = 0 AndAlso Fields!sumOvertimePremium.Value = 0 AndAlso Fields!sumSpecialOvertimePremium.Value = 0)
+, true, false)</Hidden>
+                  </Visibility>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=iif(Fields!multiplier3.Value = 0 or Fields!sumSubjectToMarkup.Value = 0, true, false)</Hidden>
+                  </Visibility>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=iif(Fields!sumOvertimePremium.Value = 0, true, false)</Hidden>
+                  </Visibility>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=iif(Fields!sumSpecialOvertimePremium.Value = 0, true, false)</Hidden>
+                  </Visibility>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>LaborDataset</DataSetName>
+            <Height>2.67in</Height>
+            <Width>6.87in</Width>
+            <Style>
+              <FontSize>9pt</FontSize>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>2.67in</Height>
+        <Style />
+      </Body>
+      <Width>6.875in</Width>
+      <Page>
+        <LeftMargin>1in</LeftMargin>
+        <RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin>
+        <BottomMargin>1in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="parmInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>&lt;Draft&gt;</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmInvoice</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="parmMainWBS1">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>REG000010069</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmMainWBS1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS1">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>REG000010069</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS2">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>0</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS2</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS3">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS3</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="parmFixedFee">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmFixedFee</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmShowLabExt">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmShowLabExt</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BackupLaborSort">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>0</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_8</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmshowBillingBackupComments">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_11</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmshowBillingBackupLaborCode">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_12</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmshowBillingBackupLaborCategory">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_13</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmshowBillingBackupEmployeeNumber">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_14</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="DecimalPlaces">
+      <DataType>Integer</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>2</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>DecimalPlaces</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BillingCurrencyCode">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>BillingCurrencyCode</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="showBillingBackup">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>showBillingBackup</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="OvtIndicator">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>OvtIndicator</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="PreInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>PreInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+  </ReportParameters>
+  <CustomProperties>
+    <CustomProperty>
+      <Name>ReportType</Name>
+      <Value>SubReport</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ResourceFileName</Name>
+      <Value>BackupLabor</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ReportVersion</Name>
+      <Value>2.0.5.5170</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>LookupType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>GroupingType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AutoGroupQuery</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>OptionForm</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>HelpFile</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>UseColumnSelection</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowUserDefinedFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowCalcFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>Modules</Name>
+      <Value />
+    </CustomProperty>
+  </CustomProperties>
+  <Language>=User.Language</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>f40b5e89-9ca0-4aa9-a1d5-3d1c188652b0</rd:ReportID>
+</Report>

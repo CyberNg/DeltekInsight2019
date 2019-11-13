@@ -1,0 +1,710 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition">
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="InterestSubReport">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>1.25in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.25in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>3.375in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.2in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="header_AddOnInterest">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelInterest]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>6</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>4</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="reportHeader_SectionTotal">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!SectionTotal.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Visibility>
+                            <Hidden>=IIF(Parameters!HideIntDetail.Value="Y", False, True)</Hidden>
+                          </Visibility>
+                          <Style>
+                            <Border />
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_Rate">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!rate.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>P2</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>4</ZIndex>
+                          <Style>
+                            <PaddingLeft>19pt</PaddingLeft>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_of">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>[LabelOf]</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>3</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_Balance">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!balance.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>2</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_Grace">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!graceString.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <NumeralVariant>2</NumeralVariant>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>1</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="detail_SectionTotal">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!SectionTotal.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>c</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.07in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox1</rd:DefaultName>
+                          <ZIndex>5</ZIndex>
+                          <Style />
+                        </Textbox>
+                        <ColSpan>5</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="InterestSubReport_Details_Group">
+                    <DataElementName>Detail</DataElementName>
+                  </Group>
+                  <TablixMembers>
+                    <TablixMember />
+                  </TablixMembers>
+                  <Visibility>
+                    <Hidden>=IIF(Parameters!HideIntDetail.Value="Y", True, False)</Hidden>
+                  </Visibility>
+                  <DataElementName>Detail_Collection</DataElementName>
+                  <DataElementOutput>Output</DataElementOutput>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>InterestDataset</DataSetName>
+            <Height>0.43in</Height>
+            <Width>6.875in</Width>
+            <Style>
+              <FontSize>9pt</FontSize>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>0.43in</Height>
+        <Style />
+      </Body>
+      <Width>6.875in</Width>
+      <Page>
+        <LeftMargin>1in</LeftMargin>
+        <RightMargin>1in</RightMargin>
+        <TopMargin>1in</TopMargin>
+        <BottomMargin>1in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <DataSources>
+    <DataSource Name="VisionQA51MCMC__alisond_">
+      <DataSourceReference>DefaultDataSource</DataSourceReference>
+      <rd:DataSourceID>fdc62d2f-d38a-4285-ac4a-3e011f99d64d</rd:DataSourceID>
+      <rd:SecurityType>None</rd:SecurityType>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="InterestDataset">
+      <Fields>
+        <Field Name="balance">
+          <DataField>balance</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="graceString">
+          <DataField>graceString</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="rate">
+          <DataField>rate</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="SectionTotal">
+          <DataField>SectionTotal</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="CurrencyCode">
+          <DataField>CurrencyCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+      <Query>
+        <DataSourceName>VisionQA51MCMC__alisond_</DataSourceName>
+        <CommandText>/******************************************************************** WBS3 ************************************************/
+SELECT 
+balance,
+/*N*/'[DoubleQuoteLabelBalanceover]' + ltrim(str(gracePeriod)) + /*N*/'[DoubleQuoteLabelDays]' As graceString,
+rate/100 as rate,
+IsNull(summary.finalAmount, 0) As SectionTotal,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode
+ FROM billIntDetail left join
+/*Sub Query to get invoice Totals*/
+ (SELECT
+  billInvSums.invoice as sumInvoice,
+  billInvSums.mainWBS1 as sumMainWBS1,
+  billInvSums.BillWBS1 as sumBillWBS1,
+  billInvSums.BillWBS2 as sumBillWBS2,
+  billInvSums.BillWBS3 as sumBillWBS3,
+  sum(billInvSums.finalAmount) AS finalAmount
+  FROM billInvSums
+  WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And 
+ArrayType = 'I' AND Section = /*N*/'I'
+AND (Invoice = @parmInvoice) 
+AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~') 
+AND (BillWBS3 = @parmWBS3 OR BillWBS3 = /*N*/'~') 
+ GROUP BY billInvSums.invoice, billInvSums.mainWBS1, 
+ billInvSums.BillWBS1, billInvSums.BillWBS2, billInvSums.BillWBS3) AS summary ON 
+ (billIntDetail.invoice = summary.sumInvoice) AND 
+ (billIntDetail.mainWBS1 = summary.sumMainWBS1) AND 
+ (billIntDetail.BillWBS1 = summary.sumBillWBS1) AND
+ (billIntDetail.BillWBS2 = summary.sumBillWBS2) AND
+ (billIntDetail.BillWBS3 = summary.sumBillWBS3)
+ WHERE @PreInvoice = 'N' And 
+ (billIntDetail.Invoice = @parmInvoice) 
+AND (billIntDetail.MainWBS1 = @parmMainWBS1 OR billIntDetail.MainWBS1 = /*N*/'~') 
+AND (billIntDetail.BillWBS1 = @parmWBS1 OR billIntDetail.BillWBS1 = /*N*/'~') 
+AND (billIntDetail.BillWBS2 = @parmWBS2 OR billIntDetail.BillWBS2 = /*N*/'~') 
+AND (billIntDetail.BillWBS3 = @parmWBS3 OR billIntDetail.BillWBS3 = /*N*/'~') 
+And billIntDetail.billWBS3 &lt;&gt; /*N*/'~' And billIntDetail.billWBS3 &lt;&gt; /*N*/' '
+And @parmOnWBS3 = 'Y'
+
+/******************************************************************** WBS2 ***************************************************/
+
+UNION ALL SELECT 
+balance,
+/*N*/'[DoubleQuoteLabelBalanceover]' + ltrim(str(gracePeriod)) + /*N*/'[DoubleQuoteLabelDays]' As graceString,
+rate/100 as rate,
+IsNull(summary.finalAmount, 0) As SectionTotal,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode
+ FROM billIntDetail left join
+/*Sub Query to get invoice Totals*/
+ (SELECT
+  billInvSums.invoice as sumInvoice,
+  billInvSums.mainWBS1 as sumMainWBS1,
+  billInvSums.BillWBS1 as sumBillWBS1,
+  billInvSums.BillWBS2 as sumBillWBS2,
+  sum(billInvSums.finalAmount) AS finalAmount
+  FROM billInvSums
+  WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And 
+ArrayType = 'I' AND Section = /*N*/'I'
+AND (Invoice = @parmInvoice) 
+AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+AND (BillWBS2 = @parmWBS2 OR BillWBS2 = /*N*/'~') 
+ GROUP BY billInvSums.invoice, billInvSums.mainWBS1, 
+ billInvSums.BillWBS1, billInvSums.BillWBS2) AS summary ON 
+ (billIntDetail.invoice = summary.sumInvoice) AND 
+ (billIntDetail.mainWBS1 = summary.sumMainWBS1) AND 
+ (billIntDetail.BillWBS1 = summary.sumBillWBS1) AND
+ (billIntDetail.BillWBS2 = summary.sumBillWBS2) 
+ WHERE @PreInvoice = 'N' And
+ (billIntDetail.Invoice = @parmInvoice) 
+AND (billIntDetail.MainWBS1 = @parmMainWBS1 OR billIntDetail.MainWBS1 = /*N*/'~') 
+AND (billIntDetail.BillWBS1 = @parmWBS1 OR billIntDetail.BillWBS1 = /*N*/'~') 
+AND (billIntDetail.BillWBS2 = @parmWBS2 OR billIntDetail.BillWBS2 = /*N*/'~') 
+And billIntDetail.billWBS2 &lt;&gt; /*N*/'~' And billIntDetail.billWBS2 &lt;&gt; /*N*/' ' And (billIntDetail.billWBS3 = /*N*/'~' Or billIntDetail.billWBS3 = /*N*/' ')
+And @parmOnWBS2 = 'Y'
+
+/******************************************************************** WBS1 *************************************************/
+UNION ALL SELECT 
+balance,
+'[DoubleQuoteLabelBalanceover]' + ltrim(str(gracePeriod)) + '[DoubleQuoteLabelDays]' As graceString,
+rate/100 as rate,
+IsNull(summary.finalAmount, 0) As SectionTotal,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode
+ FROM billIntDetail left join
+/*Sub Query to get invoice Totals*/
+ (SELECT
+  billInvSums.invoice as sumInvoice,
+  billInvSums.mainWBS1 as sumMainWBS1,
+  billInvSums.BillWBS1 as sumBillWBS1,
+  sum(billInvSums.finalAmount) AS finalAmount
+  FROM billInvSums
+  WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And 
+ArrayType = 'I' AND Section = /*N*/'I'
+AND (Invoice = @parmInvoice) 
+AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+AND (BillWBS1 = @parmWBS1 OR BillWBS1 = /*N*/'~') 
+ GROUP BY billInvSums.invoice, billInvSums.mainWBS1, 
+ billInvSums.BillWBS1) AS summary ON 
+ (billIntDetail.invoice = summary.sumInvoice) AND 
+ (billIntDetail.mainWBS1 = summary.sumMainWBS1) AND 
+ (billIntDetail.BillWBS1 = summary.sumBillWBS1) 
+ WHERE @PreInvoice = 'N' And 
+ (billIntDetail.Invoice = @parmInvoice) 
+AND (billIntDetail.MainWBS1 = @parmMainWBS1 OR billIntDetail.MainWBS1 = /*N*/'~') 
+AND (billIntDetail.BillWBS1 = @parmWBS1 OR billIntDetail.BillWBS1 = /*N*/'~') 
+And billIntDetail.billWBS1 &lt;&gt; /*N*/'~' And ((billIntDetail.billWBS2 = /*N*/'~' And billIntDetail.billWBS3 = /*N*/'~') Or (billIntDetail.billWBS2 = /*N*/' ' And billIntDetail.billWBS3 = /*N*/' '))
+And @parmOnWBS1 = 'Y'
+
+/******************************************************************** GROUP **************************************************/
+
+UNION ALL SELECT 
+balance,
+'[DoubleQuoteLabelBalanceover]' + ltrim(str(gracePeriod)) + '[DoubleQuoteLabelDays]' As graceString,
+rate/100 as rate,
+IsNull(summary.finalAmount, 0) As SectionTotal,
+CAST(@BillingCurrencyCode as varchar) As CurrencyCode
+ FROM billIntDetail left join
+/*Sub Query to get invoice Totals*/
+ (SELECT
+  billInvSums.invoice as sumInvoice,
+  billInvSums.mainWBS1 as sumMainWBS1,
+  sum(billInvSums.finalAmount) AS finalAmount
+  FROM billInvSums
+  WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And 
+ArrayType = 'I' AND Section = /*N*/'I'
+AND (Invoice = @parmInvoice) 
+AND (MainWBS1 = @parmMainWBS1 OR MainWBS1 = /*N*/'~') 
+ GROUP BY billInvSums.invoice, billInvSums.mainWBS1, 
+ billInvSums.BillWBS1) AS summary ON 
+ (billIntDetail.invoice = summary.sumInvoice) AND 
+ (billIntDetail.mainWBS1 = summary.sumMainWBS1) 
+ WHERE @PreInvoice = 'N' And
+ (billIntDetail.Invoice = @parmInvoice) 
+AND (billIntDetail.MainWBS1 = @parmMainWBS1 OR billIntDetail.MainWBS1 = /*N*/'~') 
+And (billIntDetail.billWBS1 = /*N*/'~' And billIntDetail.billWBS2 = /*N*/'~' And billIntDetail.billWBS3 = /*N*/'~')
+And @parmOnGroup = 'Y'
+ ORDER BY 1</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@parmInvoice">
+            <Value>=Parameters!parmInvoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@BillingCurrencyCode">
+            <Value>=Parameters!BillingCurrencyCode.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@PreInvoice">
+            <Value>=Parameters!PreInvoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmMainWBS1">
+            <Value>=Parameters!parmMainWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS1">
+            <Value>=Parameters!parmWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS2">
+            <Value>=Parameters!parmWBS2.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmWBS3">
+            <Value>=Parameters!parmWBS3.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnWBS3">
+            <Value>=Parameters!parmOnWBS3.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnWBS2">
+            <Value>=Parameters!parmOnWBS2.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnWBS1">
+            <Value>=Parameters!parmOnWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmOnGroup">
+            <Value>=Parameters!parmOnGroup.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+    </DataSet>
+  </DataSets>
+  <ReportParameters>
+    <ReportParameter Name="parmInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>0000183</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmMainWBS1">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>1999007.00</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmMainWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS1">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>1999007.00</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS2">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS2</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmWBS3">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmWBS3</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnWBS2">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmOnWBS2</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnWBS3">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmOnWBS3</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnWBS1">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmOnWBS1</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmOnGroup">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmOnGroup</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BillingCurrencyCode">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>BillingCurrencyCode</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HideIntDetail">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HideIntDetail</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="PreInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>PreInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+  </ReportParameters>
+  <CustomProperties>
+    <CustomProperty>
+      <Name>ReportType</Name>
+      <Value>SubReport</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ResourceFileName</Name>
+      <Value>InvoiceInterest</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ReportVersion</Name>
+      <Value>2.0.5.5170</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>LookupType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>GroupingType</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AutoGroupQuery</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>OptionForm</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>HelpFile</Name>
+      <Value />
+    </CustomProperty>
+    <CustomProperty>
+      <Name>UseColumnSelection</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowUserDefinedFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowCalcFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>Modules</Name>
+      <Value />
+    </CustomProperty>
+  </CustomProperties>
+  <Language>=User.Language</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportID>f40b5e89-9ca0-4aa9-a1d5-3d1c188652b0</rd:ReportID>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+</Report>

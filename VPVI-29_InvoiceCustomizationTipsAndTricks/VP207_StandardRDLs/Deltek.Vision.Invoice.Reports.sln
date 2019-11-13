@@ -1,0 +1,38 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
+
+Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "Deltek.Vision.Invoice.Reports", "Deltek.Vision.Invoice.Reports.rptproj", "{FFA9BA80-4DBE-4643-99CD-6CDF14E8F569}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 2
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://tfs.deltek.com:8080/tfs/deltek
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Deltek.Vision.Invoice.Reports.rptproj
+		SccLocalPath1 = .
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Default = Debug|Default
+		DebugLocal|Default = DebugLocal|Default
+		Production|Default = Production|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FFA9BA80-4DBE-4643-99CD-6CDF14E8F569}.Debug|Default.ActiveCfg = Debug
+		{FFA9BA80-4DBE-4643-99CD-6CDF14E8F569}.Debug|Default.Build.0 = DebugLocal
+		{FFA9BA80-4DBE-4643-99CD-6CDF14E8F569}.Debug|Default.Deploy.0 = DebugLocal
+		{FFA9BA80-4DBE-4643-99CD-6CDF14E8F569}.DebugLocal|Default.ActiveCfg = DebugLocal
+		{FFA9BA80-4DBE-4643-99CD-6CDF14E8F569}.DebugLocal|Default.Build.0 = DebugLocal
+		{FFA9BA80-4DBE-4643-99CD-6CDF14E8F569}.DebugLocal|Default.Deploy.0 = DebugLocal
+		{FFA9BA80-4DBE-4643-99CD-6CDF14E8F569}.Production|Default.ActiveCfg = Production
+		{FFA9BA80-4DBE-4643-99CD-6CDF14E8F569}.Production|Default.Build.0 = Production
+		{FFA9BA80-4DBE-4643-99CD-6CDF14E8F569}.Production|Default.Deploy.0 = Production
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
+

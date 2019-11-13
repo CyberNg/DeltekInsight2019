@@ -1,0 +1,2642 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="DefaultDataSource">
+      <DataSourceReference>DefaultDataSource</DataSourceReference>
+      <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>757cccad-314c-43e6-9f38-26619b870391</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="ReportDataset">
+      <Query>
+        <DataSourceName>DefaultDataSource</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@ActiveCompany">
+            <Value>=Parameters!ActiveCompany.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmMainWBS1">
+            <Value>=Parameters!parmMainWBS1.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@PreInvoice">
+            <Value>=Parameters!PreInvoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmInvoice">
+            <Value>=Parameters!parmInvoice.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmFixedFee">
+            <Value>=Parameters!parmFixedFee.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmShowLabExt">
+            <Value>=Parameters!parmShowLabExt.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@showBillingBackup">
+            <Value>=Parameters!showBillingBackup.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmShowBillingBackupLabor">
+            <Value>=Parameters!parmShowBillingBackupLabor.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmShowBillingBackupExpense">
+            <Value>=Parameters!parmShowBillingBackupExpense.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmShowBackupFees">
+            <Value>=Parameters!BackupFees.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@parmShowBackupAddOns">
+            <Value>=Parameters!BackupAddOns.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>Select max(NonBill) as NonBill, max(invoiceKey) as InvoiceKey, Invoice,
+          MainWBS1, BillWBS1, BillWBS2, BillWBS3,
+          max(InvoiceDate) AS InvoiceDate,
+          max(MainName) AS MainName, max(MainType) AS MainType, max(BillGroup) AS BillGroup,
+          max(ConsolidatePrint) AS ConsolidatePrint, max(ByGroupWBS1) AS ByGroupWBS1, max(BillName) AS BillName,
+          max(ConsolidateWBS2) AS ConsolidateWBS2, max(ConsolidateWBS3) AS ConsolidateWBS3,
+          max(BillWBS2Name) AS BillWBS2Name,
+          max(BillWBS3Name) AS BillWBS3Name, max(FromDate) AS FromDate, max(ToDate) AS ToDate, max(WBS2Rollup) AS WBS2Rollup,
+          max(WBS3Rollup) AS WBS3Rollup, max(Description) As Description,
+          sum(billBack.wbs3Total) AS wbs3Total,
+          sum(wbs2Section.wbs2Amount) AS wbs2Total,
+          sum(wbs1Section.wbs1Amount) AS wbs1Total,
+          sum(invSection.invAmount) As invTotal,
+          max(LongName) As LongName,
+          max(WBS2LongName) As WBS2LongName,
+          max(WBS3LongName) As WBS3LongName,
+          max(BillingCurrencyCode) As CurrencyCode, FirmName = (Select FirmName From CFGMainData Where Company = @ActiveCompany)         
+          FROM (
+          Select max(NonBill) as NonBill, max(invoiceKey) as InvoiceKey, max(Invoice) AS Invoice,
+          max(MainWBS1) AS MainWBS1, max(BillWBS1) AS BillWBS1, max(BillWBS2) AS BillWBS2, max(BillWBS3) AS BillWBS3,
+          max(InvoiceDate) AS InvoiceDate,
+          max(MainName) AS MainName, max(MainType) AS MainType, max(BillGroup) AS BillGroup,
+          max(ConsolidatePrint) AS ConsolidatePrint, max(ByGroupWBS1) AS ByGroupWBS1, max(BillName) AS BillName,
+          max(ConsolidateWBS2) AS ConsolidateWBS2, max(ConsolidateWBS3) AS ConsolidateWBS3,
+          max(BillWBS2Name) AS BillWBS2Name,
+          max(BillWBS3Name) AS BillWBS3Name, max(FromDate) AS FromDate, max(ToDate) AS ToDate, max(WBS2Rollup) AS WBS2Rollup,
+          max(WBS3Rollup) AS WBS3Rollup, max(Description) As Description,
+          sum(wbs3Amount) AS wbs3Total,
+          max(LongName) As LongName,
+          max(WBS2LongName) As WBS2LongName,
+          max(WBS3LongName) As WBS3LongName,
+          max(BillingCurrencyCode) As BillingCurrencyCode          
+          FROM (
+          SELECT 0 AS NonBill, billInvMaster.invoice + billInvMaster.mainWBS1 As invoiceKey,
+          billInvMaster.Invoice,
+          billInvMaster.MainWBS1,
+          billInvMaster.BillWBS1,
+          billInvMaster.BillWBS2,
+          billInvMaster.BillWBS3,
+          billInvMaster.InvoiceDate,
+          billInvMaster.MainName,
+          billInvMaster.MainType,
+          billInvMaster.BillGroup,
+          billInvMaster.ConsolidatePrint,
+          billInvMaster.ByGroupWBS1,
+          billInvMaster.BillName,
+          billInvMaster.ConsolidateWBS2,
+          billInvMaster.ConsolidateWBS3,
+          billInvMaster.BillWBS2Name,
+          billInvMaster.BillWBS3Name,
+          billInvMaster.FromDate,
+          billInvMaster.ToDate,
+          billInvMaster.WBS2Rollup,
+          billInvMaster.WBS3Rollup,
+          billInvMaster.Description,
+          wbs3Section.wbs3Amount AS wbs3Amount,
+          IsNull(PR1.LongName, PR1.Name) As LongName,
+          IsNull(PR2.LongName, PR2.Name) As WBS2LongName,
+          IsNull(PR3.LongName, PR3.Name) As WBS3LongName,
+          PRMain.BillingCurrencyCode
+          
+          FROM billInvMaster left join
+          PR As PRMain On PRMain.WBS1 = billInvMaster.MainWBS1 And PRMain.WBS2 = /*N*/' ' And PRMain.WBS3 = /*N*/' '
+          Left Join
+          PR As PR1 On PR1.WBS1 = billInvMaster.BillWBS1 And PR1.WBS2 = /*N*/' ' And PR1.WBS3 = /*N*/' '
+          Left Join
+          PR As PR2 On PR2.WBS1 = billInvMaster.BillWBS1 And PR2.WBS2 = billInvMaster.BillWBS2 And PR2.WBS3 = /*N*/' '
+          Left Join
+          PR As PR3 On PR3.WBS1 = billInvMaster.BillWBS1 And PR3.WBS2 = billInvMaster.BillWBS2 And PR3.WBS3 = billInvMaster.BillWBS3
+
+          /*SubQuery to get wbs3 totals */
+          left join (SELECT
+          billInvSums.invoice as sumInvoice,
+          billInvSums.mainWBS1 as sumMainWBS1,
+          billInvSums.BillWBS1 as sumBillWBS1,
+          billInvSums.BillWBS2 as sumBillWBS2,
+          billInvSums.BillWBS3 as sumBillWBS3,
+          sum(billInvSums.finalAmount) AS wbs3Amount
+          FROM billInvSums
+          WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And ArrayType = 'I' 
+          And (Section In (/*N*/'L', /*N*/'E', /*N*/'C', /*N*/'U') Or (Section = /*N*/'F' And @parmShowBackupFees = 'Y') Or (Section In (/*N*/'A',/*N*/'Retainer') And @parmShowBackupAddOns = 'Y')) 
+          And billInvSums.MainWBS1 = @parmMainWBS1
+          AND billInvSums.Invoice = @parmInvoice AND @showBillingBackup = 'Y'
+          GROUP BY billInvSums.invoice, billInvSums.mainWBS1,
+          billInvSums.BillWBS1, billInvSums.BillWBS2, billInvSums.BillWBS3) AS wbs3Section
+          on (billInvMaster.invoice = wbs3Section.sumInvoice) AND
+          (billInvMaster.mainWBS1 = wbs3Section.sumMainWBS1) AND
+          (billInvMaster.BillWBS1 = wbs3Section.sumBillWBS1) AND
+          (billInvMaster.BillWBS2 = wbs3Section.sumBillWBS2) AND
+          (billInvMaster.BillWBS3 = wbs3Section.sumBillWBS3)
+
+          WHERE @PreInvoice = 'N' And billInvMaster.MainWBS1 = @parmMainWBS1
+          AND billInvMaster.Invoice = @parmInvoice
+          AND @showBillingBackup = 'Y'
+
+          /*Do Fixed Fee portion of the query*/
+          UNION ALL SELECT 1 AS NonBill,
+          @parmInvoice + @parmMainWBS1 AS invoiceKey, @parmInvoice AS Invoice,
+          max(billLab.MainWBS1) AS MainWBS1, max(BillLab.BillWBS1) AS BillWBS1, max(BillLab.BillWBS2) AS BillWBS2,
+          max(BillLab.BillWBS3) AS BillWBS3, '1/1/1900' AS InvoiceDate,
+          max(MainPR.Name) AS MainName, 'I' AS MainType, '' AS BillGroup, '' AS ConsolidatePrint,
+          '' AS ByGroupWBS1, max(BillPR.Name) AS BillName, '' AS ConsolidateWBS2, '' AS ConsolidateWBS3,
+          max(LEVEL2.Name) AS BillWBS2Name, max(LEVEL3.Name) AS BillWBS3Name,
+          '1/1/1900' AS FromDate, '1/1/1900' AS ToDate, 0 AS WBS2Rollup, 0 AS WBS3Rollup, '' As Description,
+          max(billLab.Extension) AS wbs3Amount,
+          max(IsNull(BillPR.LongName, BillPR.Name)) As LongName,
+          max(IsNull(LEVEL2.LongName, LEVEL2.Name)) As WBS2LongName,
+          max(IsNull(LEVEL3.LongName, LEVEL3.Name)) As WBS3LongName,
+          max(MainPR.BillingCurrencyCode) As CurrencyCode
+
+          FROM
+          PR AS BillPR,
+          PR AS MainPR,
+          PR AS LEVEL2,
+          PR AS LEVEL3,
+          (Select Invoice, MainWBS1, BillWBS1, BillWBS2, BillWBS3, Sum(CASE WHEN @parmShowLabExt = 'Y' THEN billLabDetail.Extension ELSE 0 END) AS Extension FROM billLabDetail
+          WHERE @PreInvoice = 'N' And @parmFixedFee = 'Y' AND FixedFee = 'Y' AND @showBillingBackup = 'Y' And billLabDetail.MainWBS1 = @parmMainWBS1
+          AND billLabDetail.Invoice = @parmInvoice And @parmShowBillingBackupLabor = 'Y'
+          GROUP BY Invoice, MainWBS1, BillWBS1, BillWBS2, BillWBS3) AS billLab
+
+          WHERE @PreInvoice = 'N' And (LEVEL3.WBS1 = billLab.BillWBS1) AND (LEVEL3.WBS2 = billLab.BillWBS2) AND (LEVEL3.WBS3 = billLab.BillWBS3)
+          AND (LEVEL2.WBS1 = billLab.BillWBS1) AND (LEVEL2.WBS2 = billLab.BillWBS2) AND (LEVEL2.WBS3 = /*N*/' ')
+          AND (BillPR.WBS1 = billLab.BillWBS1) AND (BillPR.WBS2 = /*N*/' ')
+          AND (MainPR.WBS1 = billLab.MainWBS1) AND (MainPR.WBS2 = /*N*/' ')
+          AND billLab.MainWBS1 = @parmMainWBS1 AND @showBillingBackup = 'Y' And @parmFixedFee = 'Y'
+          Group By billLab.MainWBS1, billLab.BillWBS1, billLab.BillWBS2, billLab.BillWBS3
+
+          /*Do Non Billable Expenses portion of the query*/
+          UNION ALL SELECT 1 AS NonBill,
+          @parmInvoice + @parmMainWBS1 AS invoiceKey, @parmInvoice AS Invoice,
+          max(billExpenses.MainWBS1) AS MainWBS1, max(billExpenses.BillWBS1) AS BillWBS1, max(billExpenses.BillWBS2) AS BillWBS2,
+          max(billExpenses.BillWBS3) AS BillWBS3, '1/1/1900' AS InvoiceDate,
+          max(MainPR.Name) AS MainName, 'I' AS MainType, '' AS BillGroup, '' AS ConsolidatePrint,
+          '' AS ByGroupWBS1, max(BillPR.Name) AS BillName, '' AS ConsolidateWBS2, '' AS ConsolidateWBS3,
+          max(LEVEL2.Name) AS BillWBS2Name, max(LEVEL3.Name) AS BillWBS3Name,
+          '1/1/1900' AS FromDate, '1/1/1900' AS ToDate, 0 AS WBS2Rollup, 0 AS WBS3Rollup, '' As Description,
+          sum(billExpenses.Extension) AS wbs3Amount,
+          max(IsNull(BillPR.LongName, BillPR.Name)) As LongName,
+          max(IsNull(LEVEL2.LongName, LEVEL2.Name)) As WBS2LongName,
+          max(IsNull(LEVEL3.LongName, LEVEL3.Name)) As WBS3LongName,
+          max(MainPR.BillingCurrencyCode) As CurrencyCode
+
+          FROM
+          PR AS BillPR,
+          PR AS MainPR,
+          PR AS LEVEL2,
+          PR AS LEVEL3,
+          (Select Invoice, MainWBS1, BillWBS1, BillWBS2, BillWBS3, Sum(billExpDetail.Amount) AS Extension FROM billExpDetail
+          WHERE @PreInvoice = 'N' And RateFlag = 'N' AND @showBillingBackup = 'Y' And billExpDetail.MainWBS1 = @parmMainWBS1
+          AND billExpDetail.Invoice = @parmInvoice AND billExpDetail.Invoice = '&lt;Draft&gt;' And @parmShowBillingBackupExpense = 'Y'
+          GROUP BY Invoice, MainWBS1, BillWBS1, BillWBS2, BillWBS3
+          Union All
+          Select Invoice, MainWBS1, BillWBS1, BillWBS2, BillWBS3, Sum(billConDetail.Amount) AS Extension FROM billConDetail
+          WHERE @PreInvoice = 'N' And RateFlag = 'N' AND @showBillingBackup = 'Y' And billConDetail.MainWBS1 = @parmMainWBS1
+          AND billConDetail.Invoice = @parmInvoice AND billConDetail.Invoice = '&lt;Draft&gt;' And @parmShowBillingBackupExpense = 'Y'
+          GROUP BY Invoice, MainWBS1, BillWBS1, BillWBS2, BillWBS3
+          Union All
+          Select Invoice, MainWBS1, BillWBS1, BillWBS2, BillWBS3, Sum(billUnitDetail.Amount) AS Extension FROM billUnitDetail
+          WHERE @PreInvoice = 'N' And RateFlag = 'N' AND @showBillingBackup = 'Y' And billUnitDetail.MainWBS1 = @parmMainWBS1
+          AND billUnitDetail.Invoice = @parmInvoice AND billUnitDetail.Invoice = '&lt;Draft&gt;' And @parmShowBillingBackupExpense = 'Y'
+          GROUP BY Invoice, MainWBS1, BillWBS1, BillWBS2, BillWBS3) AS billExpenses
+
+          WHERE @PreInvoice = 'N' And (LEVEL3.WBS1 = billExpenses.BillWBS1) AND (LEVEL3.WBS2 = billExpenses.BillWBS2) AND (LEVEL3.WBS3 = billExpenses.BillWBS3)
+          AND (LEVEL2.WBS1 = billExpenses.BillWBS1) AND (LEVEL2.WBS2 = billExpenses.BillWBS2) AND (LEVEL2.WBS3 = /*N*/' ')
+          AND (BillPR.WBS1 = billExpenses.BillWBS1) AND (BillPR.WBS2 = /*N*/' ')
+          AND (MainPR.WBS1 = billExpenses.MainWBS1) AND (MainPR.WBS2 = /*N*/' ')
+          AND billExpenses.MainWBS1 = @parmMainWBS1 AND @showBillingBackup = 'Y' AND billExpenses.Invoice = '&lt;Draft&gt;'
+          Group By billExpenses.MainWBS1, billExpenses.BillWBS1, billExpenses.BillWBS2, billExpenses.BillWBS3
+
+          ) as billInvUnion Group by MainWBS1, BillWBS1, BillWBS2, BillWBS3 ) as billBack
+
+          /*Need to extend out the Labor Amounts and get totals for inv/wbs1/wbs2/wbs3*/
+          /*All total queries must be unions to include records with sums (items that are billable)*/
+          /*as well as the non billable labor items that would only be in billLabDetail*/
+
+          /*SubQuery to get wbs2 totals*/
+          LEFT JOIN (SELECT
+          sumInvoice as sumInvoice,
+          sumMainWBS1 as sumMainWBS1,
+          sumBillWBS1 as sumBillWBS1,
+          sumBillWBS2 as sumBillWBS2,
+          sum(wbs2Amount) AS wbs2Amount FROM
+          (SELECT billLabDetail.invoice as sumInvoice,
+          billLabDetail.mainWBS1 as sumMainWBS1,
+          billLabDetail.BillWBS1 as sumBillWBS1,
+          billLabDetail.BillWBS2 as sumBillWBS2,
+          sum(billLabDetail.Extension) AS wbs2Amount
+          FROM billLabDetail
+          WHERE @PreInvoice = 'N' And  FixedFee = 'Y' And billLabDetail.MainWBS1 = @parmMainWBS1
+          AND billLabDetail.Invoice = @parmInvoice
+          AND @parmShowLabExt = 'Y' AND @showBillingBackup = 'Y' And @parmShowBillingBackupLabor = 'Y'
+          GROUP BY billLabDetail.invoice, billLabDetail.mainWBS1,
+          billLabDetail.BillWBS1, billLabDetail.BillWBS2
+
+          UNION ALL SELECT billExpDetail.invoice as sumInvoice,
+          billExpDetail.mainWBS1 as sumMainWBS1,
+          billExpDetail.BillWBS1 as sumBillWBS1,
+          billExpDetail.BillWBS2 as sumBillWBS2,
+          sum(billExpDetail.Amount) AS wbs2Amount
+          FROM billExpDetail
+          WHERE @PreInvoice = 'N' And Invoice = '&lt;Draft&gt;' And RateFlag = 'N' And billExpDetail.MainWBS1 = @parmMainWBS1
+          AND billExpDetail.Invoice = @parmInvoice AND @showBillingBackup = 'Y' And @parmShowBillingBackupExpense= 'Y'
+          GROUP BY billExpDetail.invoice, billExpDetail.mainWBS1,
+          billExpDetail.BillWBS1, billExpDetail.BillWBS2
+
+          UNION ALL SELECT billConDetail.invoice as sumInvoice,
+          billConDetail.mainWBS1 as sumMainWBS1,
+          billConDetail.BillWBS1 as sumBillWBS1,
+          billConDetail.BillWBS2 as sumBillWBS2,
+          sum(billConDetail.Amount) AS wbs2Amount
+          FROM billConDetail
+          WHERE @PreInvoice = 'N' And Invoice = '&lt;Draft&gt;' And RateFlag = 'N' And billConDetail.MainWBS1 = @parmMainWBS1
+          AND billConDetail.Invoice = @parmInvoice AND @showBillingBackup = 'Y' And @parmShowBillingBackupExpense= 'Y'
+          GROUP BY billConDetail.invoice, billConDetail.mainWBS1,
+          billConDetail.BillWBS1, billConDetail.BillWBS2
+
+          UNION ALL SELECT billUnitDetail.invoice as sumInvoice,
+          billUnitDetail.mainWBS1 as sumMainWBS1,
+          billUnitDetail.BillWBS1 as sumBillWBS1,
+          billUnitDetail.BillWBS2 as sumBillWBS2,
+          sum(billUnitDetail.Amount) AS wbs2Amount
+          FROM billUnitDetail
+          WHERE @PreInvoice = 'N' And Invoice = '&lt;Draft&gt;' And RateFlag = 'N' And billUnitDetail.MainWBS1 = @parmMainWBS1
+          AND billUnitDetail.Invoice = @parmInvoice AND @showBillingBackup = 'Y' And @parmShowBillingBackupExpense= 'Y'
+          GROUP BY billUnitDetail.invoice, billUnitDetail.mainWBS1,
+          billUnitDetail.BillWBS1, billUnitDetail.BillWBS2
+
+          UNION ALL SELECT
+          billInvSums.invoice as sumInvoice,
+          billInvSums.mainWBS1 as sumMainWBS1,
+          billInvSums.BillWBS1 as sumBillWBS1,
+          billInvSums.BillWBS2 as sumBillWBS2,
+          sum(billInvSums.finalAmount) AS wbs2Amount
+          FROM billInvSums
+          WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And ArrayType = 'I'
+          And (Section In (/*N*/'L', /*N*/'E', /*N*/'C', /*N*/'U') Or (Section = /*N*/'F' And @parmShowBackupFees = 'Y') Or (Section In (/*N*/'A',/*N*/'Retainer') And @parmShowBackupAddOns = 'Y'))
+            And billInvSums.MainWBS1 = @parmMainWBS1
+          AND billInvSums.Invoice = @parmInvoice
+          AND @showBillingBackup = 'Y'
+          GROUP BY billInvSums.invoice, billInvSums.mainWBS1,
+          billInvSums.BillWBS1, billInvSums.BillWBS2) AS wbs2Union
+          GROUP BY sumInvoice, sumMainWBS1, sumBillWBS1, sumBillWBS2) AS wbs2Section
+          ON billBack.MainWBS1 = wbs2Section.sumMainWBS1 AND
+          billBack.Invoice = wbs2Section.sumInvoice AND billBack.BillWBS1 = wbs2Section.sumBillWBS1
+          AND billBack.BillWBS2 = wbs2Section.sumBillWBS2
+
+          /*SubQuery to get wbs1 totals*/
+          LEFT JOIN (SELECT
+          sumInvoice as sumInvoice,
+          sumMainWBS1 as sumMainWBS1,
+          sumBillWBS1 as sumBillWBS1,
+          sum(wbs1Amount) AS wbs1Amount FROM
+          (SELECT
+          billLabDetail.invoice as sumInvoice,
+          billLabDetail.mainWBS1 as sumMainWBS1,
+          billLabDetail.BillWBS1 as sumBillWBS1,
+          sum(billLabDetail.Extension) AS wbs1Amount
+          FROM billLabDetail
+          WHERE @PreInvoice = 'N' And FixedFee = 'Y' AND billLabDetail.MainWBS1 = @parmMainWBS1
+          AND billLabDetail.Invoice = @parmInvoice
+          AND @parmShowLabExt = 'Y' AND @showBillingBackup = 'Y' And @parmShowBillingBackupLabor= 'Y'
+          GROUP BY billLabDetail.invoice, billLabDetail.mainWBS1,
+          billLabDetail.BillWBS1
+
+          UNION ALL SELECT billExpDetail.invoice as sumInvoice,
+          billExpDetail.mainWBS1 as sumMainWBS1,
+          billExpDetail.BillWBS1 as sumBillWBS1,
+          sum(billExpDetail.Amount) AS wbs1Amount
+          FROM billExpDetail
+          WHERE @PreInvoice = 'N' And Invoice = '&lt;Draft&gt;' And RateFlag = 'N' And billExpDetail.MainWBS1 = @parmMainWBS1
+          AND billExpDetail.Invoice = @parmInvoice AND @showBillingBackup = 'Y' And @parmShowBillingBackupExpense= 'Y'
+          GROUP BY billExpDetail.invoice, billExpDetail.mainWBS1,
+          billExpDetail.BillWBS1
+
+          UNION ALL SELECT billConDetail.invoice as sumInvoice,
+          billConDetail.mainWBS1 as sumMainWBS1,
+          billConDetail.BillWBS1 as sumBillWBS1,
+          sum(billConDetail.Amount) AS wbs1Amount
+          FROM billConDetail
+          WHERE @PreInvoice = 'N' And Invoice = '&lt;Draft&gt;' And RateFlag = 'N' And billConDetail.MainWBS1 = @parmMainWBS1
+          AND billConDetail.Invoice = @parmInvoice AND @showBillingBackup = 'Y' And @parmShowBillingBackupExpense= 'Y'
+          GROUP BY billConDetail.invoice, billConDetail.mainWBS1,
+          billConDetail.BillWBS1
+
+          UNION ALL SELECT billUnitDetail.invoice as sumInvoice,
+          billUnitDetail.mainWBS1 as sumMainWBS1,
+          billUnitDetail.BillWBS1 as sumBillWBS1,
+          sum(billUnitDetail.Amount) AS wbs1Amount
+          FROM billUnitDetail
+          WHERE @PreInvoice = 'N' And Invoice = '&lt;Draft&gt;' And RateFlag = 'N' And billUnitDetail.MainWBS1 = @parmMainWBS1
+          AND billUnitDetail.Invoice = @parmInvoice AND @showBillingBackup = 'Y' And @parmShowBillingBackupExpense= 'Y'
+          GROUP BY billUnitDetail.invoice, billUnitDetail.mainWBS1,
+          billUnitDetail.BillWBS1
+
+          UNION ALL SELECT
+          billInvSums.invoice as sumInvoice,
+          billInvSums.mainWBS1 as sumMainWBS1,
+          billInvSums.BillWBS1 as sumBillWBS1,
+          sum(billInvSums.finalAmount) AS wbs1Amount
+          FROM billInvSums
+          WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And ArrayType = 'I'
+          And (Section In (/*N*/'L', /*N*/'E', /*N*/'C', /*N*/'U') Or (Section = /*N*/'F' And @parmShowBackupFees = 'Y') Or (Section In (/*N*/'A',/*N*/'Retainer') And @parmShowBackupAddOns = 'Y'))
+          And billInvSums.MainWBS1 = @parmMainWBS1
+          AND billInvSums.Invoice = @parmInvoice
+          AND @showBillingBackup = 'Y'
+          GROUP BY billInvSums.invoice, billInvSums.mainWBS1,
+          billInvSums.BillWBS1) AS wbs1Union
+          GROUP BY sumInvoice, sumMainWBS1, sumBillWBS1) AS wbs1Section ON billBack.MainWBS1 = wbs1Section.sumMainWBS1 AND
+          billBack.Invoice = wbs1Section.sumInvoice AND billBack.BillWBS1 = wbs1Section.sumBillWBS1
+
+          /*SubQuery to get invoice totals*/
+          LEFT JOIN (SELECT
+          sumInvoice as sumInvoice,
+          sumMainWBS1 as sumMainWBS1,
+          sum(invAmount) AS invAmount FROM
+          (SELECT
+          billLabDetail.invoice as sumInvoice,
+          billLabDetail.mainWBS1 as sumMainWBS1,
+          sum(billLabDetail.Extension) AS invAmount
+          FROM billLabDetail
+          WHERE @PreInvoice = 'N' And FixedFee = 'Y' AND billLabDetail.MainWBS1 = @parmMainWBS1
+          AND billLabDetail.Invoice = @parmInvoice
+          AND @parmShowLabExt = 'Y' AND @showBillingBackup = 'Y' And @parmShowBillingBackupLabor= 'Y'
+          GROUP BY billLabDetail.Invoice, billLabDetail.mainWBS1
+
+          UNION ALL SELECT billExpDetail.invoice as sumInvoice,
+          billExpDetail.mainWBS1 as sumMainWBS1,
+          sum(billExpDetail.Amount) AS invAmount
+          FROM billExpDetail
+          WHERE @PreInvoice = 'N' And Invoice = '&lt;Draft&gt;' And RateFlag = 'N' And billExpDetail.MainWBS1 = @parmMainWBS1
+          AND billExpDetail.Invoice = @parmInvoice AND @showBillingBackup = 'Y' And @parmShowBillingBackupExpense= 'Y'
+          GROUP BY billExpDetail.invoice, billExpDetail.mainWBS1
+
+          UNION ALL SELECT billConDetail.invoice as sumInvoice,
+          billConDetail.mainWBS1 as sumMainWBS1,
+          sum(billConDetail.Amount) AS invAmount
+          FROM billConDetail
+          WHERE @PreInvoice = 'N' And Invoice = '&lt;Draft&gt;' And RateFlag = 'N' And billConDetail.MainWBS1 = @parmMainWBS1
+          AND billConDetail.Invoice = @parmInvoice AND @showBillingBackup = 'Y' And @parmShowBillingBackupExpense= 'Y'
+          GROUP BY billConDetail.invoice, billConDetail.mainWBS1
+
+          UNION ALL SELECT billUnitDetail.invoice as sumInvoice,
+          billUnitDetail.mainWBS1 as sumMainWBS1,
+          sum(billUnitDetail.Amount) AS invAmount
+          FROM billUnitDetail
+          WHERE @PreInvoice = 'N' And Invoice = '&lt;Draft&gt;' And RateFlag = 'N' And billUnitDetail.MainWBS1 = @parmMainWBS1
+          AND billUnitDetail.Invoice = @parmInvoice AND @showBillingBackup = 'Y' And @parmShowBillingBackupExpense= 'Y'
+          GROUP BY billUnitDetail.invoice, billUnitDetail.mainWBS1
+
+          UNION ALL SELECT
+          billInvSums.invoice as sumInvoice,
+          billInvSums.mainWBS1 as sumMainWBS1,
+          sum(billInvSums.finalAmount) AS invAmount
+          FROM billInvSums
+          WHERE @PreInvoice = 'N' And billInvSums.PreInvoice = 'N' And ArrayType = 'I' AND @showBillingBackup = 'Y'
+          And (Section In (/*N*/'L', /*N*/'E', /*N*/'C', /*N*/'U') Or (Section = /*N*/'F' And @parmShowBackupFees = 'Y') Or (Section In (/*N*/'A',/*N*/'Retainer') And @parmShowBackupAddOns = 'Y'))
+          And billInvSums.MainWBS1 = @parmMainWBS1
+          AND billInvSums.Invoice = @parmInvoice
+          GROUP BY billInvSums.invoice, billInvSums.mainWBS1) AS invUnion
+          GROUP BY sumInvoice, sumMainWBS1) AS invSection ON billBack.MainWBS1 = invSection.sumMainWBS1 AND
+          billBack.Invoice = invSection.sumInvoice
+          WHERE @PreInvoice = 'N' AND @showBillingBackup = 'Y'
+          Group by Invoice, MainWBS1, BillWBS1, BillWBS2, BillWBS3
+          /*the having clause filters out phases/tasks when no labor/detail items exist in the bill tables (so a phase total does not exist without detail)*/
+          Having (max(NonBill) &gt; 0 Or sum(invSection.invAmount) is not Null) AND (max(NonBill) &gt; 0 Or sum(wbs1Section.wbs1Amount) is not Null) AND (max(NonBill) &gt; 0 Or sum(wbs2Section.wbs2Amount) is not Null)
+          AND (max(NonBill) &gt; 0 Or sum(wbs3Total) is not Null)
+
+          ORDER BY MainType, BillWBS1, BillWBS2, BillWBS3</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="NonBill">
+          <DataField>NonBill</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="invoiceKey">
+          <DataField>InvoiceKey</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Invoice">
+          <DataField>Invoice</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MainWBS1">
+          <DataField>MainWBS1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BillWBS1">
+          <DataField>BillWBS1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BillWBS2">
+          <DataField>BillWBS2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BillWBS3">
+          <DataField>BillWBS3</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="InvoiceDate">
+          <DataField>InvoiceDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="MainName">
+          <DataField>MainName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MainType">
+          <DataField>MainType</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BillGroup">
+          <DataField>BillGroup</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ConsolidatePrint">
+          <DataField>ConsolidatePrint</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ByGroupWBS1">
+          <DataField>ByGroupWBS1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BillName">
+          <DataField>BillName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ConsolidateWBS2">
+          <DataField>ConsolidateWBS2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ConsolidateWBS3">
+          <DataField>ConsolidateWBS3</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BillWBS2Name">
+          <DataField>BillWBS2Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BillWBS3Name">
+          <DataField>BillWBS3Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FromDate">
+          <DataField>FromDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="ToDate">
+          <DataField>ToDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="WBS2Rollup">
+          <DataField>WBS2Rollup</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="WBS3Rollup">
+          <DataField>WBS3Rollup</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Description">
+          <DataField>Description</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="wbs3Total">
+          <DataField>wbs3Total</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="wbs2Total">
+          <DataField>wbs2Total</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="wbs1Total">
+          <DataField>wbs1Total</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="invTotal">
+          <DataField>invTotal</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="LongName">
+          <DataField>LongName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WBS2LongName">
+          <DataField>WBS2LongName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="WBS3LongName">
+          <DataField>WBS3LongName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CurrencyCode">
+          <DataField>CurrencyCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FirmName">
+          <DataField>FirmName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="Backup_Main">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>6.87387in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.52in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="rectangleHeader">
+                          <ReportItems>
+                            <Textbox Name="body_Time">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Now()</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <Format>T</Format>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.33in</Top>
+                              <Left>5.125in</Left>
+                              <Height>0.16in</Height>
+                              <Width>1.74887in</Width>
+                              <Style />
+                            </Textbox>
+                            <Textbox Name="body_PeriodRange">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=String.Format("[LabelInvoice0Dated1:d]", Code.InvoiceLeadingZeros(Parameters!HeaderInvoice.Value, Parameters!printInvoiceLeadingZeros.Value), Parameters!InvoiceDate.Value)</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Center</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.33333in</Top>
+                              <Left>2.76251in</Left>
+                              <Height>0.16in</Height>
+                              <Width>2.36249in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style />
+                            </Textbox>
+                            <Textbox Name="body_FirmName">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!FirmName.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.33126in</Top>
+                              <Left>0.02in</Left>
+                              <Height>0.16in</Height>
+                              <Width>2.7in</Width>
+                              <ZIndex>2</ZIndex>
+                              <Style />
+                            </Textbox>
+                            <Textbox Name="body_Date">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Now()</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <Format>D</Format>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.125in</Top>
+                              <Left>4.67708in</Left>
+                              <Height>0.16in</Height>
+                              <Width>2.19679in</Width>
+                              <ZIndex>3</ZIndex>
+                              <Style />
+                            </Textbox>
+                            <Textbox Name="body_ReportName">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>[LabelBillingBackup]</Value>
+                                      <Style>
+                                        <FontSize>18pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Height>0.32in</Height>
+                              <Width>4.625in</Width>
+                              <ZIndex>4</ZIndex>
+                              <Style />
+                            </Textbox>
+                          </ReportItems>
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>18</ZIndex>
+                          <Style />
+                        </Rectangle>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.075in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox1</rd:DefaultName>
+                          <ZIndex>17</ZIndex>
+                          <Style>
+                            <TopBorder>
+                              <Style>Solid</Style>
+                            </TopBorder>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.22in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="groupHeaderWBS1">
+                          <ReportItems>
+                            <Textbox Name="groupHeader_WBS1Label">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Parameters!wbs1HeaderLabel.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Height>0.165in</Height>
+                              <Width>1.1in</Width>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                            <Textbox Name="groupHeader_WBS1Number">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!BillWBS1.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Left>1.14in</Left>
+                              <Height>0.165in</Height>
+                              <Width>1.35in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                            <Textbox Name="groupHeader_WBS1Name">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=iif(Parameters!printWBSLongName.Value = "Y" And Parameters!printWBSName.Value = "N", Fields!LongName.Value, Fields!BillName.Value)</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Left>2.52in</Left>
+                              <Height>0.165in</Height>
+                              <Width>4.35387in</Width>
+                              <ZIndex>2</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                          </ReportItems>
+                          <KeepTogether>true</KeepTogether>
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>16</ZIndex>
+                          <Style>
+                            <Border>
+                              <Width>1.5pt</Width>
+                            </Border>
+                            <TopBorder>
+                              <Style>=iif(Fields!MainWBS1.Value = Fields!BillWBS1.Value, "None", "Dashed")</Style>
+                            </TopBorder>
+                          </Style>
+                        </Rectangle>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader_WBS1LongName">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!LongName.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>15</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.03125in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox2</rd:DefaultName>
+                          <ZIndex>14</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.22in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="groupHeader_WBS2">
+                          <ReportItems>
+                            <Textbox Name="groupHeader_WBS2Label">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Parameters!wbs2HeaderLabel.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Height>0.17in</Height>
+                              <Width>1.1in</Width>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                            <Textbox Name="groupHeader_WBS2Number">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!BillWBS2.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Left>1.14in</Left>
+                              <Height>0.17in</Height>
+                              <Width>0.9in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                            <Textbox Name="groupHeader_WBS2Name">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=iif(Parameters!printWBS2LongName.Value = "Y" And Parameters!printWBS2Name.Value = "N", Fields!WBS2LongName.Value, Fields!BillWBS2Name.Value)</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Left>2.06in</Left>
+                              <Height>0.17in</Height>
+                              <Width>4.8in</Width>
+                              <ZIndex>2</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                          </ReportItems>
+                          <KeepTogether>true</KeepTogether>
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>13</ZIndex>
+                          <Style>
+                            <Border>
+                              <Width>1.5pt</Width>
+                            </Border>
+                            <TopBorder>
+                              <Style>Dashed</Style>
+                            </TopBorder>
+                          </Style>
+                        </Rectangle>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader_WBS2LongName">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!WBS2LongName.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>12</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.03125in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox3</rd:DefaultName>
+                          <ZIndex>11</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.22in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="groupHeader_WBS3">
+                          <ReportItems>
+                            <Textbox Name="groupHeader_WBS3Label">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Parameters!wbs3HeaderLabel.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Height>0.17in</Height>
+                              <Width>1.1in</Width>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                            <Textbox Name="groupHeader_WBS3Number">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!BillWBS3.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Left>1.14in</Left>
+                              <Height>0.17in</Height>
+                              <Width>0.9in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                            <Textbox Name="groupHeader_WBS3Name">
+                              <CanGrow>true</CanGrow>
+                              <CanShrink>true</CanShrink>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=iif(Parameters!printWBS3LongName.Value = "Y" And Parameters!printWBS3Name.Value = "N", Fields!WBS3LongName.Value, Fields!BillWBS3Name.Value)</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style />
+                                </Paragraph>
+                              </Paragraphs>
+                              <Top>0.05in</Top>
+                              <Left>2.06in</Left>
+                              <Height>0.17in</Height>
+                              <Width>4.8in</Width>
+                              <ZIndex>2</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Width>1.5pt</Width>
+                                </Border>
+                              </Style>
+                            </Textbox>
+                          </ReportItems>
+                          <KeepTogether>true</KeepTogether>
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>10</ZIndex>
+                          <Style>
+                            <Border>
+                              <Width>1.5pt</Width>
+                            </Border>
+                            <TopBorder>
+                              <Style>Dashed</Style>
+                            </TopBorder>
+                          </Style>
+                        </Rectangle>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.18in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="groupHeader_WBS3LongName">
+                          <CanGrow>true</CanGrow>
+                          <CanShrink>true</CanShrink>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!WBS3LongName.Value</Value>
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <ZIndex>9</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.03125in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="textbox4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>textbox4</rd:DefaultName>
+                          <ZIndex>8</ZIndex>
+                          <Style />
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="BillingBackup_Fee">
+                          <ReportName>BackupFee</ReportName>
+                          <Parameters>
+                            <Parameter Name="parmInvoice">
+                              <Value>=Fields!Invoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmMainWBS1">
+                              <Value>=Fields!MainWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS1">
+                              <Value>=Fields!BillWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS2">
+                              <Value>=Fields!BillWBS2.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS3">
+                              <Value>=Fields!BillWBS3.Value</Value>
+                            </Parameter>
+                            <Parameter Name="BillingCurrencyCode">
+                              <Value>=Fields!CurrencyCode.Value</Value>
+                            </Parameter>
+                            <Parameter Name="DecimalPlaces">
+                              <Value>=Parameters!DecimalPlaces.Value</Value>
+                            </Parameter>
+                            <Parameter Name="PreInvoice">
+                              <Value>=Parameters!PreInvoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="FeeJTDCalc">
+                              <Value>=Parameters!FeeJTDCalc.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Subreport>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="BillingBackup_Labor">
+                          <ReportName>BackupLabor</ReportName>
+                          <Parameters>
+                            <Parameter Name="parmInvoice">
+                              <Value>=Fields!Invoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmMainWBS1">
+                              <Value>=Fields!MainWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS1">
+                              <Value>=Fields!BillWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS2">
+                              <Value>=Fields!BillWBS2.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS3">
+                              <Value>=Fields!BillWBS3.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmshowBillingBackupLaborCategory">
+                              <Value>=Parameters!parmshowBillingBackupLaborCategory.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmshowBillingBackupLaborCode">
+                              <Value>=Parameters!parmshowBillingBackupLaborCode.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmshowBillingBackupEmployeeNumber">
+                              <Value>=Parameters!parmshowBillingBackupEmployeeNumber.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmshowBillingBackupComments">
+                              <Value>=Parameters!parmshowBillingBackupComments.Value</Value>
+                            </Parameter>
+                            <Parameter Name="BackupLaborSort">
+                              <Value>=Parameters!parmBackupLaborSort.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmFixedFee">
+                              <Value>=Parameters!parmFixedFee.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmShowLabExt">
+                              <Value>=Parameters!parmShowLabExt.Value</Value>
+                            </Parameter>
+                            <Parameter Name="DecimalPlaces">
+                              <Value>=Parameters!DecimalPlaces.Value</Value>
+                            </Parameter>
+                            <Parameter Name="BillingCurrencyCode">
+                              <Value>=Fields!CurrencyCode.Value</Value>
+                            </Parameter>
+                            <Parameter Name="showBillingBackup">
+                              <Value>=Parameters!showBillingBackup.Value</Value>
+                            </Parameter>
+                            <Parameter Name="OvtIndicator">
+                              <Value>=Parameters!OvtIndicator.Value</Value>
+                            </Parameter>
+                            <Parameter Name="PreInvoice">
+                              <Value>=Parameters!PreInvoice.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <ZIndex>7</ZIndex>
+                          <Style>
+                            <Border />
+                          </Style>
+                        </Subreport>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="BackupConsultant">
+                          <ReportName>BackupConsultant</ReportName>
+                          <Parameters>
+                            <Parameter Name="parmInvoice">
+                              <Value>=Fields!Invoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmMainWBS1">
+                              <Value>=Fields!MainWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS1">
+                              <Value>=Fields!BillWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS2">
+                              <Value>=Fields!BillWBS2.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS3">
+                              <Value>=Fields!BillWBS3.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmShowBillingBackupVendorInvoice">
+                              <Value>=Parameters!parmshowBillingBackupVendorInvoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmShowBillingBackupEXDescription">
+                              <Value>=Parameters!parmshowBillingBackupEXDescription.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmShowBillingBackupEKDescription">
+                              <Value>=Parameters!parmshowBillingBackupEKDescription.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmShowBillingBackupAPDescription">
+                              <Value>=Parameters!parmshowBillingBackupAPDescription.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmShowBillingBackupMileage">
+                              <Value>=Parameters!parmshowBillingBackupMileage.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmShowBillingBackupTransType">
+                              <Value>=Parameters!parmshowBillingBackupTransType.Value</Value>
+                            </Parameter>
+                            <Parameter Name="BackupExpenseSort">
+                              <Value>= Parameters!parmBackupExpenseSort.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmPrintInvoiceLeadingZeros">
+                              <Value>=Parameters!printInvoiceLeadingZeros.Value</Value>
+                            </Parameter>
+                            <Parameter Name="showBillingBackup">
+                              <Value>=Parameters!showBillingBackup.Value</Value>
+                            </Parameter>
+                            <Parameter Name="BillingCurrencyCode">
+                              <Value>=Fields!CurrencyCode.Value</Value>
+                            </Parameter>
+                            <Parameter Name="BGConsolidatePrint">
+                              <Value>=IIF(Fields!BillGroup.Value = "Y" AndAlso Fields!ConsolidatePrint.Value = "Y", "Y", "N")</Value>
+                            </Parameter>
+                            <Parameter Name="PreInvoice">
+                              <Value>=Parameters!PreInvoice.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <ZIndex>6</ZIndex>
+                          <Style>
+                            <Border />
+                          </Style>
+                        </Subreport>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="BillingBackup_Expense">
+                          <ReportName>BackupExpense</ReportName>
+                          <Parameters>
+                            <Parameter Name="parmInvoice">
+                              <Value>=Fields!Invoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmMainWBS1">
+                              <Value>=Fields!MainWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS1">
+                              <Value>=Fields!BillWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS2">
+                              <Value>=Fields!BillWBS2.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS3">
+                              <Value>=Fields!BillWBS3.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmShowBillingBackupVendorInvoice">
+                              <Value>=Parameters!parmshowBillingBackupVendorInvoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmShowBillingBackupEXDescription">
+                              <Value>=Parameters!parmshowBillingBackupEXDescription.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmShowBillingBackupEKDescription">
+                              <Value>=Parameters!parmshowBillingBackupEKDescription.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmShowBillingBackupAPDescription">
+                              <Value>=Parameters!parmshowBillingBackupAPDescription.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmShowBillingBackupMileage">
+                              <Value>=Parameters!parmshowBillingBackupMileage.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmShowBillingBackupTransType">
+                              <Value>=Parameters!parmshowBillingBackupTransType.Value</Value>
+                            </Parameter>
+                            <Parameter Name="BackupExpenseSort">
+                              <Value>=Parameters!parmBackupExpenseSort.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmPrintInvoiceLeadingZeros">
+                              <Value>=Parameters!printInvoiceLeadingZeros.Value</Value>
+                            </Parameter>
+                            <Parameter Name="showBillingBackup">
+                              <Value>=Parameters!showBillingBackup.Value</Value>
+                            </Parameter>
+                            <Parameter Name="BillingCurrencyCode">
+                              <Value>=Fields!CurrencyCode.Value</Value>
+                            </Parameter>
+                            <Parameter Name="BGConsolidatePrint">
+                              <Value>=IIF(Fields!BillGroup.Value = "Y" AndAlso Fields!ConsolidatePrint.Value = "Y", "Y", "N")</Value>
+                            </Parameter>
+                            <Parameter Name="PreInvoice">
+                              <Value>=Parameters!PreInvoice.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <ZIndex>5</ZIndex>
+                          <Style>
+                            <Border />
+                          </Style>
+                        </Subreport>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="BackupUnit">
+                          <ReportName>BackupUnit</ReportName>
+                          <Parameters>
+                            <Parameter Name="parmInvoice">
+                              <Value>=Fields!Invoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmMainWBS1">
+                              <Value>=Fields!MainWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS1">
+                              <Value>=Fields!BillWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS2">
+                              <Value>=Fields!BillWBS2.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS3">
+                              <Value>=Fields!BillWBS3.Value</Value>
+                            </Parameter>
+                            <Parameter Name="showBillingBackup">
+                              <Value>=Parameters!showBillingBackup.Value</Value>
+                            </Parameter>
+                            <Parameter Name="BillingCurrencyCode">
+                              <Value>=Fields!CurrencyCode.Value</Value>
+                            </Parameter>
+                            <Parameter Name="DecimalPlaces">
+                              <Value>=Parameters!DecimalPlaces.Value</Value>
+                            </Parameter>
+                            <Parameter Name="PreInvoice">
+                              <Value>=Parameters!PreInvoice.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <Style>
+                            <Border />
+                          </Style>
+                        </Subreport>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="BillingBackup_AddOn">
+                          <ReportName>BackupAddOn</ReportName>
+                          <Parameters>
+                            <Parameter Name="parmInvoice">
+                              <Value>=Fields!Invoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmMainWBS1">
+                              <Value>=Fields!MainWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS1">
+                              <Value>=Fields!BillWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS2">
+                              <Value>=Fields!BillWBS2.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS3">
+                              <Value>=Fields!BillWBS3.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmOnWBS3">
+                              <Value>Y</Value>
+                            </Parameter>
+                            <Parameter Name="parmOnWBS2">
+                              <Value>N</Value>
+                            </Parameter>
+                            <Parameter Name="parmOnWBS1">
+                              <Value>N</Value>
+                            </Parameter>
+                            <Parameter Name="parmOnGroup">
+                              <Value>N</Value>
+                            </Parameter>
+                            <Parameter Name="BillingCurrencyCode">
+                              <Value>=Fields!CurrencyCode.Value</Value>
+                            </Parameter>
+                            <Parameter Name="DecimalPlaces">
+                              <Value>=Parameters!DecimalPlaces.Value</Value>
+                            </Parameter>
+                            <Parameter Name="PreInvoice">
+                              <Value>=Parameters!PreInvoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="FeeJTDCalc">
+                              <Value>=Parameters!FeeJTDCalc.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Subreport>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.35in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="rectangleWBS3Total">
+                          <ReportItems>
+                            <Textbox Name="groupFooter_BackupWBS3Total">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!wbs3Total.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                        <Format>c</Format>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Left>5.47in</Left>
+                              <Height>0.16251in</Height>
+                              <Width>1.40387in</Width>
+                              <Style />
+                            </Textbox>
+                            <Textbox Name="groupFooter_WBS3LabelBackup">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>[LabelTotalthisWBS3]</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Left>1.9in</Left>
+                              <Height>0.16251in</Height>
+                              <Width>3.55in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style />
+                            </Textbox>
+                          </ReportItems>
+                          <KeepTogether>true</KeepTogether>
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>1</ZIndex>
+                          <Style />
+                        </Rectangle>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="WBS2Footer_AddOns">
+                          <ReportName>BackupAddOn</ReportName>
+                          <Parameters>
+                            <Parameter Name="parmInvoice">
+                              <Value>=Fields!Invoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmMainWBS1">
+                              <Value>=Fields!MainWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS1">
+                              <Value>=Fields!BillWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS2">
+                              <Value>=Fields!BillWBS2.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS3">
+                              <Value>=Fields!BillWBS3.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmOnWBS3">
+                              <Value>N</Value>
+                            </Parameter>
+                            <Parameter Name="parmOnWBS2">
+                              <Value>Y</Value>
+                            </Parameter>
+                            <Parameter Name="parmOnWBS1">
+                              <Value>N</Value>
+                            </Parameter>
+                            <Parameter Name="parmOnGroup">
+                              <Value>N</Value>
+                            </Parameter>
+                            <Parameter Name="BillingCurrencyCode">
+                              <Value>=Fields!CurrencyCode.Value</Value>
+                            </Parameter>
+                            <Parameter Name="DecimalPlaces">
+                              <Value>=Parameters!DecimalPlaces.Value</Value>
+                            </Parameter>
+                            <Parameter Name="PreInvoice">
+                              <Value>=Parameters!PreInvoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="FeeJTDCalc">
+                              <Value>=Parameters!FeeJTDCalc.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Subreport>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.35in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="rectangleWBS2Total">
+                          <ReportItems>
+                            <Textbox Name="groupFooter_WBS2LabelBackup">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>[LabelTotalthisWBS2]</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Left>1.9in</Left>
+                              <Height>0.16251in</Height>
+                              <Width>3.55in</Width>
+                              <Style />
+                            </Textbox>
+                            <Textbox Name="groupFooter_BackupWBS2Total">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!wbs2Total.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                        <Format>c</Format>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Left>5.47in</Left>
+                              <Height>0.16251in</Height>
+                              <Width>1.40387in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style />
+                            </Textbox>
+                          </ReportItems>
+                          <KeepTogether>true</KeepTogether>
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>2</ZIndex>
+                          <Style />
+                        </Rectangle>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.16in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="WBS1Footer_AddOns">
+                          <ReportName>BackupAddOn</ReportName>
+                          <Parameters>
+                            <Parameter Name="parmInvoice">
+                              <Value>=Fields!Invoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmMainWBS1">
+                              <Value>=Fields!MainWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS1">
+                              <Value>=Fields!BillWBS1.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS2">
+                              <Value>=Fields!BillWBS2.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmWBS3">
+                              <Value>=Fields!BillWBS3.Value</Value>
+                            </Parameter>
+                            <Parameter Name="parmOnWBS3">
+                              <Value>N</Value>
+                            </Parameter>
+                            <Parameter Name="parmOnWBS2">
+                              <Value>N</Value>
+                            </Parameter>
+                            <Parameter Name="parmOnWBS1">
+                              <Value>Y</Value>
+                            </Parameter>
+                            <Parameter Name="parmOnGroup">
+                              <Value>N</Value>
+                            </Parameter>
+                            <Parameter Name="BillingCurrencyCode">
+                              <Value>=Fields!CurrencyCode.Value</Value>
+                            </Parameter>
+                            <Parameter Name="DecimalPlaces">
+                              <Value>=Parameters!DecimalPlaces.Value</Value>
+                            </Parameter>
+                            <Parameter Name="PreInvoice">
+                              <Value>=Parameters!PreInvoice.Value</Value>
+                            </Parameter>
+                            <Parameter Name="FeeJTDCalc">
+                              <Value>=Parameters!FeeJTDCalc.Value</Value>
+                            </Parameter>
+                          </Parameters>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Subreport>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.35in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="rectangleWBS1Total">
+                          <ReportItems>
+                            <Textbox Name="groupFooter_BackupWBS1Total">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!wbs1Total.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                        <Format>c</Format>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Left>5.47in</Left>
+                              <Height>0.16252in</Height>
+                              <Width>1.40387in</Width>
+                              <Style />
+                            </Textbox>
+                            <Textbox Name="groupFooter_WBS1LabelBackup">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>[LabelTotalthisWBS1]</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Left>1.9in</Left>
+                              <Height>0.16252in</Height>
+                              <Width>3.55in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style />
+                            </Textbox>
+                          </ReportItems>
+                          <KeepTogether>true</KeepTogether>
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>3</ZIndex>
+                          <Style />
+                        </Rectangle>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.17625in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="rectangleInvoiceTotal">
+                          <ReportItems>
+                            <Textbox Name="groupFooter_BackupInvoiceTotal">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>=Fields!invTotal.Value</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                        <Format>c</Format>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Left>5.47in</Left>
+                              <Height>0.16252in</Height>
+                              <Width>1.40387in</Width>
+                              <Style />
+                            </Textbox>
+                            <Textbox Name="groupFooter_InvoiceLabelBackup">
+                              <CanGrow>true</CanGrow>
+                              <KeepTogether>true</KeepTogether>
+                              <Paragraphs>
+                                <Paragraph>
+                                  <TextRuns>
+                                    <TextRun>
+                                      <Value>[LabelTotalthisReport]</Value>
+                                      <Style>
+                                        <FontSize>9pt</FontSize>
+                                        <FontWeight>Bold</FontWeight>
+                                      </Style>
+                                    </TextRun>
+                                  </TextRuns>
+                                  <Style>
+                                    <TextAlign>Right</TextAlign>
+                                  </Style>
+                                </Paragraph>
+                              </Paragraphs>
+                              <Left>1.9in</Left>
+                              <Height>0.16252in</Height>
+                              <Width>3.55in</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style />
+                            </Textbox>
+                          </ReportItems>
+                          <KeepTogether>true</KeepTogether>
+                          <DataElementOutput>ContentsOnly</DataElementOutput>
+                          <ZIndex>4</ZIndex>
+                          <Style />
+                        </Rectangle>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember>
+                  <Group Name="BillingBackup_MainTable_WBS1">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!BillWBS1.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <TablixMembers>
+                    <TablixMember>
+                      <Visibility>
+                        <Hidden>=iif(Parameters!printWBSName.Value = "N" And Parameters!printWBSLongName.Value = "N", True, False)</Hidden>
+                      </Visibility>
+                    </TablixMember>
+                    <TablixMember>
+                      <Visibility>
+                        <Hidden>=iif(Parameters!printWBSName.Value = "N" OrElse Parameters!printWBSLongName.Value = "N", True, False)</Hidden>
+                      </Visibility>
+                    </TablixMember>
+                    <TablixMember />
+                    <TablixMember>
+                      <Group Name="BillingBackup_MainTable_WBS2">
+                        <GroupExpressions>
+                          <GroupExpression>=Fields!BillWBS2.Value</GroupExpression>
+                        </GroupExpressions>
+                      </Group>
+                      <TablixMembers>
+                        <TablixMember>
+                          <Visibility>
+                            <Hidden>=iif(Fields!BillWBS2.Value = " " OrElse (Parameters!printWBS2Name.Value = "N" AndAlso Parameters!printWBS2LongName.Value = "N"), true, false)</Hidden>
+                          </Visibility>
+                        </TablixMember>
+                        <TablixMember>
+                          <Visibility>
+                            <Hidden>=iif(Fields!BillWBS2.Value = " " OrElse Parameters!printWBS2Name.Value = "N" OrElse Parameters!printWBS2LongName.Value = "N", True, False)</Hidden>
+                          </Visibility>
+                        </TablixMember>
+                        <TablixMember />
+                        <TablixMember>
+                          <Group Name="BillingBackup_MainTable_WBS3">
+                            <GroupExpressions>
+                              <GroupExpression>=Fields!BillWBS3.Value</GroupExpression>
+                            </GroupExpressions>
+                          </Group>
+                          <TablixMembers>
+                            <TablixMember>
+                              <Visibility>
+                                <Hidden>=iif(Fields!BillWBS3.Value = " " OrElse (Parameters!printWBS3Name.Value = "N" AndAlso Parameters!printWBS3LongName.Value = "N"), true, false)</Hidden>
+                              </Visibility>
+                            </TablixMember>
+                            <TablixMember>
+                              <Visibility>
+                                <Hidden>=iif(Fields!BillWBS3.Value = " " OrElse Parameters!printWBS3Name.Value = "N" OrElse Parameters!printWBS3LongName.Value = "N", True, False)</Hidden>
+                              </Visibility>
+                            </TablixMember>
+                            <TablixMember />
+                            <TablixMember>
+                              <Group Name="Backup_Main_Details_Group">
+                                <DataElementName>Detail</DataElementName>
+                              </Group>
+                              <TablixMembers>
+                                <TablixMember>
+                                  <Visibility>
+                                    <Hidden>=iif(Parameters!BackupFees.Value = "Y", False, True)</Hidden>
+                                  </Visibility>
+                                </TablixMember>
+                                <TablixMember>
+                                  <Visibility>
+                                    <Hidden>=iif(Parameters!parmShowBillingBackupLabor.Value = "Y", False, True)</Hidden>
+                                  </Visibility>
+                                </TablixMember>
+                                <TablixMember>
+                                  <Visibility>
+                                    <Hidden>=iif(Parameters!parmShowBillingBackupExpense.Value = "Y", False, True)</Hidden>
+                                  </Visibility>
+                                </TablixMember>
+                                <TablixMember>
+                                  <Visibility>
+                                    <Hidden>=iif(Parameters!parmShowBillingBackupExpense.Value = "Y", False, True)</Hidden>
+                                  </Visibility>
+                                </TablixMember>
+                                <TablixMember>
+                                  <Visibility>
+                                    <Hidden>=iif(Parameters!parmShowBillingBackupExpense.Value = "Y", False, True)</Hidden>
+                                  </Visibility>
+                                </TablixMember>
+                                <TablixMember>
+                                  <Visibility>
+                                    <Hidden>=iif(Parameters!BackupAddOns.Value = "Y", False, True)</Hidden>
+                                  </Visibility>
+                                </TablixMember>
+                              </TablixMembers>
+                              <DataElementName>Detail_Collection</DataElementName>
+                              <DataElementOutput>Output</DataElementOutput>
+                            </TablixMember>
+                            <TablixMember>
+                              <Visibility>
+                                <Hidden>=IIF(Fields!BillWBS3.Value = " ", True, False)</Hidden>
+                              </Visibility>
+                            </TablixMember>
+                          </TablixMembers>
+                        </TablixMember>
+                        <TablixMember>
+                          <Visibility>
+                            <Hidden>=iif(Parameters!BackupAddOns.Value = "Y" AND Fields!BillWBS2.Value &lt;&gt; " ", false, true)</Hidden>
+                          </Visibility>
+                        </TablixMember>
+                        <TablixMember>
+                          <Visibility>
+                            <Hidden>=IIF(Fields!BillWBS2.Value = " ", True, False)</Hidden>
+                          </Visibility>
+                        </TablixMember>
+                      </TablixMembers>
+                    </TablixMember>
+                    <TablixMember>
+                      <Visibility>
+                        <Hidden>=iif(Parameters!BackupAddOns.Value = "Y" AND Fields!BillWBS1.Value &lt;&gt; " ", false, true)</Hidden>
+                      </Visibility>
+                    </TablixMember>
+                    <TablixMember />
+                  </TablixMembers>
+                </TablixMember>
+                <TablixMember />
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>ReportDataset</DataSetName>
+            <PageBreak>
+              <BreakLocation>Start</BreakLocation>
+            </PageBreak>
+            <Top>0.01in</Top>
+            <Height>4.395in</Height>
+            <Width>6.87387in</Width>
+            <Visibility>
+              <Hidden>=iif(CountRows() &gt; 0, false, true)</Hidden>
+            </Visibility>
+            <DataElementOutput>NoOutput</DataElementOutput>
+            <Style>
+              <FontSize>9pt</FontSize>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>4.495in</Height>
+        <Style />
+      </Body>
+      <Width>6.88in</Width>
+      <Page>
+        <LeftMargin>0.5in</LeftMargin>
+        <RightMargin>0.5in</RightMargin>
+        <TopMargin>0.5in</TopMargin>
+        <BottomMargin>0.5in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="InvoiceDate">
+      <DataType>DateTime</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>InvoiceDate</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="DisplayInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>&lt;Draft&gt;</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>DisplayInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printInvoiceLeadingZeros">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printInvoiceLeadingZeros</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmMainWBS1">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>0009M080.00</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmMainWBS1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="parmInvoice">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>0013826</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmInvoice</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ActivePeriod">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>200510</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ActivePeriod</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="ActiveCompany">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>IE</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ActiveCompany</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmFixedFee">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>parmFixedFee</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmShowBillingBackupExpense">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_9</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmShowBillingBackupLabor">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_10</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmShowLabExt">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>N</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmShowLabExt</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmshowBillingBackupComments">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_11</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmshowBillingBackupVendorInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_12</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmshowBillingBackupEXDescription">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_13</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmshowBillingBackupEKDescription">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_14</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmshowBillingBackupAPDescription">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_15</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmshowBillingBackupLaborCode">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_16</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmshowBillingBackupLaborCategory">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_17</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmshowBillingBackupMileage">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_18</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmshowBillingBackupEmployeeNumber">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_19</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmshowBillingBackupTransType">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_20</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmBackupExpenseSort">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>0</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmBackupExpenseSort</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="parmBackupLaborSort">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>0</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>parmBackupLaborSort</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printPageNumbers">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>Y</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printPageNumbers</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="DecimalPlaces">
+      <DataType>Integer</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <Prompt>DecimalPlaces</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printWBSName">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printWBSName</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printWBSLongName">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printWBSLongName</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printWBS2Name">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printWBS2Name</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printWBS2LongName">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printWBS2LongName</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printWBS3Name">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printWBS3Name</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="printWBS3LongName">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>printWBS3LongName</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="wbs1HeaderLabel">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>wbs1HeaderLabel</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="wbs2HeaderLabel">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>wbs2HeaderLabel</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="wbs3HeaderLabel">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true" />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>wbs3HeaderLabel</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="showBillingBackup">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>showBillingBackup</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HeaderInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <DefaultValue>
+        <Values>
+          <Value>&lt;Draft&gt;</Value>
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HeaderInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="OvtIndicator">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>OvtIndicator</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="PreInvoice">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>PreInvoice</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BackupFees">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>BackupFees</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="BackupAddOns">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>BackupAddOns</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="FeeJTDCalc">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>FeeJTDCalc</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <CustomProperties>
+    <CustomProperty>
+      <Name>ReportType</Name>
+      <Value>SubReport</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ResourceFileName</Name>
+      <Value>BillingBackup</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>ReportVersion</Name>
+      <Value>2.0.5.5170</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AutoGroupQuery</Name>
+      <Value>Y</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>UseColumnSelection</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowUserDefinedFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+    <CustomProperty>
+      <Name>AllowCalcFields</Name>
+      <Value>N</Value>
+    </CustomProperty>
+  </CustomProperties>
+  <Code>
+'************************************************************
+' Used to divide numbers in an expression and avoid dividing by 0
+'************************************************************
+Function SafeDivide(ByVal numerator As Decimal, ByVal denominator As Decimal) As Decimal
+        If (denominator = 0) Then
+            Return 0
+        Else
+            Return numerator / denominator
+        End If
+ End Function
+
+'************************************************************
+' Format report heading period textbox for Audit reports
+'************************************************************
+Function InvoiceLeadingZeros (ByVal DisplayInvoice As String, ByVal printInvoiceLeadingZeros As String) As String
+Dim i AS Integer
+	if printInvoiceLeadingZeros = "N" then
+		i = 1
+		Do While Mid(DisplayInvoice, i, 1) = "0"
+			i = i + 1
+		Loop
+		DisplayInvoice = Mid(DisplayInvoice, i)
+	end if
+	Return DisplayInvoice
+End Function
+</Code>
+  <Language>=User!Language</Language>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>c8a27a81-a734-47f7-89ac-3465a4aef185</rd:ReportID>
+</Report>
