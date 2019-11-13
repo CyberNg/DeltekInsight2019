@@ -1,0 +1,11 @@
+C:\Dev\WebServicesExtensions\bin\WebServicesExtensions.dll.config
+C:\Dev\WebServicesExtensions\bin\WebServicesExtensions.dll
+C:\Dev\WebServicesExtensions\bin\WebServicesExtensions.pdb
+C:\Dev\WebServicesExtensions\bin\WebServicesExtensions.xml
+C:\Dev\WebServicesExtensions\obj\Release\WebServicesExtensions.vbprojAssemblyReference.cache
+C:\Dev\WebServicesExtensions\obj\Release\WebServicesExtensions.Resources.resources
+C:\Dev\WebServicesExtensions\obj\Release\WebServicesExtensions.vbproj.GenerateResource.cache
+C:\Dev\WebServicesExtensions\obj\Release\WebServicesExtensions.vbproj.CoreCompileInputs.cache
+C:\Dev\WebServicesExtensions\obj\Release\WebServicesExtensions.dll
+C:\Dev\WebServicesExtensions\obj\Release\WebServicesExtensions.xml
+C:\Dev\WebServicesExtensions\obj\Release\WebServicesExtensions.pdb
